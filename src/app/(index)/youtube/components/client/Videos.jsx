@@ -3,6 +3,7 @@ import React from 'react'
 import { BsThreeDotsVertical, AiFillCheckCircle } from '@/data/icons/icons'
 import { Data } from '@/data/data/data'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const Menu = () => {
     return (
@@ -36,13 +37,13 @@ const Videos = ({ item }) => {
     return (
         <div className='flex flex-col'>
             <div className='w-full h-[200px] rounded-lg relative'>
-                <img src={item.thumbnail} className='w-full h-full rounded-lg' />
+                <Image width={356.39} height={200} src={item.thumbnail} className='w-full h-full rounded-lg' />
                 <span className="bg-black text-white text-xs px-2.5 py-0.5 rounded absolute bottom-2 right-2">
                     {item.duration}
                 </span>
             </div>
-            <div className='flex justify-center items-start gap-2 py-1 group relative' onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
-                <img src={item.uploaderImage} className='w-10 h-10 rounded-full' />
+            <div className='flex justify-center items-start gap-2 py-1 group relative pr-5' onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
+                <Image width={40} height={40} src={item.uploaderImage} className='w-10 h-10 rounded-full' />
                 <div className='flex flex-col justify-start gap-1'>
                     <Link className='text-sm cursor-pointer' href={`/youtube/video/${item.id}`}>
                         {item.title}

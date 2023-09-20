@@ -85,7 +85,6 @@ const VideoPlayer = () => {
     const changeVolume = (e) => {
         videoRef.current.volume = e.target.value;
         setVolume(e.target.value)
-        console.log(e.target.value)
     };
 
     const changePlaybackRate = (e) => {
@@ -102,7 +101,7 @@ const VideoPlayer = () => {
             setIsFullscreen(true)
         }
     };
-
+    console.log(progress);
     return (
         <div className={`container ${isFullscreen ? 'fullscreen' : ''}`} ref={videoContainerRef}>
             <div className="wrapper" style={{ opacity: 1, bottom: 0 }}>
