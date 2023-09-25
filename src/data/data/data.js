@@ -1,5 +1,4 @@
-import { HiUsers, HiSpeakerphone, FaFilePen, FaIndianRupeeSign, FaGear, FaRedditAlien, FaPlaceOfWorship, BsTwitter, BsDiscord, BsFillBookmarkFill, BsSteam, BsMusicNoteBeamed, BsFillQuestionCircleFill, AiFillPieChart, AiFillYoutube, AiFillFacebook, AiFillInstagram, AiFillHome, AiFillStar, AiOutlineRadarChart, PiHandbagSimpleFill, PiSignIn, BiSolidBookContent, BiSolidInbox, BiBell, BiSolidHot, BiWorld, BiCodeAlt, BiLogOut, MdLibraryAdd, MdSubscriptions, MdBusiness, MdSportsVolleyball, MdFastfood, MdLocalMovies, MdPlace, MdScience, MdPrivacyTip, LuHistory, PiTelevisionBold, VscLaw, GiAmpleDress, GiWhiteBook, GiLaptop, LiaSignatureSolid, TbLetterZ } from '@/data/icons/icons'
-import { BsThreeDotsVertical, BiTimeFive, MdPlaylistAdd, PiShareFatLight, AiOutlineStop, MdOutlinedFlag, IoMdRemoveCircleOutline } from '@/data/icons/icons'
+import { HiUsers, HiSpeakerphone, FaFilePen, FaIndianRupeeSign, FaGear, FaRedditAlien, FaPlaceOfWorship, BsTwitter, BsDiscord, BsFillBookmarkFill, BsSteam, BsMusicNoteBeamed, BsFillQuestionCircleFill, AiFillPieChart, AiFillYoutube, AiFillFacebook, AiFillInstagram, AiFillHome, AiFillStar, AiOutlineRadarChart, PiHandbagSimpleFill, PiSignIn, BiSolidBookContent, BiSolidInbox, BiBell, BiSolidHot, BiWorld, BiCodeAlt, BiLogOut, MdLibraryAdd, MdSubscriptions, MdBusiness, MdSportsVolleyball, MdFastfood, MdLocalMovies, MdPlace, MdScience, MdPrivacyTip, LuHistory, PiTelevisionBold, VscLaw, GiAmpleDress, GiWhiteBook, GiLaptop, LiaSignatureSolid, TbLetterZ, BiTimeFive, MdPlaylistAdd, PiShareFatLight, AiOutlineStop, MdOutlinedFlag, IoMdRemoveCircleOutline } from '@/data/icons/icons'
 
 export const Data = {
     sidebar: {
@@ -214,7 +213,8 @@ export const Data = {
                     uploaderName: "Lorem, ipsum",
                     views: 12,
                     time: "45 seconds ago",
-                    duration: "2:40"
+                    videoLink: "/video/videoplayback.mp4",
+                    duration: "783.6"
                 },
                 {
                     id: 'video2',
@@ -224,7 +224,8 @@ export const Data = {
                     uploaderName: "Lorem, ipsum",
                     views: 12,
                     time: "45 seconds ago",
-                    duration: "2:40"
+                    videoLink: "/video/videoplayback.mp4",
+                    duration: "783.6"
                 },
                 {
                     id: 'video3',
@@ -234,7 +235,8 @@ export const Data = {
                     uploaderName: "Lorem, ipsum",
                     views: 12,
                     time: "45 seconds ago",
-                    duration: "2:40"
+                    videoLink: "/video/videoplayback.mp4",
+                    duration: "783.6"
                 },
                 {
                     id: 'video4',
@@ -244,7 +246,8 @@ export const Data = {
                     uploaderName: "Lorem, ipsum",
                     views: 12,
                     time: "45 seconds ago",
-                    duration: "2:40"
+                    videoLink: "/video/videoplayback.mp4",
+                    duration: "783.6"
                 },
                 {
                     id: 'video5',
@@ -254,7 +257,8 @@ export const Data = {
                     uploaderName: "Lorem, ipsum",
                     views: 12,
                     time: "45 seconds ago",
-                    duration: "2:40"
+                    videoLink: "/video/videoplayback.mp4",
+                    duration: "783.6"
                 },
                 {
                     id: 'video6',
@@ -264,7 +268,8 @@ export const Data = {
                     uploaderName: "Lorem, ipsum",
                     views: 12,
                     time: "45 seconds ago",
-                    duration: "2:40"
+                    videoLink: "/video/videoplayback.mp4",
+                    duration: "783.6"
                 },
                 {
                     id: 'video7',
@@ -274,7 +279,8 @@ export const Data = {
                     uploaderName: "Lorem, ipsum",
                     views: 12,
                     time: "45 seconds ago",
-                    duration: "2:40"
+                    videoLink: "/video/videoplayback.mp4",
+                    duration: "783.6"
                 },
                 {
                     id: 'video8',
@@ -284,7 +290,8 @@ export const Data = {
                     uploaderName: "Lorem, ipsum",
                     views: 12,
                     time: "45 seconds ago",
-                    duration: "2:40"
+                    videoLink: "/video/videoplayback.mp4",
+                    duration: "783.6"
                 },
                 {
                     id: 'video9',
@@ -294,7 +301,8 @@ export const Data = {
                     uploaderName: "Lorem, ipsum",
                     views: 12,
                     time: "45 seconds ago",
-                    duration: "2:40"
+                    videoLink: "/video/videoplayback.mp4",
+                    duration: "783.6"
                 },
                 {
                     id: 'video10',
@@ -304,7 +312,8 @@ export const Data = {
                     uploaderName: "Lorem, ipsum",
                     views: 12,
                     time: "45 seconds ago",
-                    duration: "2:40"
+                    videoLink: "/video/videoplayback.mp4",
+                    duration: "783.6"
                 },
                 {
                     id: 'video11',
@@ -314,7 +323,8 @@ export const Data = {
                     uploaderName: "Lorem, ipsum",
                     views: 12,
                     time: "45 seconds ago",
-                    duration: "2:40"
+                    videoLink: "/video/videoplayback.mp4",
+                    duration: "783.6"
                 },
                 {
                     id: 'video12',
@@ -324,7 +334,8 @@ export const Data = {
                     uploaderName: "Lorem, ipsum",
                     views: 12,
                     time: "45 seconds ago",
-                    duration: "2:40"
+                    videoLink: "/video/videoplayback.mp4",
+                    duration: "783.6"
                 },
                 {
                     id: 'video13',
@@ -334,7 +345,8 @@ export const Data = {
                     uploaderName: "Lorem, ipsum",
                     views: 12,
                     time: "45 seconds ago",
-                    duration: "2:40"
+                    videoLink: "/video/videoplayback.mp4",
+                    duration: "783.6"
                 },
             ],
             menu: [

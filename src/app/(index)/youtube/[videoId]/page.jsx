@@ -4,7 +4,10 @@ import React from 'react'
 const Page = ({ params }) => {
 
     return (
-        <VideoPlayer />
+        <div>
+            Hi
+        </div>
+        // <VideoPlayer />
     )
 }
 

@@ -9,10 +9,10 @@ const NavbarSidebarLayout = () => {
 
     React.useEffect(() => {
         document.body.addEventListener("click", () => {
-            setToggleSidebar(false)
+            setToggleSidebar(pre => false)
         })
         window.addEventListener("scroll", () => {
-            document.documentElement.scrollTop !== 0 ? setToggleNavbar(true) : setToggleNavbar(false);
+            document.documentElement.scrollTop !== 0 ? setToggleNavbar(pre => true) : setToggleNavbar(pre => false);
         });
     }, [])
 

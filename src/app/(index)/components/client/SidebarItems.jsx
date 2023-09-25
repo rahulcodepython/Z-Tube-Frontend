@@ -21,8 +21,8 @@ const SidebarItems = ({ setToggleSidebar }) => {
                 })
             }
             <li onClick={() => {
-                setShowTopicAll(!showTopicAll)
-                setToggleSidebar(true)
+                setShowTopicAll(pre => !showTopicAll)
+                setToggleSidebar(pre => true)
             }}>
                 <Link href="#" className="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 group hover:text-gray-700">
                     {showTopicAll ? 'Show Less' : 'Show More'}
