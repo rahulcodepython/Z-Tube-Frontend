@@ -51,7 +51,7 @@ const Page = () => {
                         <span className="ml-4">Login with Google</span>
                     </button>
                     <div className="text-sm flex justify-between items-center">
-                        <p>If you don't have an account...</p>
+                        <p>If you {`don't`} have an account...</p>
                         <Link href={'/register'} className="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300 border-black">
                             Register
                         </Link>
