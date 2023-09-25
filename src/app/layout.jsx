@@ -1,7 +1,7 @@
 import './globals.css'
 import 'react-tooltip/dist/react-tooltip.css'
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import { ToastContainer, Flip } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata = {
     title: 'Create Next App',
@@ -11,7 +11,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
     return (
         <html lang="en">
-            <body className='h-[100vh]'>{children}</body>
+            <body className='h-[100vh]'>
+                <ToastContainer draggableDirection="x" pauseOnFocusLoss={false} transition={Flip} />
+                {children}
+            </body>
         </html>
     )
 }

@@ -1,3 +1,4 @@
+import RegisterForm from './components/client/RegisterForm';
 import Link from 'next/link';
 
 const Page = () => {
@@ -7,25 +8,7 @@ const Page = () => {
                 <h2 className="text-2xl font-bold text-black">Register</h2>
                 <p className="text-sm text-black">If you have not an account, please register</p>
             </div>
-            <form className="flex flex-col gap-6" action="#" method="POST">
-                <div className='flex flex-col gap-4'>
-                    <div className='flex flex-col gap-2'>
-                        <label className="block text-gray-700">Name</label>
-                        <input type="name" name="" id="" placeholder="Enter Your Name" className="w-full px-4 py-3 rounded-lg bg-gray-200 border focus:border-black focus:bg-white focus:outline-none" autoFocus autoComplete="name" required />
-                    </div>
-                    <div className='flex flex-col gap-2'>
-                        <label className="block text-gray-700">Email Address</label>
-                        <input type="email" name="" id="" placeholder="Enter Email Address" className="w-full px-4 py-3 rounded-lg bg-gray-200 border focus:border-black focus:bg-white focus:outline-none" autoFocus autoComplete="email" required />
-                    </div>
-                    <div className='flex flex-col gap-2'>
-                        <label className="block text-gray-700">Password</label>
-                        <input type="password" name="" id="" placeholder="Enter Password" minLength="6" className="w-full px-4 py-3 rounded-lg bg-gray-200 border focus:border-black focus:bg-white focus:outline-none" required />
-                    </div>
-                </div>
-                <button type="submit" className="w-full block bg-black  hover:scale-105 duration-300 text-white font-semibold rounded-lg px-4 py-3">
-                    Register
-                </button>
-            </form>
+            <RegisterForm />
             <div className="grid grid-cols-3 items-center text-gray-500">
                 <hr className="border-gray-500" />
                 <p className="text-center text-sm">OR</p>
