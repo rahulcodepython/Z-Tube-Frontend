@@ -14,7 +14,7 @@ const Videos = ({ item }) => {
                     {TimeParser(item.duration)}
                 </span>
             </div>
-            <div className='flex justify-center items-start gap-2 py-1 group relative pr-5 all-videos-description'>
+            <div className='flex justify-center items-start gap-2 py-1 relative pr-5'>
                 <Image width={40} height={40} src={item.uploaderImage} alt='User Image' className='w-10 h-10 rounded-full' />
                 <div className='flex flex-col justify-start gap-1'>
                     <Link className='text-sm cursor-pointer' href={`/youtube/${item.id}`}>
@@ -31,7 +31,9 @@ const Videos = ({ item }) => {
                         <div>{item.time}</div>
                     </div>
                 </div>
-                <VideosMenu />
+                <div className='absolute top-2 right-0 cursor-pointer'>
+                    <VideosMenu />
+                </div>
             </div>
         </div>
     )

@@ -1,9 +1,9 @@
 import { Data } from "@/data/data/data";
 import React from "react";
 
-const Menu = () => {
+const Menu = ({ menuRef }) => {
     return (
-        <div className="absolute -right-60 top-7 bg-black text-white z-10 flex flex-col divide-y-2 divide-white rounded-lg">
+        <div className="absolute -right-56 top-7 bg-black text-white z-10 flex flex-col divide-y-2 divide-white rounded-lg" ref={menuRef}>
             {
                 Data.youtube.allVideos.menu.map((item, index) => {
                     return <div key={index} className='py-2 text-xs'>

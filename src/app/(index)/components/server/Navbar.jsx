@@ -8,7 +8,7 @@ const Navbar = ({ setToggleSidebar, toggleSidebar, toggleNavbar }) => {
     return (
         <nav className={`flex flex-wrap justify-between items-center px-5 p-2 ${toggleNavbar ? 'sticky top-0 z-20 bg-white shadow-2xl' : ''}`}>
             <div className="flex items-center gap-3">
-                <BiMenu onClick={() => { setToggleSidebar(!toggleSidebar) }} className="text-2xl cursor-pointer" />
+                <BiMenu onClick={() => { setToggleSidebar(pre => !toggleSidebar) }} className="text-2xl cursor-pointer" />
                 <span className="text-xl font-semibold cursor-pointer">ZTube</span>
             </div>
             <div className="flex items-center justify-center rounded-full border border-gray-800 bg-gray-800 w-[40rem]">
