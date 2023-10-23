@@ -1,6 +1,6 @@
-import Videos from '@/app/(index)/youtube/components/server/Videos'
 import { Data } from '@/data/data/data'
 import React from 'react'
+import Videos from './components/server/Videos'
 
 const Page = () => {
     return (

@@ -2,6 +2,7 @@
 import { AuthContext } from '@/context/AuthContext'
 import CheckUserIsAuthenticated from '@/functions/CheckUserIsAuthenticated'
 import { Decrypt } from '@/functions/Decrypt'
+import FetchNewAccessToken from '@/functions/FetchNewAccessToken'
 import axios from 'axios'
 import Link from 'next/link'
 import React from 'react'
@@ -18,6 +19,9 @@ const UserButton = () => {
         }
         else {
             if (isAuthenticated) {
+                if (!sessionStorage.getItem('access')) {
+                    await FetchNewAccessToken()
+                }
                 const option = {
                     headers: {
                         Authorization: `JWT ${Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY)}`
@@ -37,7 +41,7 @@ const UserButton = () => {
     React.useEffect(() => {
         CheckUserIsAuthenticated(sessionStorage.getItem('access'), localStorage.getItem('refresh'), setIsAuthenticated)
         checkAuthentication();
-    }, [])
+    }, [isAuthenticated])
 
     return loading ? 'loading ...' : user === null ? <Link href={'/auth/login'} className="px-3 py-2 bg-gray-300 text-black rounded-lg hover:scale-105 duration-300">
         Login
