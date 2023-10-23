@@ -27,11 +27,11 @@ const Page = () => {
                     <path clipPath="url(#b)" fill="#34A853" d="M0 37l30-23 7.9 1L48 0v48H0z" />
                     <path clipPath="url(#b)" fill="#4285F4" d="M48 48L17 24l-4-3 35-10z" />
                 </svg>
-                <span className="ml-4">Register with Google</span>
+                <span className="ml-4 text-black">Register with Google</span>
             </button>
             <div className="text-sm flex justify-between items-center">
                 <p>If you have an account...</p>
-                <Link href={'/auth/login'} className="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300 border-black">
+                <Link href={'/auth/login'} className="py-2 px-5 text-black bg-white border rounded-xl hover:scale-110 duration-300 border-black">
                     Login
                 </Link>
             </div>
