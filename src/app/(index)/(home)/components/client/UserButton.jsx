@@ -1,6 +1,8 @@
 "use client"
 import { AuthContext } from '@/context/AuthContext'
 import CheckUserIsAuthenticated from '@/functions/CheckUserIsAuthenticated'
+import { Decrypt } from '@/functions/Decrypt'
+import axios from 'axios'
 import Link from 'next/link'
 import React from 'react'
 
@@ -10,11 +12,24 @@ const UserButton = () => {
     const [user, setUser] = React.useState(null)
     const { isAuthenticated, setIsAuthenticated } = React.useContext(AuthContext)
 
-    const checkAuthentication = () => {
-        if (isAuthenticated) {
-            const name = sessionStorage.getItem('first_name') ?? 'Guest'
-            const username = sessionStorage.getItem('username') ?? 'Guest'
-            setUser({ "name": name, "username": username })
+    const checkAuthentication = async () => {
+        if (sessionStorage.getItem("user")) {
+            setUser(pre => JSON.parse(sessionStorage.getItem("user")))
+        }
+        else {
+            if (isAuthenticated) {
+                const option = {
+                    headers: {
+                        Authorization: `JWT ${Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY)}`
+                    },
+                }
+                await axios.get(`${process.env.BACKEND_DOMAIN_NAME}user/me/`, option)
+                    .then(response => {
+                        setUser(pre => response.data)
+                        sessionStorage.setItem("user", JSON.stringify(response.data))
+                    })
+                    .catch(error => setUser(pre => null))
+            }
         }
         setLoading(pre => false)
     }
@@ -27,9 +42,8 @@ const UserButton = () => {
     return loading ? 'loading ...' : user === null ? <Link href={'/auth/login'} className="px-3 py-2 bg-gray-300 text-black rounded-lg hover:scale-105 duration-300">
         Login
     </Link> : <Link href={`/user/${user?.username}`} className="px-3 py-2 bg-gray-300 text-black rounded-lg hover:scale-105 duration-300">
-        {user?.name}
+        {user?.first_name}
     </Link>
 }
 
 export default UserButton
-// {/* <img id="avatarButton" type="button" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start" className="w-10 h-10 rounded-full cursor-pointer" src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1780&q=80" alt="User dropdown" /> */}

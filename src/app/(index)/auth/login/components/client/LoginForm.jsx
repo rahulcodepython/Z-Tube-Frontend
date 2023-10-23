@@ -19,10 +19,6 @@ const LoginForm = () => {
                     resolve();
                     localStorage.setItem('refresh', Encrypt(response.data.refresh, process.env.ENCRYPTION_KEY));
                     sessionStorage.setItem('access', Encrypt(response.data.access, process.env.ENCRYPTION_KEY));
-                    sessionStorage.setItem("email", response.data.email)
-                    sessionStorage.setItem("first_name", response.data.first_name)
-                    sessionStorage.setItem("last_name", response.data.last_name)
-                    sessionStorage.setItem("username", response.data.username)
                 })
                 .catch((error) => {
                     rejected();

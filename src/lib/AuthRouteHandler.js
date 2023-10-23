@@ -44,7 +44,7 @@ const AuthRouteHandler = ({ children }) => {
     }
 
     React.useEffect(() => {
-        CheckUserIsAuthenticated(sessionStorage.getItem('access'), sessionStorage.getItem('refresh'), setIsAuthenticated)
+        CheckUserIsAuthenticated(sessionStorage.getItem('access'), localStorage.getItem('refresh'), setIsAuthenticated)
         Handler();
     }, [])
 
