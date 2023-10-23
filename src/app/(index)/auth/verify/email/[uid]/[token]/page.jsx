@@ -2,6 +2,7 @@ import React from 'react'
 import axios from "axios";
 import Image from 'next/image';
 import Link from 'next/link';
+import AutoLoginButton from './components/client/AutoLoginButton';
 
 const Page = async ({ params }) => {
     try {
@@ -19,9 +20,7 @@ const Page = async ({ params }) => {
                     <div>
                         You are now verified
                     </div>
-                    <Link href={'/auth/login'} className='px-4 py-2 rounded-lg bg-green-600 text-white'>
-                        Go to Login
-                    </Link>
+                    <AutoLoginButton />
                 </div>
             )
         }

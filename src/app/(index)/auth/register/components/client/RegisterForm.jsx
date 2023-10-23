@@ -3,12 +3,15 @@ import React from 'react'
 import { Formik, Form, Field } from 'formik';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { Encrypt } from '@/functions/Encrypt';
 
 const RegisterForm = () => {
     const handleSubmit = (values) => {
         const HandleTostify = new Promise((resolve, rejected) => {
             axios.post(`${process.env.BACKEND_DOMAIN_NAME}user/auth/users/`, values)
                 .then((response) => {
+                    localStorage.setItem("email", values.email)
+                    localStorage.setItem("password", Encrypt(values.password, process.env.ENCRYPTION_KEY))
                     resolve();
                 })
                 .catch((error) => {

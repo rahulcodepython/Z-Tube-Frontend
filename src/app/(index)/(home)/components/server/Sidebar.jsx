@@ -1,7 +1,7 @@
 import React from 'react'
 import { Data } from '@/data/data/data'
-import SidebarItems from '@/app/(index)/components/client/SidebarItems'
 import Link from 'next/link'
+import SidebarItems from '../client/SidebarItems'
 
 const Sidebar = ({ toggleSidebar, setToggleSidebar, sidebarRef }) => {
 

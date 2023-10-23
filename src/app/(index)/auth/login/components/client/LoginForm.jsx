@@ -3,14 +3,26 @@ import React from 'react'
 import { Formik, Form, Field } from 'formik';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { Encrypt } from '@/functions/Encrypt';
+import { useRouter } from 'next/navigation';
 
 const LoginForm = () => {
+    const router = useRouter();
+
     const handleSubmit = (values) => {
         const HandleTostify = new Promise((resolve, rejected) => {
             axios.post(`${process.env.BACKEND_DOMAIN_NAME}user/auth/jwt/create/`, values)
                 .then((response) => {
+                    setTimeout(() => {
+                        router.push("/")
+                    }, 3000);
                     resolve();
-                    console.log(response.data);
+                    localStorage.setItem('refresh', Encrypt(response.data.refresh, process.env.ENCRYPTION_KEY));
+                    sessionStorage.setItem('access', Encrypt(response.data.access, process.env.ENCRYPTION_KEY));
+                    sessionStorage.setItem("email", response.data.email)
+                    sessionStorage.setItem("first_name", response.data.first_name)
+                    sessionStorage.setItem("last_name", response.data.last_name)
+                    sessionStorage.setItem("username", response.data.username)
                 })
                 .catch((error) => {
                     rejected();

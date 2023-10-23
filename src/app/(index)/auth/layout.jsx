@@ -1,14 +1,11 @@
-import { AuthProvider } from '@/context/AuthContext';
-import RouteHandler from '@/lib/RouteHandler';
+import AuthRouteHandler from '@/lib/AuthRouteHandler';
 import Image from 'next/image';
 import React from 'react'
 import Link from 'next/link';
 
 const AuthLayout = ({ children }) => {
     return (
-        // <AuthProvider>
-        // </AuthProvider>  
-        <RouteHandler>
+        <AuthRouteHandler>
             <section className="flex items-center justify-center overflow-y-scroll my-5">
                 <div className='flex flex-col items-start gap-4'>
                     <Link href={'/'} className='px-3 py-2 bg-black text-white hover:scale-110 transition-all duration-300 ease-in-out rounded-lg'>
@@ -22,7 +19,7 @@ const AuthLayout = ({ children }) => {
                     </div>
                 </div>
             </section>
-        </RouteHandler>
+        </AuthRouteHandler>
     )
 }
 

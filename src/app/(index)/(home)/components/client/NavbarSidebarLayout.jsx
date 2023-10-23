@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
-import Navbar from '@/app/(index)/components/server/Navbar'
-import Sidebar from '@/app/(index)/components/server/Sidebar'
+import Navbar from '../server/Navbar'
+import Sidebar from '../server/Sidebar'
 
 const NavbarSidebarLayout = () => {
     const [toggleSidebar, setToggleSidebar] = React.useState(false)
