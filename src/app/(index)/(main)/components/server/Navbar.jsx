@@ -22,7 +22,11 @@ const Navbar = ({ setToggleSidebar, toggleSidebar, toggleNavbar }) => {
                 <Tooltip id="create" />
                 <BiBell className="text-2xl cursor-pointer" data-tooltip-id="notification" data-tooltip-content="Notification" />
                 <Tooltip id="notification" />
+                {/* Just for testing purposes */}
                 <Link href={'/auth/login'}>Login</Link>
+                <Link href={'/auth/register'}>Register</Link>
+                <Link href={'/auth/verify/password'}>Passowrd</Link>
+                {/* Just for testing purposes */}
                 <UserButton />
                 {/* <img id="avatarButton" type="button" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start" className="w-10 h-10 rounded-full cursor-pointer" src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1780&q=80" alt="User dropdown" />
                 <Link href={'/auth/login'} className="px-3 py-2 bg-gray-300 text-black rounded-lg hover:scale-105 duration-300">
