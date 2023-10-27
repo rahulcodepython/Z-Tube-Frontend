@@ -6,71 +6,65 @@ import { usePathname } from 'next/navigation'
 import React from 'react'
 
 const IndexLayout = ({ children }) => {
-    const { isAuthenticated, setIsAuthenticated, isAccessToken, setIsAccessToken, accessToken, setAccessToken, isRefreshToken, setIsRefreshToken, refreshToken, setRefreshToken } = React.useContext(Context)
-
     const [loading, setLoading] = React.useState(true)
-    const [proccedFurthur, setProccedFurthur] = React.useState(true)
+
+    const { isAuthenticated, setIsAuthenticated, isAccessToken, setIsAccessToken, accessToken, setAccessToken, isRefreshToken, setIsRefreshToken, refreshToken, setRefreshToken } = React.useContext(Context)
 
     const pathname = usePathname()
 
-    const SetAllValuesToFalse = () => {
-        setIsAuthenticated(pre => false)
-        setIsAccessToken(pre => false)
-        setAccessToken(pre => null)
-        setIsRefreshToken(pre => false)
-        setRefreshToken(pre => null)
+    React.useEffect(() => {
 
-        setProccedFurthur(pre => false)
-    }
-
-    const CheckRefreshToken = async () => {
-        const refresh_token = localStorage.getItem("refresh") ?? null
-
-        if (refresh_token === null) {
-            SetAllValuesToFalse();
+        const SetAllValuesToFalse = () => {
+            setIsAuthenticated(pre => false)
+            setIsAccessToken(pre => false)
+            setAccessToken(pre => null)
+            setIsRefreshToken(pre => false)
+            setRefreshToken(pre => null)
         }
-        else {
-            setIsAuthenticated(pre => true)
-            setIsRefreshToken(pre => true)
-            setRefreshToken(pre => Decrypt(refresh_token, process.env.ENCRYPTION_KEY))
 
-            setProccedFurthur(pre => true)
-        }
-    }
+        const CheckRefreshToken = async () => {
+            const refresh_token = localStorage.getItem("refresh") ?? null
 
-    const CheckAccessToken = async () => {
-        const access_token = sessionStorage.getItem("access") ?? null
-
-        if (access_token === null) {
-            const result = await FetchNewAccessToken(refreshToken);
-
-            if (result === null) {
+            if (refresh_token === null) {
                 SetAllValuesToFalse();
+                sessionStorage.removeItem('access')
+                return false;
+            }
+            else {
+                setIsAuthenticated(pre => true)
+                setIsRefreshToken(pre => true)
+                setRefreshToken(pre => Decrypt(refresh_token, process.env.ENCRYPTION_KEY))
+                return true;
+            }
+        }
+
+        const CheckAccessToken = async () => {
+            const access_token = sessionStorage.getItem("access") ?? null
+
+            if (access_token === null) {
+                const result = await FetchNewAccessToken(Decrypt(localStorage.getItem("refresh"), process.env.ENCRYPTION_KEY));
+
+                if (result === null) {
+                    SetAllValuesToFalse();
+                }
+                else {
+                    setIsAccessToken(pre => true)
+                    setAccessToken(pre => result.access)
+                    setRefreshToken(pre => result.refresh)
+                }
             }
             else {
                 setIsAccessToken(pre => true)
-                setAccessToken(pre => result.access)
-                setRefreshToken(pre => result.refresh)
-
-                setProccedFurthur(pre => true)
+                setAccessToken(pre => Decrypt(access_token, process.env.ENCRYPTION_KEY))
             }
         }
-        else {
-            setIsAccessToken(pre => true)
-            setAccessToken(pre => Decrypt(access_token, process.env.ENCRYPTION_KEY))
 
-            setProccedFurthur(pre => true)
+        const Handler = async () => {
+            const refreshTokenValidation = await CheckRefreshToken();
+            refreshTokenValidation ? await CheckAccessToken() : null;
+            setLoading(pre => false)
         }
-    }
 
-    const Handler = async () => {
-        proccedFurthur ? await CheckRefreshToken() : null;
-        proccedFurthur ? await CheckAccessToken() : null;
-        setLoading(pre => false)
-    }
-
-    React.useEffect(() => {
-        setProccedFurthur(pre => true)
         Handler();
     }, [pathname])
 

@@ -11,30 +11,32 @@ const UserButton = () => {
     const [user, setUser] = React.useState(null)
     const { isAuthenticated, setIsAuthenticated } = React.useContext(Context)
 
-    const checkAuthentication = async () => {
-        if (sessionStorage.getItem("user")) {
-            setUser(pre => JSON.parse(sessionStorage.getItem("user")))
-        }
-        else {
-            if (isAuthenticated && sessionStorage.getItem('access')) {
-                const option = {
-                    headers: {
-                        Authorization: `JWT ${Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY)}`
-                    },
-                }
-                await axios.get(`${process.env.BACKEND_DOMAIN_NAME}user/me/`, option)
-                    .then(response => {
-                        setUser(pre => response.data)
-                        sessionStorage.setItem("user", JSON.stringify(response.data))
-                    })
-                    .catch(error => setUser(pre => null))
-            }
-        }
-    }
-
     React.useEffect(() => {
+
+        const checkAuthentication = async () => {
+            if (isAuthenticated) {
+                if (sessionStorage.getItem("user")) {
+                    setUser(pre => JSON.parse(sessionStorage.getItem("user")))
+                }
+                else {
+                    const option = {
+                        headers: {
+                            Authorization: `JWT ${Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY)}`
+                        },
+                    }
+                    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}user/me/`, option)
+                        .then(response => {
+                            setUser(pre => response.data)
+                            sessionStorage.setItem("user", JSON.stringify(response.data))
+                        })
+                        .catch(error => setUser(pre => null))
+                }
+            }
+
+            setLoading(pre => false)
+        }
+
         checkAuthentication();
-        setLoading(pre => false)
     }, [isAuthenticated])
 
     return loading ? 'loading ...' : user === null ? <Link href={'/auth/login'} className="px-3 py-2 bg-gray-300 text-black rounded-lg hover:scale-105 duration-300">

@@ -21,33 +21,34 @@ const Page = () => {
     const authuser = searchParams.get('authuser')
     const prompt = searchParams.get('prompt')
 
-    const AuthenticateUser = async () => {
-        const config = {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
+    React.useEffect(() => {
+
+        const AuthenticateUser = async () => {
+            // const config = {
+            //     headers: {
+            //         'Content-Type': 'application/x-www-form-urlencoded'
+            //     }
+            // }
+
+            // const url = `${process.env.BACKEND_DOMAIN_NAME}user/auth/o/google-oauth2/?state=${encodeURIComponent(state)}&code=${encodeURIComponent(code)}`
+
+            // await axios.post(url, config)
+            //     .then(response => {
+            //         console.log(response);
+            //         // sessionStorage.setItem('access', response.data.access)
+            //         // localStorage.setItem('refresh', response.data.refresh)
+            //         // setIsAuthenticated(pre => true)
+            //         // setIsAuth(pre => true)
+            //         setLoading(pre => false)
+            //     })
+            //     .catch(error => {
+            //         console.log(error);
+            //         // setIsAuthenticated(pre => false)
+            //     })
+            setLoading(pre => false)
         }
 
-        const url = `${process.env.BACKEND_DOMAIN_NAME}user/auth/o/google-oauth2/?state=${encodeURIComponent(state)}&code=${encodeURIComponent(code)}`
-
-        await axios.post(url, config)
-            .then(response => {
-                console.log(response);
-                // sessionStorage.setItem('access', response.data.access)
-                // localStorage.setItem('refresh', response.data.refresh)
-                // setIsAuthenticated(pre => true)
-                // setIsAuth(pre => true)
-                setLoading(pre => false)
-            })
-            .catch(error => {
-                console.log(error);
-                // setIsAuthenticated(pre => false)
-                setLoading(pre => false)
-            })
-    }
-
-    React.useEffect(() => {
-        AuthenticateUser()
+        AuthenticateUser();
     }, [])
 
 
