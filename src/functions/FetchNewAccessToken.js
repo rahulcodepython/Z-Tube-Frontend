@@ -17,6 +17,8 @@ const FetchNewAccessToken = async (refreshToken) => {
             sessionStorage.removeItem('access')
             localStorage.removeItem('refresh')
         })
+
+    return result;
 }
 
 export default FetchNewAccessToken
