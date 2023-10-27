@@ -39,7 +39,7 @@ const UserButton = () => {
 
     return loading ? 'loading ...' : user === null ? <Link href={'/auth/login'} className="px-3 py-2 bg-gray-300 text-black rounded-lg hover:scale-105 duration-300">
         Login
-    </Link> : <Link href={`/user/${user?.username}`} className="px-3 py-2 bg-gray-300 text-black rounded-lg hover:scale-105 duration-300">
+    </Link> : <Link href={`/admin/${user?.username}`} className="px-3 py-2 bg-gray-300 text-black rounded-lg hover:scale-105 duration-300">
         {user?.first_name}
     </Link>
 }

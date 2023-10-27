@@ -2,12 +2,11 @@
 import React from 'react'
 import { Context } from '@/context/Context'
 import { usePathname, useRouter } from 'next/navigation'
-import { AuthenticatedRoute, UnauthenticatedRoute } from '@/lib/Routes'
-import CheckUserIsAuthenticated from '@/functions/CheckUserIsAuthenticated'
+import { AuthenticatedRoute, UnauthenticatedRoute } from '@/lib/Routes/Auth/Routes'
 
 const AuthRouteHandler = ({ children }) => {
     const [loading, setLoading] = React.useState(true)
-    const { isAuthenticated, setIsAuthenticated } = React.useContext(Context)
+    const { isAuthenticated } = React.useContext(Context)
 
     const pathname = usePathname()
     const router = useRouter()
@@ -57,7 +56,6 @@ const AuthRouteHandler = ({ children }) => {
     }
 
     const Handler = () => {
-        console.log(isAuthenticated, 'isauthenticated in auth route handler');
         if (isAuthenticated) {
             const routeMatch = AuthenticatedRouteMatcher()
             routeMatch ? setLoading(pre => false) : router.push("/");
@@ -69,11 +67,10 @@ const AuthRouteHandler = ({ children }) => {
     }
 
     React.useEffect(() => {
-        CheckUserIsAuthenticated(sessionStorage.getItem('access'), localStorage.getItem('refresh'), setIsAuthenticated)
         Handler();
-    }, [router.pathname])
+    }, [pathname])
 
-    return !loading && children
+    return loading ? "Loading..." : children
 }
 
 export default AuthRouteHandler

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const UserLayout = ({ children }) => {
+const AdminLayout = ({ children }) => {
     return (
         <section className='my-4 mx-auto container'>
             {children}
@@ -8,4 +8,4 @@ const UserLayout = ({ children }) => {
     )
 }
 
-export default UserLayout
+export default AdminLayout

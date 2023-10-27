@@ -1,7 +1,7 @@
-import AuthRouteHandler from '@/lib/AuthRouteHandler';
 import Image from 'next/image';
 import React from 'react'
 import Link from 'next/link';
+import AuthRouteHandler from '@/lib/Routes/Auth/AuthRouteHandler';
 
 const AuthLayout = ({ children }) => {
     return (
