@@ -1,5 +1,5 @@
 "use client"
-import { AuthContext } from '@/context/AuthContext'
+import { Context } from '@/context/Context'
 import { Decrypt } from '@/functions/Decrypt'
 import { Encrypt } from '@/functions/Encrypt'
 import axios from 'axios'
@@ -10,7 +10,7 @@ const AutoLoginButton = () => {
     const [loading, setLoading] = React.useState(true)
     const [isValidated, setIsValidated] = React.useState(false)
 
-    const { setIsAuthenticated } = React.useContext(AuthContext)
+    const { setIsAuthenticated } = React.useContext(Context)
 
     const fetchTokens = async () => {
         const values = {

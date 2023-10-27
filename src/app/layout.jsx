@@ -2,7 +2,7 @@ import './globals.css'
 import 'react-tooltip/dist/react-tooltip.css'
 import { ToastContainer, Flip } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { AuthProvider } from '@/context/AuthContext';
+import { ContextProvider } from '@/context/Context';
 
 export const metadata = {
     title: 'Create Next App',
@@ -14,9 +14,9 @@ export default function RootLayout({ children }) {
         <html lang="en">
             <body className='h-[100vh]'>
                 <ToastContainer draggableDirection="x" pauseOnFocusLoss={false} transition={Flip} />
-                <AuthProvider>
+                <ContextProvider>
                     {children}
-                </AuthProvider>
+                </ContextProvider>
             </body>
         </html>
     )
