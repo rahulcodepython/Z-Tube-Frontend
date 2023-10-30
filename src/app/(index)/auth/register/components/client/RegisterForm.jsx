@@ -8,7 +8,7 @@ import { Encrypt } from '@/functions/Encrypt';
 const RegisterForm = () => {
     const handleSubmit = (values) => {
         const HandleTostify = new Promise((resolve, rejected) => {
-            axios.post(`${process.env.BACKEND_DOMAIN_NAME}user/auth/users/`, values)
+            axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/dj/users/`, values)
                 .then((response) => {
                     localStorage.setItem("email", values.email)
                     localStorage.setItem("password", Encrypt(values.password, process.env.ENCRYPTION_KEY))

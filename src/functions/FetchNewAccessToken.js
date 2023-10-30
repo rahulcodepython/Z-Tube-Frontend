@@ -9,7 +9,7 @@ const FetchNewAccessToken = async (refreshToken) => {
     }
 
     console.log(values);
-    await axios.post(`${process.env.BACKEND_DOMAIN_NAME}user/auth/jwt/refresh/`, values)
+    await axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/token/jwt/refresh/`, values)
         .then(response => {
             sessionStorage.setItem('access', Encrypt(response.data.access, process.env.ENCRYPTION_KEY))
             localStorage.setItem('refresh', Encrypt(response.data.refresh, process.env.ENCRYPTION_KEY))

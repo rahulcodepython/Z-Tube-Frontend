@@ -24,7 +24,7 @@ const UserButton = () => {
                             Authorization: `JWT ${Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY)}`
                         },
                     }
-                    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}user/me/`, option)
+                    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}auth/me/`, option)
                         .then(response => {
                             setUser(pre => response.data)
                             sessionStorage.setItem("user", JSON.stringify(response.data))
