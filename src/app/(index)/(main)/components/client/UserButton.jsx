@@ -9,7 +9,7 @@ import React from 'react'
 const UserButton = () => {
     const [loading, setLoading] = React.useState(true)
     const [user, setUser] = React.useState(null)
-    const { isAuthenticated, setIsAuthenticated } = React.useContext(Context)
+    const { isAuthenticated, accessToken } = React.useContext(Context)
 
     React.useEffect(() => {
 
@@ -21,7 +21,8 @@ const UserButton = () => {
                 else {
                     const option = {
                         headers: {
-                            Authorization: `JWT ${Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY)}`
+                            // Authorization: `JWT ${Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY)}`
+                            Authorization: `JWT ${accessToken}`
                         },
                     }
                     await axios.get(`${process.env.BACKEND_DOMAIN_NAME}auth/me/`, option)

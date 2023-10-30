@@ -2,6 +2,7 @@
 import { Context } from '@/context/Context'
 import { Decrypt } from '@/functions/Decrypt'
 import FetchNewAccessToken from '@/functions/FetchNewAccessToken'
+import axios from 'axios'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
@@ -31,10 +32,22 @@ const IndexLayout = ({ children }) => {
                 return false;
             }
             else {
-                setIsAuthenticated(pre => true)
-                setIsRefreshToken(pre => true)
-                setRefreshToken(pre => Decrypt(refresh_token, process.env.ENCRYPTION_KEY))
-                return true;
+                const values = {
+                    "token": refreshToken
+                }
+                await axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/token/jwt/verify/`, values)
+                    .then(response => {
+                        setIsAuthenticated(pre => true)
+                        setIsRefreshToken(pre => true)
+                        setRefreshToken(pre => Decrypt(refresh_token, process.env.ENCRYPTION_KEY))
+                        return true;
+                    })
+                    .catch(error => {
+                        SetAllValuesToFalse();
+                        sessionStorage.removeItem('access')
+                        return false;
+                    })
+
             }
         }
 
@@ -44,18 +57,22 @@ const IndexLayout = ({ children }) => {
             if (access_token === null) {
                 const result = await FetchNewAccessToken(Decrypt(localStorage.getItem("refresh"), process.env.ENCRYPTION_KEY));
 
-                if (result === null) {
-                    SetAllValuesToFalse();
-                }
-                else {
-                    setIsAccessToken(pre => true)
-                    setAccessToken(pre => result.access)
-                    setRefreshToken(pre => result.refresh)
-                }
+                setIsAccessToken(pre => true)
+                setAccessToken(pre => result.access)
+                setRefreshToken(pre => result.refresh)
             }
             else {
-                setIsAccessToken(pre => true)
-                setAccessToken(pre => Decrypt(access_token, process.env.ENCRYPTION_KEY))
+                const values = {
+                    "token": accessToken
+                }
+                await axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/token/jwt/verify/`, values)
+                    .then(response => {
+                        setIsAccessToken(pre => true)
+                        setAccessToken(pre => Decrypt(access_token, process.env.ENCRYPTION_KEY))
+                    })
+                    .catch(error => {
+                        SetAllValuesToFalse()
+                    })
             }
         }
 
