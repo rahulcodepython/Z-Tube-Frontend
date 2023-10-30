@@ -1,7 +1,7 @@
 import React from 'react'
 import NavbarSidebarLayout from './components/client/NavbarSidebarLayout'
 
-const HomeLayout = ({ children }) => {
+const MainLayout = ({ children }) => {
     return (
         <>
             <NavbarSidebarLayout />
@@ -10,4 +10,4 @@ const HomeLayout = ({ children }) => {
     )
 }
 
-export default HomeLayout
+export default MainLayout

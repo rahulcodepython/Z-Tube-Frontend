@@ -11,14 +11,14 @@ const LoginForm = () => {
 
     const handleSubmit = (values) => {
         const HandleTostify = new Promise((resolve, rejected) => {
-            axios.post(`${process.env.BACKEND_DOMAIN_NAME}user/auth/jwt/create/`, values)
+            axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/token/jwt/create/`, values)
                 .then((response) => {
                     setTimeout(() => {
                         router.push("/")
                     }, 3000);
-                    resolve();
                     localStorage.setItem('refresh', Encrypt(response.data.refresh, process.env.ENCRYPTION_KEY));
                     sessionStorage.setItem('access', Encrypt(response.data.access, process.env.ENCRYPTION_KEY));
+                    resolve();
                 })
                 .catch((error) => {
                     rejected();

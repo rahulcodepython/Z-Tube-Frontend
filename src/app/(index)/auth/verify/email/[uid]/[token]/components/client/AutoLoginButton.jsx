@@ -1,5 +1,4 @@
 "use client"
-import { AuthContext } from '@/context/AuthContext'
 import { Decrypt } from '@/functions/Decrypt'
 import { Encrypt } from '@/functions/Encrypt'
 import axios from 'axios'
@@ -10,26 +9,24 @@ const AutoLoginButton = () => {
     const [loading, setLoading] = React.useState(true)
     const [isValidated, setIsValidated] = React.useState(false)
 
-    const { setIsAuthenticated } = React.useContext(AuthContext)
-
     const fetchTokens = async () => {
         const values = {
             "email": `${localStorage.getItem("email")}`,
             "password": `${Decrypt(localStorage.getItem("password"), process.env.ENCRYPTION_KEY)}`
         }
-        await axios.post(`${process.env.BACKEND_DOMAIN_NAME}user/auth/jwt/create/`, values)
+        await axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/token/jwt/create/`, values)
             .then((response) => {
                 localStorage.setItem('refresh', Encrypt(response.data.refresh, process.env.ENCRYPTION_KEY));
                 sessionStorage.setItem('access', Encrypt(response.data.access, process.env.ENCRYPTION_KEY));
                 setIsValidated(pre => true)
                 localStorage.removeItem('email')
                 localStorage.removeItem('password')
-                setIsAuthenticated(pre => isValidated)
-                setLoading(pre => false)
             })
             .catch((error) => {
                 setIsValidated(pre => false)
             });
+
+        setLoading(pre => false)
     }
 
 
