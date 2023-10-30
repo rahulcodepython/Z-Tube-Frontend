@@ -15,7 +15,7 @@ const IndexLayout = ({ children }) => {
 
     React.useEffect(() => {
 
-        const SetAllValuesToFalse = () => {
+        const setAuthUserFalse = () => {
             setIsAuthenticated(pre => false)
             setIsAccessToken(pre => false)
             setAccessToken(pre => null)
@@ -27,13 +27,13 @@ const IndexLayout = ({ children }) => {
             const refresh_token = localStorage.getItem("refresh") ?? null
 
             if (refresh_token === null) {
-                SetAllValuesToFalse();
+                setAuthUserFalse();
                 sessionStorage.removeItem('access')
                 return false;
             }
             else {
                 const values = {
-                    "token": refreshToken
+                    "token": Decrypt(refresh_token, process.env.ENCRYPTION_KEY)
                 }
                 await axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/token/jwt/verify/`, values)
                     .then(response => {
@@ -43,7 +43,7 @@ const IndexLayout = ({ children }) => {
                         return true;
                     })
                     .catch(error => {
-                        SetAllValuesToFalse();
+                        setAuthUserFalse();
                         sessionStorage.removeItem('access')
                         return false;
                     })
@@ -63,7 +63,7 @@ const IndexLayout = ({ children }) => {
             }
             else {
                 const values = {
-                    "token": accessToken
+                    "token": Decrypt(access_token, process.env.ENCRYPTION_KEY)
                 }
                 await axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/token/jwt/verify/`, values)
                     .then(response => {
@@ -71,7 +71,7 @@ const IndexLayout = ({ children }) => {
                         setAccessToken(pre => Decrypt(access_token, process.env.ENCRYPTION_KEY))
                     })
                     .catch(error => {
-                        SetAllValuesToFalse()
+                        setAuthUserFalse()
                     })
             }
         }
