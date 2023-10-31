@@ -12,7 +12,10 @@ export const ContextProvider = ({ children }) => {
     const [isRefreshToken, setIsRefreshToken] = React.useState(false)
     const [refreshToken, setRefreshToken] = React.useState(null)
 
-    return <Context.Provider value={{ isAuthenticated, setIsAuthenticated, isAccessToken, setIsAccessToken, accessToken, setAccessToken, isRefreshToken, setIsRefreshToken, refreshToken, setRefreshToken }}>
+    const [isProfileData, setIsProfileData] = React.useState(false)
+    const [profileData, setProfileData] = React.useState({})
+
+    return <Context.Provider value={{ isAuthenticated, setIsAuthenticated, isAccessToken, setIsAccessToken, accessToken, setAccessToken, isRefreshToken, setIsRefreshToken, refreshToken, setRefreshToken, isProfileData, setIsProfileData, profileData, setProfileData }}>
         {children}
     </Context.Provider>
 }
