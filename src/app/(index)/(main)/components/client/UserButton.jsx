@@ -1,48 +1,59 @@
 "use client"
 import { Context } from '@/context/Context'
-import { Decrypt } from '@/functions/Decrypt'
-import axios from 'axios'
+// import { Decrypt } from '@/functions/Decrypt'
+// import { Encrypt } from '@/functions/Encrypt'
+// import axios from 'axios'
 import Link from 'next/link'
+// import { usePathname } from 'next/navigation'
 import React from 'react'
 
 
 const UserButton = () => {
-    const [loading, setLoading] = React.useState(true)
-    const [user, setUser] = React.useState(null)
-    const { isAuthenticated, accessToken } = React.useContext(Context)
+    // const [loading, setLoading] = React.useState(true)
+    const { isAuthenticated, isUserData, userData } = React.useContext(Context)
 
-    React.useEffect(() => {
+    // const pathname = usePathname()
 
-        const checkAuthentication = async () => {
-            if (isAuthenticated) {
-                if (sessionStorage.getItem("user")) {
-                    setUser(pre => JSON.parse(sessionStorage.getItem("user")))
-                }
-                else {
-                    const option = {
-                        headers: {
-                            Authorization: `JWT ${accessToken}`
-                        },
-                    }
+    // React.useEffect(() => {
 
-                    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}auth/me/`, option)
-                        .then(response => {
-                            setUser(pre => response.data)
-                            sessionStorage.setItem("user", JSON.stringify(response.data))
-                        })
-                        .catch(error => setUser(pre => null))
-                }
-            }
-            setLoading(pre => false)
-        }
+    //     const checkAuthentication = async () => {
+    //         if (isAuthenticated && !isUserData) {
+    //             if (sessionStorage.getItem("user")) {
+    //                 setIsUserData(pre => true)
+    //                 setUserData(pre => JSON.parse(Decrypt(sessionStorage.getItem("user"), process.env.ENCRYPTION_KEY)))
+    //             }
+    //             else {
+    //                 const option = {
+    //                     headers: {
+    //                         Authorization: `JWT ${accessToken}`
+    //                     },
+    //                 }
 
-        checkAuthentication();
-    }, [isAuthenticated])
+    //                 await axios.get(`${process.env.BACKEND_DOMAIN_NAME}auth/me/`, option)
+    //                     .then(response => {
+    //                         setIsUserData(pre => true)
+    //                         setUserData(pre => response.data)
+    //                         sessionStorage.setItem("user", Encrypt(JSON.stringify(response.data), process.env.ENCRYPTION_KEY))
+    //                     })
+    //             }
+    //         }
+    //         setLoading(pre => false)
+    //     }
 
-    return loading ? 'loading ...' : user === null ? <Link href={'/auth/login'} className="px-3 py-2 bg-gray-300 text-black rounded-lg hover:scale-105 duration-300">
+    //     checkAuthentication();
+    // }, [pathname])
+
+    // return loading ? 'loading ...' : 
+    // isAuthenticated ? <Link href={`/admin/${userData?.username}`} className="px-3 py-2 bg-gray-300 text-black rounded-lg hover:scale-105 duration-300">
+    //     {userData?.first_name}
+    // </Link> : <Link href={'/auth/login'} className="px-3 py-2 bg-gray-300 text-black rounded-lg hover:scale-105 duration-300">
+    //     Login
+    // </Link>
+
+    isAuthenticated && isUserData ? <Link href={`/admin/${userData?.username}`} className="px-3 py-2 bg-gray-300 text-black rounded-lg hover:scale-105 duration-300">
+        {userData?.first_name}
+    </Link> : <Link href={'/auth/login'} className="px-3 py-2 bg-gray-300 text-black rounded-lg hover:scale-105 duration-300">
         Login
-    </Link> : <Link href={`/admin/${user?.username}`} className="px-3 py-2 bg-gray-300 text-black rounded-lg hover:scale-105 duration-300">
-        {user?.first_name}
     </Link>
 }
 
