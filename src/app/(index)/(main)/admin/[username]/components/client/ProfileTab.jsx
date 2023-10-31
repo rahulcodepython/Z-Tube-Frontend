@@ -9,25 +9,26 @@ import { Context } from '@/context/Context'
 
 const ProfileTab = ({ username }) => {
     const [loading, setLoading] = React.useState(true)
-    const [profileData, setProfileData] = React.useState({})
 
-    const { accessToken } = React.useContext(Context)
+    const { isAuthenticated, accessToken, isProfileData, setIsProfileData, profileData, setProfileData } = React.useContext(Context)
 
     const FetchProfileData = async () => {
-        const option = {
-            headers: {
-                Authorization: `JWT ${accessToken}`
-            },
-        }
+        if (isAuthenticated) {
+            if (!isProfileData) {
+                const option = {
+                    headers: {
+                        Authorization: `JWT ${accessToken}`
+                    },
+                }
 
-        try {
-            const response = await axios.get(`${process.env.BACKEND_DOMAIN_NAME}auth/profile/`, option)
-            console.log(response.data);
-            setProfileData(pre => response.data)
-            setLoading(pre => false)
-        } catch (error) {
-            setLoading(pre => false)
+                await axios.get(`${process.env.BACKEND_DOMAIN_NAME}auth/profile/${username}`, option)
+                    .then(response => {
+                        setIsProfileData(pre => true)
+                        setProfileData(pre => response.data)
+                    })
+            }
         }
+        setLoading(pre => false)
     }
 
     React.useEffect(() => {
@@ -37,48 +38,48 @@ const ProfileTab = ({ username }) => {
     return (
         loading ? "Loading..." : <>
             <div className='flex flex-col'>
-                <Image src={'/image/profile-banner.png'} width={2250} height={500} priority={false} className='rounded-t-lg' alt='...' />
+                <Image src={profileData.banner ? profileData.banner : '/image/profile-banner.png'} width={2250} height={500} priority={false} className='rounded-t-lg' alt='...' />
                 <div className='bg-black text-white relative px-4 py-5'>
-                    <Image src={'/image/user.png'} width={120} height={120} className='absolute top-[1.85rem] left-4 rounded-lg' alt='...' />
+                    <Image src={profileData.image ? profileData.image : '/image/user.png'} width={120} height={120} className='absolute top-[1.85rem] left-4 rounded-lg' alt='...' />
                     <div className='flex flex-col items-start justify-start gap-2 mx-40'>
                         <div className='flex flex-col items-start justify-center'>
                             <div className='font-extrabold text-xl'>
                                 <span>
-                                    Rahul Das
+                                    {profileData?.user?.first_name} {profileData?.user?.last_name}
                                 </span>
-                                <sup className='ml-1'>
-                                    <MdVerified className='inline-block text-sm' />
-                                </sup>
+                                {
+                                    profileData?.isVerified && <sup className='ml-1'>
+                                        <MdVerified className='inline-block text-sm' />
+                                    </sup>
+                                }
                             </div>
                             <span>
-                                rahulcodepython
+                                {profileData?.user?.username}
                             </span>
                         </div>
                         <div className='text-sm'>
-                            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Adipisci, quo.
+                            {profileData?.bio}
                         </div>
                         <div className='flex font-semibold items-center justify-start gap-4 text-sm'>
-                            <span>
-                                #webdeveloper
-                            </span>
-                            <span>
-                                #programmer
-                            </span>
-                            <span>
-                                #python
-                            </span>
+                            {
+                                JSON.parse(profileData?.tags).map((item, index) => {
+                                    return <span key={index}>
+                                        #{item}
+                                    </span>
+                                })
+                            }
                         </div>
                         <div className='flex items-center justify-center gap-4'>
                             <div className='flex items-center justify-center gap-1 cursor-pointer'>
-                                <span>93</span>
+                                <span>{profileData?.posts}</span>
                                 <span>Posts</span>
                             </div>
                             <div className='flex items-center justify-center gap-1 cursor-pointer'>
-                                <span>100</span>
+                                <span>{profileData?.followers}</span>
                                 <span>Followers</span>
                             </div>
                             <div className='flex items-center justify-center gap-1 cursor-pointer'>
-                                <span>100</span>
+                                <span>{profileData?.followings}</span>
                                 <span>Followings</span>
                             </div>
                         </div>
@@ -92,8 +93,7 @@ const ProfileTab = ({ username }) => {
                             </span>
                         </button>
                         <button className='bg-white text-black rounded-md px-4 py-2 font-semibold flex items-center justify-center gap-2'>
-                            <BiSolidLock />
-                            <BiSolidLockOpen />
+                            {profileData?.isLocked ? <BiSolidLock /> : <BiSolidLockOpen />}
                             <span>
                                 Locked
                             </span>
