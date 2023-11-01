@@ -9,7 +9,7 @@ import React from 'react'
 const IndexLayout = ({ children }) => {
     const [loading, setLoading] = React.useState(true)
 
-    const { isAuthenticated, setIsAuthenticated, isAccessToken, setIsAccessToken, accessToken, setAccessToken, isRefreshToken, setIsRefreshToken, refreshToken, setRefreshToken } = React.useContext(Context)
+    const { isAuthenticated, setIsAuthenticated, isAccessToken, setIsAccessToken, accessToken, setAccessToken, isRefreshToken, setIsRefreshToken, refreshToken, setRefreshToken, isUserData, setIsUserData, userData, setUserData } = React.useContext(Context)
 
     const pathname = usePathname()
 
@@ -64,6 +64,8 @@ const IndexLayout = ({ children }) => {
         }
 
         const FetchNewAccessToken = async () => {
+            let result = false;
+
             const values = {
                 "refresh": Decrypt(localStorage.getItem("refresh"), process.env.ENCRYPTION_KEY)
             }
@@ -73,21 +75,25 @@ const IndexLayout = ({ children }) => {
                     sessionStorage.setItem('access', Encrypt(response.data.access, process.env.ENCRYPTION_KEY))
                     localStorage.setItem('refresh', Encrypt(response.data.refresh, process.env.ENCRYPTION_KEY))
                     await setAuthUserTrue(response.data.access, response.data.refresh)
+                    result = true;
                 })
                 .catch(async (error) => {
-                    sessionStorage.removeItem('access')
-                    localStorage.removeItem('refresh')
                     await TokenValidationFalse();
                 })
+
+            return result;
         }
 
         const CheckAccessToken = async () => {
             const access_token = sessionStorage.getItem("access") ? Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY) : null
 
             if (access_token === null) {
-                await FetchNewAccessToken();
+                const result = await FetchNewAccessToken();
+                return result;
             }
             else {
+                let result = false;
+
                 const values = {
                     "token": access_token
                 }
@@ -95,16 +101,46 @@ const IndexLayout = ({ children }) => {
                 await axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/token/jwt/verify/`, values)
                     .then(async (response) => {
                         await setAuthUserTrue(access_token, Decrypt(localStorage.getItem("refresh"), process.env.ENCRYPTION_KEY))
+                        result = true;
                     })
                     .catch(async (error) => {
-                        await FetchNewAccessToken();
+                        const fetchResult = await FetchNewAccessToken();
+                        result = fetchResult;
                     })
+
+                return result;
+            }
+        }
+
+        const CheckUserData = async () => {
+            if (!isUserData) {
+                if (sessionStorage.getItem("user")) {
+                    setIsUserData(pre => true)
+                    setUserData(pre => JSON.parse(Decrypt(sessionStorage.getItem("user"), process.env.ENCRYPTION_KEY)))
+                }
+                else {
+                    const option = {
+                        headers: {
+                            Authorization: `JWT ${Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY)}`
+                        },
+                    }
+
+                    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}auth/me/`, option)
+                        .then(response => {
+                            setIsUserData(pre => true)
+                            setUserData(pre => response.data)
+                            sessionStorage.setItem("user", Encrypt(JSON.stringify(response.data), process.env.ENCRYPTION_KEY))
+                        })
+                }
             }
         }
 
         const Handler = async () => {
             const refreshTokenValidation = await CheckRefreshToken();
-            refreshTokenValidation ? await CheckAccessToken() : null;
+            if (refreshTokenValidation) {
+                const accessTokenValidation = await CheckAccessToken();
+                accessTokenValidation ? await CheckUserData() : null;
+            }
             setLoading(pre => false)
         }
 
