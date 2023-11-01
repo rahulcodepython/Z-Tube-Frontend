@@ -1,24 +1,22 @@
 "use client"
 import React from 'react'
 import Image from 'next/image'
-import { BiSolidLock, BsLink, MdVerified, BiSolidLockOpen } from '@/data/icons/icons'
+import { BiSolidLock, BsLink, MdVerified, BiSolidLockOpen, MdAddLink } from '@/data/icons/icons'
 import EditButton from './EditButton'
 import axios from 'axios'
 import { Context } from '@/context/Context'
+import { useRouter } from 'next/navigation'
 
 const ProfileTab = ({ username }) => {
     const [loading, setLoading] = React.useState(true)
     const [self, setSelf] = React.useState(false)
     const [profile, setProfile] = React.useState({})
 
+    const router = useRouter()
+
     const { isAuthenticated, accessToken, isProfileData, setIsProfileData, profileData, setProfileData, userData } = React.useContext(Context)
 
     const FetchProfileData = async () => {
-        console.log(username);
-        console.log(userData?.username);
-        if (username === userData?.username) {
-            console.log("Yes this match");
-        }
         if (isAuthenticated && username === userData?.username) {
             setSelf(pre => true);
             if (isProfileData) {
@@ -55,6 +53,15 @@ const ProfileTab = ({ username }) => {
     React.useEffect(() => {
         FetchProfileData();
     }, [])
+
+    const CreateNewConnection = () => {
+        if (isAuthenticated) {
+
+        }
+        else {
+            router.push('/auth/login')
+        }
+    }
 
     return (
         loading ? "Loading..." : profile === null ? <div className='flex flex-col'>
@@ -109,12 +116,17 @@ const ProfileTab = ({ username }) => {
                 <div className='absolute bottom-4 right-4 flex items-center justify-end gap-4'>
                     {self ? <EditButton /> : null}
                     {
-                        self ? null : isAuthenticated ? <button className='bg-white text-black rounded-md px-4 py-2 font-semibold flex items-center justify-center gap-2'>
+                        self ? null : isAuthenticated && profile?.isFriend ? <button className='bg-white text-black rounded-md px-4 py-2 font-semibold flex items-center justify-center gap-2'>
                             <BsLink />
                             <span>
                                 Connected
                             </span>
-                        </button> : null
+                        </button> : <button className='bg-white text-black rounded-md px-4 py-2 font-semibold flex items-center justify-center gap-2' onClick={CreateNewConnection}>
+                            <MdAddLink />
+                            <span>
+                                Connect
+                            </span>
+                        </button>
                     }
                     <button className='bg-white text-black rounded-md px-4 py-2 font-semibold flex items-center justify-center gap-2'>
                         {profile?.isLocked ? <BiSolidLock /> : <BiSolidLockOpen />}

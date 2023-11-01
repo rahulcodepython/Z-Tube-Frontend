@@ -113,7 +113,7 @@ const IndexLayout = ({ children }) => {
         }
 
         const CheckUserData = async () => {
-            if (isUserData) {
+            if (!isUserData) {
                 if (sessionStorage.getItem("user")) {
                     setIsUserData(pre => true)
                     setUserData(pre => JSON.parse(Decrypt(sessionStorage.getItem("user"), process.env.ENCRYPTION_KEY)))
@@ -121,7 +121,7 @@ const IndexLayout = ({ children }) => {
                 else {
                     const option = {
                         headers: {
-                            Authorization: `JWT ${accessToken}`
+                            Authorization: `JWT ${Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY)}`
                         },
                     }
 
