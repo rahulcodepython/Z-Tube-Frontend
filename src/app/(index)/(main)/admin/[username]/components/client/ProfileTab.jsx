@@ -17,23 +17,41 @@ const ProfileTab = ({ username }) => {
     const { isAuthenticated, accessToken, isProfileData, setIsProfileData, profileData, setProfileData, userData } = React.useContext(Context)
 
     const FetchProfileData = async () => {
-        if (isAuthenticated && username === userData?.username) {
-            setSelf(pre => true);
-            if (isProfileData) {
-                setProfile(pre => profileData)
+        if (isAuthenticated) {
+            if (username === userData?.username) {
+                setSelf(pre => true);
+                if (isProfileData) {
+                    setProfile(pre => profileData)
+                }
+                else {
+                    const option = {
+                        headers: {
+                            Authorization: `JWT ${accessToken}`
+                        },
+                    }
+
+                    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}auth/profile/`, option)
+                        .then(response => {
+                            setIsProfileData(pre => true)
+                            setProfileData(pre => response.data)
+                            setProfile(pre => response.data)
+                        })
+                }
             }
             else {
+                setSelf(pre => false)
                 const option = {
                     headers: {
                         Authorization: `JWT ${accessToken}`
                     },
                 }
 
-                await axios.get(`${process.env.BACKEND_DOMAIN_NAME}auth/profile/`, option)
+                await axios.get(`${process.env.BACKEND_DOMAIN_NAME}auth/profile/${username}/`, option)
                     .then(response => {
-                        setIsProfileData(pre => true)
-                        setProfileData(pre => response.data)
                         setProfile(pre => response.data)
+                    })
+                    .catch(error => {
+                        setProfile(pre => null)
                     })
             }
         }
@@ -54,15 +72,33 @@ const ProfileTab = ({ username }) => {
         FetchProfileData();
     }, [])
 
-    const CreateNewConnection = () => {
+    const ConnectPeople = async () => {
         if (isAuthenticated) {
+            const option = {
+                headers: {
+                    Authorization: `JWT ${accessToken}`
+                },
+            }
 
+            await axios.get(`${process.env.BACKEND_DOMAIN_NAME}auth/connect/${username}/`, option)
+                .then(response => setProfile({ ...profile, isFriend: true }))
         }
         else {
             router.push('/auth/login')
         }
     }
 
+    const DisconnectPeople = async () => {
+        const option = {
+            headers: {
+                Authorization: `JWT ${accessToken}`
+            },
+        }
+
+        await axios.delete(`${process.env.BACKEND_DOMAIN_NAME}auth/connect/${username}/`, option)
+            .then(response => setProfile({ ...profile, isFriend: false }))
+    }
+    console.log(profile);
     return (
         loading ? "Loading..." : profile === null ? <div className='flex flex-col'>
             No such User is found
@@ -116,12 +152,12 @@ const ProfileTab = ({ username }) => {
                 <div className='absolute bottom-4 right-4 flex items-center justify-end gap-4'>
                     {self ? <EditButton /> : null}
                     {
-                        self ? null : isAuthenticated && profile?.isFriend ? <button className='bg-white text-black rounded-md px-4 py-2 font-semibold flex items-center justify-center gap-2'>
+                        self ? null : isAuthenticated && profile?.isFriend ? <button className='bg-white text-black rounded-md px-4 py-2 font-semibold flex items-center justify-center gap-2' onClick={DisconnectPeople}>
                             <BsLink />
                             <span>
-                                Connected
+                                Disconnect
                             </span>
-                        </button> : <button className='bg-white text-black rounded-md px-4 py-2 font-semibold flex items-center justify-center gap-2' onClick={CreateNewConnection}>
+                        </button> : <button className='bg-white text-black rounded-md px-4 py-2 font-semibold flex items-center justify-center gap-2' onClick={ConnectPeople}>
                             <MdAddLink />
                             <span>
                                 Connect
