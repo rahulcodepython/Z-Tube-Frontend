@@ -16,7 +16,7 @@ export const Data = {
             {
                 icon: <AiFillFacebook />,
                 title: "Facebook",
-                link: '/'
+                link: '/facebook'
             },
             {
                 icon: <AiFillInstagram />,
