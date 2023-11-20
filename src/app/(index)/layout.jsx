@@ -43,7 +43,7 @@ const IndexLayout = ({ children }) => {
                     "token": refresh_token
                 }
 
-                await axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/token/jwt/verify/`, values)
+                await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/verify/`, values)
                     .then(response => {
                         result = true;
                     })
@@ -70,7 +70,7 @@ const IndexLayout = ({ children }) => {
                 "refresh": Decrypt(localStorage.getItem("refresh"), process.env.ENCRYPTION_KEY)
             }
 
-            await axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/token/jwt/refresh/`, values)
+            await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/refresh/`, values)
                 .then(async (response) => {
                     sessionStorage.setItem('access', Encrypt(response.data.access, process.env.ENCRYPTION_KEY))
                     localStorage.setItem('refresh', Encrypt(response.data.refresh, process.env.ENCRYPTION_KEY))
@@ -98,7 +98,7 @@ const IndexLayout = ({ children }) => {
                     "token": access_token
                 }
 
-                await axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/token/jwt/verify/`, values)
+                await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/verify/`, values)
                     .then(async (response) => {
                         await setAuthUserTrue(access_token, Decrypt(localStorage.getItem("refresh"), process.env.ENCRYPTION_KEY))
                         result = true;
@@ -125,7 +125,7 @@ const IndexLayout = ({ children }) => {
                         },
                     }
 
-                    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}auth/me/`, option)
+                    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/me/`, option)
                         .then(response => {
                             setIsUserData(pre => true)
                             setUserData(pre => response.data)

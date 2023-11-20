@@ -1,12 +1,11 @@
 import { BiMenu, BiSearch, BiBell, HiOutlineViewGridAdd } from "@/data/icons/icons";
 import { Tooltip } from 'react-tooltip'
 import React from 'react'
-import Link from "next/link";
 import UserButton from "../client/UserButton";
 
 const Navbar = ({ setToggleSidebar, toggleSidebar, toggleNavbar }) => {
     return (
-        <nav className={`flex flex-wrap justify-between items-center px-5 p-2 ${toggleNavbar ? 'sticky top-0 z-20 shadow-2xl' : ''}`}>
+        <nav className={`flex flex-wrap justify-between items-center px-5 p-2 w-full fixed bg-white top-0 z-30 ${toggleNavbar ? 'shadow-2xl' : 'shadow-none'} transition-all duration-300 ease-in-out`}>
             <div className="flex items-center gap-3">
                 <BiMenu onClick={() => { setToggleSidebar(pre => !toggleSidebar) }} className="text-2xl cursor-pointer" />
                 <span className="text-xl font-semibold cursor-pointer">ZTube</span>

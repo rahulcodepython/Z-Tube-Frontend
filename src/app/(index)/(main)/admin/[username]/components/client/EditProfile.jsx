@@ -5,13 +5,22 @@ import { AiOutlineClose, BiCamera, FiEdit } from '@/data/icons/icons'
 import ImageUploading from 'react-images-uploading';
 import Image from 'next/image';
 import { Field, Form, Formik } from 'formik';
+import axios from 'axios';
+import { Context } from '@/context/Context';
 
-const EditButton = () => {
+const EditProfile = () => {
+    const { isAuthenticated, isAccessToken, accessToken, profileData, setProfileData, setIsProfileData } = React.useContext(Context)
+
     const [isOpen, setIsOpen] = React.useState(false);
     const [userTagsInput, setUserTagsInput] = React.useState('')
-    const [userTags, setUserTags] = React.useState([])
-    const [userImage, setUserImage] = React.useState([])
-    const [bannarImage, setBannarImage] = React.useState([])
+    const [userTags, setUserTags] = React.useState(profileData.tags ? JSON.parse(profileData.tags) : [])
+    const [formData, setFormData] = React.useState({})
+    const [bannerImage, setbannerImage] = React.useState([
+        profileData.banner ? { data_url: profileData.banner } : null
+    ])
+    const [userImage, setUserImage] = React.useState([
+        profileData.image ? { data_url: profileData.image } : null
+    ])
 
     const customStyles = {
         content: {
@@ -30,13 +39,34 @@ const EditButton = () => {
         },
     };
 
-    const addRemoveTags = () => {
-        if (userTagsInput.length > 0) {
+    const addTags = () => {
+        if (userTagsInput.trim().length > 0) {
             if (!userTags.includes(userTagsInput)) {
+                setFormData({
+                    ...formData,
+                    tags: JSON.stringify([...userTags, userTagsInput]),
+                })
                 setUserTags(pre => [...pre, userTagsInput])
             }
-            setUserTagsInput(pre => '')
         }
+        setUserTagsInput(pre => '')
+    }
+
+    const removeTags = (tag) => {
+        setFormData({
+            ...formData,
+            tags: JSON.stringify(userTags.filter(t => t !== tag)),
+        })
+        setUserTags(pre => pre.filter(t => t !== tag))
+    }
+
+    const onModalClose = () => {
+        setFormData({})
+        setIsOpen(pre => false)
+        setUserImage(pre => [profileData.image ? { data_url: profileData.image } : null])
+        setbannerImage(pre => [profileData.banner ? { data_url: profileData.banner } : null])
+        setUserTagsInput(pre => '')
+        setUserTags(pre => profileData.tags ? JSON.parse(profileData.tags) : [])
     }
 
     React.useEffect(() => {
@@ -60,27 +90,42 @@ const EditButton = () => {
                                     My account
                                 </h6>
                                 <div className='flex justify-between items-center gap-4'>
-                                    <button onClick={() => setIsOpen(pre => false)} className="bg-black text-white hover:bg-gray-100 hover:text-black hover:scale-125 hover:border hover:border-black font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none ease-linear transition-all duration-150" type="button">
+                                    <button onClick={onModalClose} className="bg-black text-white hover:bg-gray-100 hover:text-black hover:scale-125 hover:border hover:border-black font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none ease-linear transition-all duration-150" type="button">
                                         Close
                                     </button>
                                 </div>
                             </div>
                         </div>
                         <Formik initialValues={{
-                            first_name: '',
-                            last_name: '',
-                            username: '',
-                            isLocked: false,
-                            bio: '',
-                            tags: JSON.stringify(userTags),
-                            image: `${userImage}`,
-                            banner: `${bannarImage}`
+                            first_name: profileData?.user?.first_name,
+                            last_name: profileData?.user?.last_name,
+                            username: profileData?.user?.username,
+                            isLocked: profileData?.isLocked,
+                            bio: profileData?.bio,
                         }}
-                            onSubmit={values => {
-                                console.log(values);
+                            onSubmit={async () => {
+                                if (isAuthenticated && isAccessToken) {
+
+                                    const option = {
+                                        headers: {
+                                            Authorization: `JWT ${accessToken}`,
+                                            "Content-Type": "multipart/form-data",
+                                        }
+                                    }
+
+                                    await axios.patch(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/`, formData, option)
+                                        .then(response => {
+                                            setIsOpen(pre => false)
+                                            onModalClose()
+                                            setIsProfileData(pre => true)
+                                            setProfileData(pre => response.data)
+                                        })
+                                }
                             }}>
-                            {({ values }) => (
-                                <Form className="flex flex-col justify-center divide-y-2 gap-4 divide-gray-300 first:divide-y-0 px-4 lg:px-10 py-10">
+                            {({ values, handleChange, handleSubmit }) => (
+                                <Form onKeyDown={(e) => {
+                                    e.key === 'Enter' ? e.preventDefault() : null;
+                                }} className="flex flex-col justify-center divide-y-2 gap-4 divide-gray-300 first:divide-y-0 px-4 lg:px-10 py-10">
                                     <div className='flex flex-col justify-start gap-8 pt-4 first:pt-0'>
                                         <h6 className="text-gray-400 text-sm font-bold uppercase">
                                             Basic Information
@@ -91,14 +136,20 @@ const EditButton = () => {
                                                     Banner Image
                                                 </label>
                                                 {
-                                                    <ImageUploading value={bannarImage} onChange={(imageList) => setBannarImage(pre => imageList)} dataURLKey="data_url">
+                                                    <ImageUploading value={bannerImage} onChange={(imageList) => {
+                                                        setFormData({
+                                                            ...formData,
+                                                            banner: imageList[0]?.file,
+                                                        })
+                                                        setbannerImage(pre => imageList)
+                                                    }} dataURLKey="data_url">
                                                         {({
                                                             onImageUpload,
                                                             onImageUpdate,
                                                             onImageRemove,
                                                             dragProps,
                                                         }) => {
-                                                            return bannarImage.length <= 0 ? <section onClick={onImageUpload} {...dragProps} className='border-dashed border-2 border-black p-8 flex justify-center items-center w-full'>
+                                                            return bannerImage.length <= 0 ? <section onClick={onImageUpload} {...dragProps} className='border-dashed border-2 border-black p-8 flex justify-center items-center w-full'>
                                                                 <div className='flex flex-col items-center justify-center'>
                                                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24"
                                                                         stroke="currentColor" strokeWidth="2">
@@ -108,12 +159,18 @@ const EditButton = () => {
                                                                     <p className='text-gray-600'>Drag {`'n'`} drop some files here, or click to select files</p>
                                                                 </div>
                                                             </section>
-                                                                : bannarImage.map((image, index) => {
+                                                                : bannerImage.map((image, index) => {
                                                                     return <div className='relative flex justify-center items-center group' key={index}>
-                                                                        <Image src={image.data_url} width={300} height={300} alt='user image' className='w-full h-40 rounded-lg' />
+                                                                        <Image src={image.data_url} width={300} height={300} priority={false} alt='user image' className='w-full h-40 rounded-lg' />
                                                                         <div className='bg-white bg-opacity-0 absolute w-full h-full text-2xl flex gap-4 items-center justify-center group-hover:bg-opacity-50 transition-all duration-300 ease-in-out'>
-                                                                            <BiCamera onClick={() => onImageUpdate(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out' />
-                                                                            <AiOutlineClose onClick={() => onImageRemove(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out' />
+                                                                            <BiCamera onClick={() => onImageUpdate(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
+                                                                            <AiOutlineClose onClick={() => {
+                                                                                setFormData({
+                                                                                    ...formData,
+                                                                                    banner: null,
+                                                                                })
+                                                                                onImageRemove(index)
+                                                                            }} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
                                                                         </div>
                                                                     </div>
                                                                 })
@@ -127,7 +184,13 @@ const EditButton = () => {
                                                     User Image
                                                 </label>
                                                 {
-                                                    <ImageUploading value={userImage} onChange={(imageList) => setUserImage(pre => imageList)} dataURLKey="data_url">
+                                                    <ImageUploading value={userImage} onChange={(imageList) => {
+                                                        setFormData({
+                                                            ...formData,
+                                                            image: imageList[0]?.file,
+                                                        })
+                                                        setUserImage(pre => imageList)
+                                                    }} dataURLKey="data_url">
                                                         {({
                                                             onImageUpload,
                                                             onImageUpdate,
@@ -149,8 +212,8 @@ const EditButton = () => {
                                                                         <div className='relative flex items-center justify-center group w-60 h-60 rounded-full bg-red-600'>
                                                                             <Image src={image.data_url} width={300} height={300} alt='user image' className='rounded-full w-60 h-60' />
                                                                             <div className='bg-white bg-opacity-0 absolute w-full h-full text-2xl flex gap-4 items-center justify-center group-hover:bg-opacity-50 transition-all duration-300 ease-in-out'>
-                                                                                <BiCamera onClick={() => onImageUpdate(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out' />
-                                                                                <AiOutlineClose onClick={() => onImageRemove(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out' />
+                                                                                <BiCamera onClick={() => onImageUpdate(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
+                                                                                <AiOutlineClose onClick={() => onImageRemove(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -165,7 +228,14 @@ const EditButton = () => {
                                                     <label className="block uppercase text-gray-600 text-xs font-bold" htmlFor="grid-password">
                                                         First Name
                                                     </label>
-                                                    <Field type="text" name='first_name' className="border-0 p-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" />
+                                                    <Field type="text" name="first_name" id={'first_name'} onChange={(e) => {
+                                                        handleChange(e)
+                                                        setFormData({
+                                                            ...formData,
+                                                            first_name: e.target.value
+                                                        })
+                                                    }}
+                                                        className="border-0 p-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" />
                                                 </div>
                                             </div>
                                             <div className="col-span-1">
@@ -173,7 +243,14 @@ const EditButton = () => {
                                                     <label className="block uppercase text-gray-600 text-xs font-bold" htmlFor="grid-password">
                                                         Last Name
                                                     </label>
-                                                    <Field type="text" name='last_name' className="border-0 p-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" />
+                                                    <Field type="text" name="last_name" id="last_name" onChange={(e) => {
+                                                        handleChange(e)
+                                                        setFormData({
+                                                            ...formData,
+                                                            last_name: e.target.value
+                                                        })
+                                                    }}
+                                                        className="border-0 p-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" />
                                                 </div>
                                             </div>
                                             <div className="col-span-1">
@@ -181,7 +258,14 @@ const EditButton = () => {
                                                     <label className="block uppercase text-gray-600 text-xs font-bold" htmlFor="grid-password">
                                                         Username
                                                     </label>
-                                                    <Field type="text" name='username' className="border-0 p-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" />
+                                                    <Field type="text" name="username" id="username" onChange={(e) => {
+                                                        handleChange(e)
+                                                        setFormData({
+                                                            ...formData,
+                                                            username: e.target.value
+                                                        })
+                                                    }}
+                                                        className="border-0 p-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" />
                                                 </div>
                                             </div>
                                             <div className="col-span-1">
@@ -190,7 +274,13 @@ const EditButton = () => {
                                                         Lock Profile
                                                     </label>
                                                     <div className='flex gap-4 justify-center items-center'>
-                                                        <Field type="checkbox" name='isLocked' className="" />
+                                                        <Field type="checkbox" name="isLocked" id="isLocked" onChange={(e) => {
+                                                            handleChange(e)
+                                                            setFormData({
+                                                                ...formData,
+                                                                isLocked: e.target.checked
+                                                            })
+                                                        }} />
                                                         <span>
                                                             {`${values.isLocked ? 'Locked' : 'Lock'}`}
                                                         </span>
@@ -202,7 +292,14 @@ const EditButton = () => {
                                                     <label className="block uppercase text-gray-600 text-xs font-bold" htmlFor="grid-password">
                                                         About me
                                                     </label>
-                                                    <Field type="text" name='bio' className="border-0 p-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" rows="4"></Field>
+                                                    <Field type="text" name="bio" id="bio" onChange={(e) => {
+                                                        handleChange(e)
+                                                        setFormData({
+                                                            ...formData,
+                                                            bio: e.target.value
+                                                        })
+                                                    }}
+                                                        className="border-0 p-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" />
                                                 </div>
                                             </div>
                                             <div className="col-span-2">
@@ -210,13 +307,13 @@ const EditButton = () => {
                                                     <label className="block uppercase text-gray-600 text-xs font-bold" htmlFor="grid-password">
                                                         Tags
                                                     </label>
-                                                    <Field type="text" className={`border-0 p-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ${userTags.length >= 5 ? 'focus:ring-gray-400' : ''} w-full ease-linear transition-all duration-150`} value={userTagsInput} onChange={e => setUserTagsInput(pre => e.target.value)} onKeyUp={e => e.key === 'Enter' ? addRemoveTags() : null} readOnly={userTags.length >= 5 ? true : false} />
+                                                    <input type="text" className={`border-0 p-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ${userTags.length >= 5 ? 'focus:ring-gray-400' : ''} w-full ease-linear transition-all duration-150`} value={userTagsInput} onChange={e => setUserTagsInput(pre => e.target.value)} onKeyUp={e => e.key === 'Enter' ? addTags() : null} readOnly={userTags.length >= 5 ? true : false} />
                                                     <div className='flex items-center gap-2 my-2'>
                                                         {
                                                             userTags.map((tag, index) => (
                                                                 <div key={index} className='flex items-center justify-center gap-2 bg-gray-200 rounded-full p-2 text-xs font-semibold text-black'>
                                                                     #{tag}
-                                                                    <span className='cursor-pointer rounded-full bg-gray-300 p-1' onClick={() => setUserTags(pre => pre.filter(t => t !== tag))}>
+                                                                    <span className='cursor-pointer rounded-full bg-gray-300 p-1' onClick={() => removeTags(tag)}>
                                                                         <AiOutlineClose />
                                                                     </span>
                                                                 </div>
@@ -227,7 +324,7 @@ const EditButton = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <button className="bg-black text-white hover:bg-gray-100 hover:text-black hover:border hover:border-black font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none ease-linear transition-all duration-150">
+                                    <button type='submit' onClick={handleSubmit} className="bg-black text-white hover:bg-gray-100 hover:text-black hover:border hover:border-black font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none ease-linear transition-all duration-150">
                                         Update
                                     </button>
                                 </Form>
@@ -240,4 +337,4 @@ const EditButton = () => {
     )
 }
 
-export default EditButton
+export default EditProfile

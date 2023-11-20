@@ -6,7 +6,7 @@ import AutoLoginButton from './components/client/AutoLoginButton';
 
 const Page = async ({ params }) => {
     try {
-        const response = await axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/dj/users/activation/`, {
+        const response = await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/dj/users/activation/`, {
             uid: params.uid, token: params.token
         })
 

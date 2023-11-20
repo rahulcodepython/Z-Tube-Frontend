@@ -9,7 +9,7 @@ const GoogleAuthButton = ({ msg }) => {
 
     const FetchGoogleOAuthUrl = () => {
         const HandleTostify = new Promise((resolve, rejected) => {
-            axios.get(`${process.env.BACKEND_DOMAIN_NAME}auth/social/o/google-oauth2/?redirect_uri=${process.env.GOOGLE_OAUTH_REDIRECT_URI}`)
+            axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/social/o/google-oauth2/?redirect_uri=${process.env.GOOGLE_OAUTH_REDIRECT_URI}`)
                 .then((response) => {
                     setTimeout(() => {
                         router.push(response?.data?.authorization_url)

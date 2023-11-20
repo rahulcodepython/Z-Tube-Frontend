@@ -11,7 +11,7 @@ const LoginForm = () => {
 
     const handleSubmit = (values) => {
         const HandleTostify = new Promise((resolve, rejected) => {
-            axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/token/jwt/create/`, values)
+            axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/create/`, values)
                 .then((response) => {
                     setTimeout(() => {
                         router.push("/")

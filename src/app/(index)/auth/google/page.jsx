@@ -30,7 +30,7 @@ const Page = () => {
             //     }
             // }
 
-            // const url = `${process.env.BACKEND_DOMAIN_NAME}user/auth/o/google-oauth2/?state=${encodeURIComponent(state)}&code=${encodeURIComponent(code)}`
+            // const url = `${process.env.BACKEND_DOMAIN_NAME}/user/auth/o/google-oauth2/?state=${encodeURIComponent(state)}&code=${encodeURIComponent(code)}`
 
             // await axios.post(url, config)
             //     .then(response => {

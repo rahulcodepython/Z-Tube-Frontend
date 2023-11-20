@@ -14,7 +14,7 @@ const AutoLoginButton = () => {
             "email": `${localStorage.getItem("email")}`,
             "password": `${Decrypt(localStorage.getItem("password"), process.env.ENCRYPTION_KEY)}`
         }
-        await axios.post(`${process.env.BACKEND_DOMAIN_NAME}auth/token/jwt/create/`, values)
+        await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/create/`, values)
             .then((response) => {
                 localStorage.setItem('refresh', Encrypt(response.data.refresh, process.env.ENCRYPTION_KEY));
                 sessionStorage.setItem('access', Encrypt(response.data.access, process.env.ENCRYPTION_KEY));
