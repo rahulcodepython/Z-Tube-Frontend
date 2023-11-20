@@ -16,37 +16,49 @@ const ProfileTab = ({ username }) => {
 
     const { isAuthenticated, accessToken, isProfileData, setIsProfileData, profileData, setProfileData, userData } = React.useContext(Context)
 
-    const FetchProfileData = async () => {
-        if (isAuthenticated) {
-            if (username === userData?.username) {
-                setSelf(pre => true);
-                if (isProfileData) {
-                    setProfile(pre => profileData)
+    React.useEffect(() => {
+        const FetchProfileData = async () => {
+            if (isAuthenticated) {
+                if (username === userData?.username) {
+                    setSelf(pre => true);
+                    if (isProfileData) {
+                        setProfile(pre => profileData)
+                    }
+                    else {
+                        const option = {
+                            headers: {
+                                Authorization: `JWT ${accessToken}`
+                            },
+                        }
+
+                        await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/`, option)
+                            .then(response => {
+                                setIsProfileData(pre => true)
+                                setProfileData(pre => response.data)
+                                setProfile(pre => response.data)
+                            })
+                    }
                 }
                 else {
+                    setSelf(pre => false)
                     const option = {
                         headers: {
                             Authorization: `JWT ${accessToken}`
                         },
                     }
 
-                    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/`, option)
+                    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/${username}/`, option)
                         .then(response => {
-                            setIsProfileData(pre => true)
-                            setProfileData(pre => response.data)
                             setProfile(pre => response.data)
+                        })
+                        .catch(error => {
+                            setProfile(pre => null)
                         })
                 }
             }
             else {
                 setSelf(pre => false)
-                const option = {
-                    headers: {
-                        Authorization: `JWT ${accessToken}`
-                    },
-                }
-
-                await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/${username}/`, option)
+                await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/${username}/`)
                     .then(response => {
                         setProfile(pre => response.data)
                     })
@@ -54,21 +66,9 @@ const ProfileTab = ({ username }) => {
                         setProfile(pre => null)
                     })
             }
+            setLoading(pre => false)
         }
-        else {
-            setSelf(pre => false)
-            await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/${username}/`)
-                .then(response => {
-                    setProfile(pre => response.data)
-                })
-                .catch(error => {
-                    setProfile(pre => null)
-                })
-        }
-        setLoading(pre => false)
-    }
 
-    React.useEffect(() => {
         FetchProfileData();
     }, [profileData])
 
