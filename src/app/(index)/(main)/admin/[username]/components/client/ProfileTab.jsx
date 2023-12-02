@@ -102,6 +102,7 @@ const ProfileTab = ({ username }) => {
         loading ? "Loading..." : profile === null ? <div className='flex flex-col'>
             No such User is found
         </div> : <div className='flex flex-col'>
+            {console.log(profile)}
             <Image src={profile.banner ? profile.banner : '/image/profile-banner.png'} width={1536} height={341} priority={false} className='rounded-t-lg w-[1536px] h-[341px]' alt='...' />
             <div className='bg-black text-white relative px-4 py-5'>
                 <Image src={profile.image ? profile.image : '/image/user.png'} width={120} height={120} className='absolute top-[1.85rem] left-4 rounded-lg' alt='...' />
