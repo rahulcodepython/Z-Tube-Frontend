@@ -5,6 +5,7 @@ export const UnauthenticatedRoute = [
     '/auth/google'
 ]
 export const AuthenticatedRoute = [
-    '/auth/verify/password'
+    '/auth/verify/password',
+    '/auth/logout'
 ]
 export const AdminRoute = []

@@ -102,9 +102,8 @@ const ProfileTab = ({ username }) => {
         loading ? "Loading..." : profile === null ? <div className='flex flex-col'>
             No such User is found
         </div> : <div className='flex flex-col'>
-            {console.log(profile)}
             <Image src={profile.banner ? profile.banner : '/image/profile-banner.png'} width={1536} height={341} priority={false} className='rounded-t-lg w-[1536px] h-[341px]' alt='...' />
-            <div className='bg-black text-white relative px-4 py-5'>
+            <div className='bg-gray-800 text-white relative px-4 py-5'>
                 <Image src={profile.image ? profile.image : '/image/user.png'} width={120} height={120} className='absolute top-[1.85rem] left-4 rounded-lg' alt='...' />
                 <div className='flex flex-col items-start justify-start gap-2 mx-40'>
                     <div className='flex flex-col items-start justify-center'>
@@ -165,10 +164,21 @@ const ProfileTab = ({ username }) => {
                         </button>
                     }
                     <button className='bg-white text-black rounded-md px-4 py-2 font-semibold flex items-center justify-center gap-2'>
-                        {profile?.isLocked ? <BiSolidLock /> : <BiSolidLockOpen />}
-                        <span>
-                            Locked
-                        </span>
+                        {
+                            profile?.isLocked ?
+                                <>
+                                    <BiSolidLock />
+                                    <span>
+                                        Locked
+                                    </span>
+                                </>
+                                : <>
+                                    <BiSolidLockOpen />
+                                    <span>
+                                        Unlocked
+                                    </span>
+                                </>
+                        }
                     </button>
                 </div>
             </div>

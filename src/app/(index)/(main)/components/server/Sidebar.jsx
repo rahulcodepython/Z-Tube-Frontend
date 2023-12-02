@@ -2,6 +2,7 @@ import React from 'react'
 import { Data } from '@/data/data/data'
 import Link from 'next/link'
 import SidebarItems from '../client/SidebarItems'
+import DashboardSidebarItem from '../client/DashboardSidebarItem'
 
 const Sidebar = ({ toggleSidebar, setToggleSidebar, sidebarRef }) => {
 
@@ -20,7 +21,7 @@ const Sidebar = ({ toggleSidebar, setToggleSidebar, sidebarRef }) => {
                     {
                         Data.sidebar.social.map((item, index) => {
                             return <li key={index}>
-                                <Link href={item.link} className="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 group hover:text-gray-700">
+                                <Link href={item?.link} className="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 group hover:text-gray-700">
                                     {item.icon}
                                     <span className="ml-3">
                                         {item.title}
@@ -34,7 +35,7 @@ const Sidebar = ({ toggleSidebar, setToggleSidebar, sidebarRef }) => {
                     {
                         Data.sidebar.explore.map((item, index) => {
                             return <li key={index}>
-                                <a href="#" className="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 group hover:text-gray-700">
+                                <a href={item?.link} className="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 group hover:text-gray-700">
                                     {item.icon}
                                     <span className="ml-3">
                                         {item.title}
@@ -46,10 +47,11 @@ const Sidebar = ({ toggleSidebar, setToggleSidebar, sidebarRef }) => {
                 </ul>
                 <SidebarItems setToggleSidebar={setToggleSidebar} />
                 <ul className="space-y-2 pt-4">
+                    <DashboardSidebarItem />
                     {
                         Data.sidebar.recources.map((item, index) => {
                             return <li key={index}>
-                                <a href="#" className="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 group hover:text-gray-700">
+                                <a href={item?.link} className="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 group hover:text-gray-700">
                                     {item.icon}
                                     <span className="ml-3">
                                         {item.title}
