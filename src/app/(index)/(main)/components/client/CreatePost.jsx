@@ -13,6 +13,8 @@ import { toast } from 'react-toastify';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import Dropzone from 'react-dropzone'
+import { analytics } from '@/lib/firebase/config';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 const CreatePost = () => {
     const { isAuthenticated, isAccessToken, accessToken } = React.useContext(Context)
@@ -22,6 +24,7 @@ const CreatePost = () => {
     const [tags, setTags] = React.useState([])
     const [formData, setFormData] = React.useState({})
     const [image, setImage] = React.useState([])
+    const [video, setVideo] = React.useState([])
 
     const router = useRouter()
 
@@ -99,7 +102,6 @@ const CreatePost = () => {
                     }}
                         onSubmit={() => {
                             if (isAuthenticated && isAccessToken) {
-
                                 // const option = {
                                 //     headers: {
                                 //         Authorization: `JWT ${accessToken}`,
@@ -107,7 +109,21 @@ const CreatePost = () => {
                                 //     }
                                 // }
 
-                                // const HandleTostify = new Promise((resolve, rejected) => {
+                                const HandleTostify = new Promise((resolve, rejected) => {
+                                    if (image.length > 0) {
+                                        const fileref = ref(analytics, `Facebook/Image/${image.file.name}`)
+                                        uploadBytes(fileref, image.file)
+                                            .then(async response => {
+                                                const downloadUrl = await getDownloadURL(response.ref)
+                                                console.log(downloadUrl);
+                                                resolve();
+                                            })
+                                            .catch((error) => {
+                                                rejected();
+                                                onModalClose()
+                                            });
+                                    }
+                                });
                                 //     axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/hi/`, formData, option)
                                 //         .then((response) => {
                                 //             resolve();
@@ -118,16 +134,15 @@ const CreatePost = () => {
                                 //             rejected();
                                 //             onModalClose()
                                 //         });
-                                // });
 
-                                // toast.promise(
-                                //     HandleTostify,
-                                //     {
-                                //         pending: 'Your request is on process.',
-                                //         success: 'Your post is uploaded.',
-                                //         error: 'There is some issue, Try again.'
-                                //     }
-                                // )
+                                toast.promise(
+                                    HandleTostify,
+                                    {
+                                        pending: 'Your request is on process.',
+                                        success: 'Your post is uploaded.',
+                                        error: 'There is some issue, Try again.'
+                                    }
+                                )
                             }
                         }}>
                         {({ values, handleChange, handleSubmit }) => (
@@ -206,13 +221,7 @@ const CreatePost = () => {
                                                 </TabPanel>
                                                 <TabPanel>
                                                     {
-                                                        <ImageUploading value={image} onChange={(imageList) => {
-                                                            setFormData({
-                                                                ...formData,
-                                                                image: imageList[0]?.file,
-                                                            })
-                                                            setImage(pre => imageList)
-                                                        }} dataURLKey="data_url">
+                                                        <ImageUploading value={image} onChange={imageList => setImage(pre => imageList[0])} dataURLKey="data_url">
                                                             {({
                                                                 onImageUpload,
                                                                 onImageUpdate,
@@ -234,13 +243,7 @@ const CreatePost = () => {
                                                                             <Image src={image.data_url} width={300} height={300} priority={false} alt='user image' className='w-full h-40 rounded-lg' />
                                                                             <div className='bg-white bg-opacity-0 absolute w-full h-full text-2xl flex gap-4 items-center justify-center group-hover:bg-opacity-50 transition-all duration-300 ease-in-out'>
                                                                                 <BiCamera onClick={() => onImageUpdate(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
-                                                                                <AiOutlineClose onClick={() => {
-                                                                                    setFormData({
-                                                                                        ...formData,
-                                                                                        image: null,
-                                                                                    })
-                                                                                    onImageRemove(index)
-                                                                                }} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
+                                                                                <AiOutlineClose onClick={() => onImageRemove(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
                                                                             </div>
                                                                         </div>
                                                                     })
@@ -250,9 +253,9 @@ const CreatePost = () => {
                                                     }
                                                 </TabPanel>
                                                 <TabPanel>
-                                                    <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)}>
-                                                        {({ getRootProps, getInputProps }) => (
-                                                            <section className='border-dashed border-2 border-black p-8 flex justify-center items-center w-full h-60'>
+                                                    <Dropzone onDrop={acceptedFiles => setVideo(pre => acceptedFiles[0])} accept={{ 'video/*': ['.mp4',] }}>
+                                                        {({ getRootProps, getInputProps }) => {
+                                                            return <section className='border-dashed border-2 border-black p-8 flex justify-center items-center w-full h-60'>
                                                                 <div {...getRootProps()} className='flex flex-col items-center justify-center'>
                                                                     <input {...getInputProps()} />
                                                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24"
@@ -263,7 +266,7 @@ const CreatePost = () => {
                                                                     <p className='text-gray-600'>Drag {`'n'`} drop some files here, or click to select files</p>
                                                                 </div>
                                                             </section>
-                                                        )}
+                                                        }}
                                                     </Dropzone>
                                                 </TabPanel>
                                             </Tabs>
