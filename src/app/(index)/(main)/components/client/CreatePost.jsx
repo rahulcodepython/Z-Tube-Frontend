@@ -80,7 +80,8 @@ const CreatePost = () => {
 
     return (
         <div id='editPageModal'>
-            <button onClick={() => isAuthenticated ? setIsOpen(pre => true) : router.push('/auth/login')} className='bg-white text-blackfont-semibold flex items-center'>
+            <button onClick={() => setIsOpen(pre => true)} className='bg-white text-blackfont-semibold flex items-center'>
+                {/* <button onClick={() => isAuthenticated ? setIsOpen(pre => true) : router.push('/auth/login')} className='bg-white text-blackfont-semibold flex items-center'> */}
                 <HiOutlineViewGridAdd className="text-2xl cursor-pointer focus:outline-none" data-tooltip-id="create" data-tooltip-content="Create" />
                 <Tooltip id="create" />
             </button>
@@ -111,8 +112,8 @@ const CreatePost = () => {
 
                                 const HandleTostify = new Promise((resolve, rejected) => {
                                     if (image.length > 0) {
-                                        const fileref = ref(analytics, `Facebook/Image/${image.file.name}`)
-                                        uploadBytes(fileref, image.file)
+                                        const fileref = ref(analytics, `Facebook/Image/${image[0].file.name}`)
+                                        uploadBytes(fileref, image[0].file)
                                             .then(async response => {
                                                 const downloadUrl = await getDownloadURL(response.ref)
                                                 console.log(downloadUrl);
@@ -221,7 +222,7 @@ const CreatePost = () => {
                                                 </TabPanel>
                                                 <TabPanel>
                                                     {
-                                                        <ImageUploading value={image} onChange={imageList => setImage(pre => imageList[0])} dataURLKey="data_url">
+                                                        <ImageUploading value={image} onChange={imageList => setImage(pre => imageList)} dataURLKey="data_url">
                                                             {({
                                                                 onImageUpload,
                                                                 onImageUpdate,

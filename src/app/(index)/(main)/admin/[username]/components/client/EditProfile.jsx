@@ -8,20 +8,22 @@ import { Field, Form, Formik } from 'formik';
 import axios from 'axios';
 import { Context } from '@/context/Context';
 import { toast } from 'react-toastify';
+import { analytics } from '@/lib/firebase/config';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 const EditProfile = () => {
-    const { isAuthenticated, isAccessToken, accessToken, profileData, setProfileData, setIsProfileData } = React.useContext(Context)
+    const { isAuthenticated, isAccessToken, accessToken, profileData, setProfileData, setIsProfileData, setIsUserData, setUserData } = React.useContext(Context)
 
     const [isOpen, setIsOpen] = React.useState(false);
     const [userTagsInput, setUserTagsInput] = React.useState('')
     const [userTags, setUserTags] = React.useState(profileData.tags ? JSON.parse(profileData.tags) : [])
     const [formData, setFormData] = React.useState({})
-    const [bannerImage, setbannerImage] = React.useState([
-        profileData.banner ? { data_url: profileData.banner } : null
-    ])
-    const [userImage, setUserImage] = React.useState([
-        profileData.image ? { data_url: profileData.image } : null
-    ])
+    const [bannerImage, setbannerImage] = React.useState(
+        profileData.banner ? [{ data_url: profileData.banner }] : [])
+    const [isBannerImageChange, setIsBannerImageChange] = React.useState(false)
+    const [userImage, setUserImage] = React.useState(
+        profileData.image ? [{ data_url: profileData.image }] : [])
+    const [isUserImageChange, setIsUserImageChange] = React.useState(false)
 
     const customStyles = {
         content: {
@@ -70,6 +72,38 @@ const EditProfile = () => {
         setUserTags(pre => profileData.tags ? JSON.parse(profileData.tags) : [])
     }
 
+    const onProfileUpdate = (response) => {
+        setIsProfileData(pre => true)
+        setProfileData(pre => response.data.profile)
+        setIsUserData(pre => true)
+        setUserData(pre => response.data.user)
+        sessionStorage.setItem("user", Encrypt(JSON.stringify(response.data.user), process.env.ENCRYPTION_KEY))
+    }
+
+    const userImageUpload = async () => {
+        let url = {};
+        if (isUserImageChange) {
+            const fileref = ref(analytics, `User/DP/${userImage[0].file.name}`)
+            await uploadBytes(fileref, userImage[0].file)
+                .then(async response => {
+                    url = { image: await getDownloadURL(response.ref) }
+                })
+        }
+        return url
+    }
+
+    const bannerImageUpload = async () => {
+        let url = {}
+        if (isBannerImageChange) {
+            const fileref = ref(analytics, `User/Banner/${bannerImage[0].file.name}`)
+            await uploadBytes(fileref, bannerImage[0].file)
+                .then(async response => {
+                    url = { banner: await getDownloadURL(response.ref) }
+                })
+        }
+        return url;
+    }
+
     React.useEffect(() => {
         Modal.setAppElement(document.getElementById('editPageModal'));
     }, [])
@@ -107,16 +141,23 @@ const EditProfile = () => {
                                 const option = {
                                     headers: {
                                         Authorization: `JWT ${accessToken}`,
-                                        "Content-Type": "multipart/form-data",
+                                        "Content-Type": "application/json",
                                     }
                                 }
 
-                                const HandleTostify = new Promise((resolve, rejected) => {
-                                    axios.patch(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/`, formData, option)
+                                const HandleTostify = new Promise(async (resolve, rejected) => {
+
+                                    const uploadedUserImageArray = await userImageUpload();
+                                    const uploadedBannerImageArray = await bannerImageUpload();
+
+                                    axios.patch(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/`, {
+                                        ...formData,
+                                        ...uploadedUserImageArray,
+                                        ...uploadedBannerImageArray
+                                    }, option)
                                         .then(response => {
                                             resolve();
-                                            setIsProfileData(pre => true)
-                                            setProfileData(pre => response.data)
+                                            onProfileUpdate(response);
                                             onModalClose()
                                         })
                                         .catch((error) => {
@@ -149,11 +190,8 @@ const EditProfile = () => {
                                                 Banner Image
                                             </label>
                                             {
-                                                <ImageUploading value={bannerImage} onChange={(imageList) => {
-                                                    setFormData({
-                                                        ...formData,
-                                                        banner: imageList[0]?.file,
-                                                    })
+                                                <ImageUploading value={bannerImage} onChange={imageList => {
+                                                    setIsBannerImageChange(pre => true)
                                                     setbannerImage(pre => imageList)
                                                 }} dataURLKey="data_url">
                                                     {({
@@ -177,13 +215,7 @@ const EditProfile = () => {
                                                                     <Image src={image.data_url} width={300} height={300} priority={false} alt='user image' className='w-full h-40 rounded-lg' />
                                                                     <div className='bg-white bg-opacity-0 absolute w-full h-full text-2xl flex gap-4 items-center justify-center group-hover:bg-opacity-50 transition-all duration-300 ease-in-out'>
                                                                         <BiCamera onClick={() => onImageUpdate(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
-                                                                        <AiOutlineClose onClick={() => {
-                                                                            setFormData({
-                                                                                ...formData,
-                                                                                banner: null,
-                                                                            })
-                                                                            onImageRemove(index)
-                                                                        }} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
+                                                                        <AiOutlineClose onClick={() => onImageRemove(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
                                                                     </div>
                                                                 </div>
                                                             })
@@ -198,10 +230,7 @@ const EditProfile = () => {
                                             </label>
                                             {
                                                 <ImageUploading value={userImage} onChange={(imageList) => {
-                                                    setFormData({
-                                                        ...formData,
-                                                        image: imageList[0]?.file,
-                                                    })
+                                                    setIsUserImageChange(pre => true)
                                                     setUserImage(pre => imageList)
                                                 }} dataURLKey="data_url">
                                                     {({

@@ -12,10 +12,10 @@ const nextConfig = {
     images: {
         remotePatterns: [
             {
-                protocol: process.env.BACKEND_HOST_PROTOCOL,
-                hostname: process.env.BACKEND_HOST_NAME,
-                port: process.env.BACKEND_PORT,
-                pathname: process.env.BACKEND_IMAGE_PATHNAME,
+                protocol: "https",
+                hostname: "firebasestorage.googleapis.com",
+                port: '',
+                pathname: '/v0/b/z-tube-e6772.appspot.com/**',
             },
         ],
     },
