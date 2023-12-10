@@ -34,6 +34,7 @@ const LoginForm = () => {
             }
         )
     }
+
     return (
         <Formik initialValues={{ email: '', password: '' }} onSubmit={(values) => handleSubmit(values)}>
             <Form className="flex flex-col gap-6">

@@ -1,7 +1,8 @@
-import { BiMenu, BiSearch, BiBell, HiOutlineViewGridAdd } from "@/data/icons/icons";
+import { BiMenu, BiSearch, BiBell } from "@/data/icons/icons";
 import { Tooltip } from 'react-tooltip'
 import React from 'react'
 import UserButton from "../client/UserButton";
+import CreatePost from "../client/CreatePost";
 
 const Navbar = ({ setToggleSidebar, toggleSidebar, toggleNavbar }) => {
     return (
@@ -17,9 +18,8 @@ const Navbar = ({ setToggleSidebar, toggleSidebar, toggleNavbar }) => {
                 </div>
             </div>
             <div className="flex gap-4 items-center">
-                <HiOutlineViewGridAdd className="text-2xl cursor-pointer" data-tooltip-id="create" data-tooltip-content="Create" />
-                <Tooltip id="create" />
-                <BiBell className="text-2xl cursor-pointer" data-tooltip-id="notification" data-tooltip-content="Notification" />
+                <CreatePost />
+                <BiBell className="text-2xl cursor-pointer focus:outline-none" data-tooltip-id="notification" data-tooltip-content="Notification" />
                 <Tooltip id="notification" />
                 <UserButton />
             </div>
