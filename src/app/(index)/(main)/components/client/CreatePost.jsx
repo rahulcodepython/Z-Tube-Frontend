@@ -15,6 +15,8 @@ import 'react-tabs/style/react-tabs.css';
 import Dropzone from 'react-dropzone'
 import { analytics } from '@/lib/firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import VideoUploader from './VideoUploader';
+import ImageUploader from './ImageUploader';
 
 const CreatePost = () => {
     const { isAuthenticated, isAccessToken, accessToken } = React.useContext(Context)
@@ -24,7 +26,9 @@ const CreatePost = () => {
     const [tags, setTags] = React.useState([])
     const [formData, setFormData] = React.useState({})
     const [image, setImage] = React.useState([])
+    const [isImageChange, setIsImageChange] = React.useState(false)
     const [video, setVideo] = React.useState([])
+    const [isVideoChange, setIsVideoChange] = React.useState(false)
 
     const router = useRouter()
 
@@ -221,54 +225,10 @@ const CreatePost = () => {
                                                     </textarea>
                                                 </TabPanel>
                                                 <TabPanel>
-                                                    {
-                                                        <ImageUploading value={image} onChange={imageList => setImage(pre => imageList)} dataURLKey="data_url">
-                                                            {({
-                                                                onImageUpload,
-                                                                onImageUpdate,
-                                                                onImageRemove,
-                                                                dragProps,
-                                                            }) => {
-                                                                return image.length <= 0 ? <section onClick={onImageUpload} {...dragProps} className='border-dashed border-2 border-black p-8 flex justify-center items-center w-full h-60'>
-                                                                    <div className='flex flex-col items-center justify-center'>
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24"
-                                                                            stroke="currentColor" strokeWidth="2">
-                                                                            <path strokeLinecap="round" strokeLinejoin="round"
-                                                                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                                                        </svg>
-                                                                        <p className='text-gray-600'>Drag {`'n'`} drop some files here, or click to select files</p>
-                                                                    </div>
-                                                                </section>
-                                                                    : image.map((image, index) => {
-                                                                        return <div className='relative flex justify-center items-center group' key={index}>
-                                                                            <Image src={image.data_url} width={300} height={300} priority={false} alt='user image' className='w-full h-40 rounded-lg' />
-                                                                            <div className='bg-white bg-opacity-0 absolute w-full h-full text-2xl flex gap-4 items-center justify-center group-hover:bg-opacity-50 transition-all duration-300 ease-in-out'>
-                                                                                <BiCamera onClick={() => onImageUpdate(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
-                                                                                <AiOutlineClose onClick={() => onImageRemove(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
-                                                                            </div>
-                                                                        </div>
-                                                                    })
-                                                            }
-                                                            }
-                                                        </ImageUploading>
-                                                    }
+                                                    <ImageUploader image={image} setImage={setImage} setIsImageChange={setIsImageChange} mode="full" />
                                                 </TabPanel>
                                                 <TabPanel>
-                                                    <Dropzone onDrop={acceptedFiles => setVideo(pre => acceptedFiles[0])} accept={{ 'video/*': ['.mp4',] }}>
-                                                        {({ getRootProps, getInputProps }) => {
-                                                            return <section className='border-dashed border-2 border-black p-8 flex justify-center items-center w-full h-60'>
-                                                                <div {...getRootProps()} className='flex flex-col items-center justify-center'>
-                                                                    <input {...getInputProps()} />
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24"
-                                                                        stroke="currentColor" strokeWidth="2">
-                                                                        <path strokeLinecap="round" strokeLinejoin="round"
-                                                                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                                                    </svg>
-                                                                    <p className='text-gray-600'>Drag {`'n'`} drop some files here, or click to select files</p>
-                                                                </div>
-                                                            </section>
-                                                        }}
-                                                    </Dropzone>
+                                                    <VideoUploader video={video} setVideo={setVideo} />
                                                 </TabPanel>
                                             </Tabs>
                                         </div>
