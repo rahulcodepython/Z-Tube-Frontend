@@ -15,7 +15,7 @@ const nextConfig = {
                 protocol: "https",
                 hostname: "firebasestorage.googleapis.com",
                 port: '',
-                pathname: '/v0/b/z-tube-e6772.appspot.com/**',
+                pathname: '/v0/b/z-tube-b4601.appspot.com/**',
             },
         ],
     },
