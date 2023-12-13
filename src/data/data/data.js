@@ -42,147 +42,182 @@ export const Data = {
         explore: [
             {
                 icon: <MdLibraryAdd />,
-                title: "Library"
+                title: "Library",
+                link: '#'
             },
             {
                 icon: <LuHistory />,
-                title: "History"
+                title: "History",
+                link: '#'
             },
             {
                 icon: <BiBell />,
-                title: "Notiification"
+                title: "Notiification",
+                link: '#'
             },
             {
                 icon: <HiUsers />,
-                title: "Users"
+                title: "Users",
+                link: '#'
             },
             {
                 icon: <BsFillBookmarkFill />,
-                title: "Bookmark"
+                title: "Bookmark",
+                link: '#'
             },
             {
                 icon: <MdSubscriptions />,
-                title: "Subscription"
+                title: "Subscription",
+                link: '#'
             },
             {
                 icon: <FaIndianRupeeSign />,
-                title: "Monitization"
+                title: "Monitization",
+                link: '#'
             },
             {
                 icon: <HiSpeakerphone />,
-                title: "Advertise"
+                title: "Advertise",
+                link: '#'
             },
             {
                 icon: <BiSolidInbox />,
-                title: "Inbox"
+                title: "Inbox",
+                link: '#'
             },
             {
                 icon: <PiHandbagSimpleFill />,
-                title: "Shopping"
+                title: "Shopping",
+                link: '#'
             },
         ],
         topic: [
             {
                 icon: <BiSolidHot />,
-                title: "Trending"
+                title: "Trending",
+                link: '#'
             },
             {
                 icon: <BsSteam />,
-                title: "Gaming"
+                title: "Gaming",
+                link: '#'
             },
             {
                 icon: <MdSportsVolleyball />,
-                title: "Sports"
+                title: "Sports",
+                link: '#'
             },
             {
                 icon: <MdBusiness />,
-                title: "Business"
+                title: "Business",
+                link: '#'
             },
             {
                 icon: <AiFillStar />,
-                title: "Celebraty"
+                title: "Celebraty",
+                link: '#'
             },
             {
                 icon: <AiOutlineRadarChart />,
-                title: "Art"
+                title: "Art",
+                link: '#'
             },
             {
                 icon: <PiTelevisionBold />,
-                title: "Television"
+                title: "Television",
+                link: '#'
             },
             {
                 icon: <GiAmpleDress />,
-                title: "Fashion"
+                title: "Fashion",
+                link: '#'
             },
             {
                 icon: <MdFastfood />,
-                title: "Food and Drink"
+                title: "Food and Drink",
+                link: '#'
             },
             {
                 icon: <GiWhiteBook />,
-                title: "History"
+                title: "History",
+                link: '#'
             },
             {
                 icon: <VscLaw />,
-                title: "Law"
+                title: "Law",
+                link: '#'
             },
             {
                 icon: <BiWorld />,
-                title: "Nation"
+                title: "Nation",
+                link: '#'
             },
             {
                 icon: <MdLocalMovies />,
-                title: "Movies"
+                title: "Movies",
+                link: '#'
             },
             {
                 icon: <BsMusicNoteBeamed />,
-                title: "Music"
+                title: "Music",
+                link: '#'
             },
             {
                 icon: <LiaSignatureSolid />,
-                title: "Books"
+                title: "Books",
+                link: '#'
             },
             {
                 icon: <FaPlaceOfWorship />,
-                title: "Religion"
+                title: "Religion",
+                link: '#'
             },
             {
                 icon: <MdScience />,
-                title: "Science"
+                title: "Science",
+                link: '#'
             },
             {
                 icon: <GiLaptop />,
-                title: "Technology"
+                title: "Technology",
+                link: '#'
             },
             {
                 icon: <BiCodeAlt />,
-                title: "Programming"
+                title: "Programming",
+                link: '#'
             },
             {
                 icon: <MdPlace />,
-                title: "Travel"
+                title: "Travel",
+                link: '#'
             },
         ],
         recources: [
             {
                 icon: <TbLetterZ />,
-                title: "About ZTube"
+                title: "About ZTube",
+                link: '#'
             },
             {
                 icon: <BsFillQuestionCircleFill />,
-                title: "Help"
+                title: "Help",
+                link: '#'
             },
             {
                 icon: <FaGear />,
-                title: "Settings"
+                title: "Settings",
+                link: '#'
             },
             {
                 icon: <BiSolidBookContent />,
-                title: "Content Policy"
+                title: "Content Policy",
+                link: '#'
             },
             {
                 icon: <MdPrivacyTip />,
-                title: "Privacy Policy"
+                title: "Privacy Policy",
+                link: '#'
             },
             {
                 icon: <PiSignIn />,

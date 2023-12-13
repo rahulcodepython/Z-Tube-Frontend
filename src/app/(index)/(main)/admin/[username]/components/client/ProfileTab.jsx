@@ -104,7 +104,7 @@ const ProfileTab = ({ username }) => {
         </div> : <div className='flex flex-col'>
             <Image src={profile.banner ? profile.banner : '/image/profile-banner.png'} width={1536} height={341} priority={false} className='rounded-t-lg w-[1536px] h-[341px]' alt='...' />
             <div className='bg-gray-800 text-white relative px-4 py-5'>
-                <Image src={profile.image ? profile.image : '/image/user.png'} width={120} height={120} className='absolute top-[1.85rem] left-4 rounded-lg' alt='...' />
+                <Image src={profile.image ? profile.image : '/image/user.png'} width={120} height={120} className='absolute top-[1.85rem] left-4 rounded-lg w-[120px] h-[120px]' alt='...' />
                 <div className='flex flex-col items-start justify-start gap-2 mx-40'>
                     <div className='flex flex-col items-start justify-center'>
                         <div className='font-extrabold text-xl'>

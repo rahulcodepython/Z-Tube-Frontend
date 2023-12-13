@@ -1,9 +1,7 @@
 "use client"
 import React from 'react'
 import Modal from 'react-modal';
-import { AiOutlineClose, BiCamera, FiEdit } from '@/data/icons/icons'
-import ImageUploading from 'react-images-uploading';
-import Image from 'next/image';
+import { AiOutlineClose, FaCircleCheck, FiEdit } from '@/data/icons/icons'
 import { Field, Form, Formik } from 'formik';
 import axios from 'axios';
 import { Context } from '@/context/Context';
@@ -11,6 +9,8 @@ import { toast } from 'react-toastify';
 import { analytics } from '@/lib/firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import ImageUploader from '@/app/(index)/(main)/components/client/ImageUploader';
+import { Decrypt } from '@/functions/Decrypt';
+import { Encrypt } from '@/functions/Encrypt';
 
 const EditProfile = () => {
     const { isAuthenticated, isAccessToken, accessToken, profileData, setProfileData, setIsProfileData, setIsUserData, setUserData } = React.useContext(Context)
@@ -20,11 +20,12 @@ const EditProfile = () => {
     const [userTags, setUserTags] = React.useState(profileData.tags ? JSON.parse(profileData.tags) : [])
     const [formData, setFormData] = React.useState({})
     const [bannerImage, setbannerImage] = React.useState(
-        profileData.banner ? [{ data_url: profileData.banner }] : [])
+        profileData.banner.length > 0 ? [{ data_url: profileData.banner }] : [])
     const [isBannerImageChange, setIsBannerImageChange] = React.useState(false)
     const [userImage, setUserImage] = React.useState(
-        profileData.image ? [{ data_url: profileData.image }] : [])
+        profileData.image.length > 0 ? [{ data_url: profileData.image }] : [])
     const [isUserImageChange, setIsUserImageChange] = React.useState(false)
+    const [isUsernameValid, setIsUsernameValid] = React.useState(true)
 
     const customStyles = {
         content: {
@@ -73,12 +74,13 @@ const EditProfile = () => {
         setUserTags(pre => profileData.tags ? JSON.parse(profileData.tags) : [])
     }
 
-    const onProfileUpdate = (response) => {
+    const onProfileUpdate = async (response) => {
         setIsProfileData(pre => true)
         setProfileData(pre => response.data.profile)
         setIsUserData(pre => true)
         setUserData(pre => response.data.user)
-        sessionStorage.setItem("user", Encrypt(JSON.stringify(response.data.user), process.env.ENCRYPTION_KEY))
+        sessionStorage.removeItem("user")
+        sessionStorage.setItem("user", Encrypt(JSON.stringify(response.data.user), process.env.ENCRYPTION_KEY));
     }
 
     const userImageUpload = async () => {
@@ -103,6 +105,35 @@ const EditProfile = () => {
                 })
         }
         return url;
+    }
+
+    const checkUsernameExists = async (e) => {
+        if (e.target.value === profileData?.user?.username) {
+            setIsUsernameValid(pre => true)
+            delete formData.username
+        }
+        else {
+            console.log("running");
+
+            const option = {
+                headers: {
+                    Authorization: `JWT ${accessToken}`,
+                    "Content-Type": "application/json",
+                }
+            }
+
+            await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/find/username/`, { "username": e.target.value }, option)
+                .then(response => {
+                    setIsUsernameValid(pre => true)
+                    setFormData({
+                        ...formData,
+                        username: e.target.value
+                    })
+                })
+                .catch(error => {
+                    setIsUsernameValid(pre => false)
+                })
+        }
     }
 
     React.useEffect(() => {
@@ -147,7 +178,6 @@ const EditProfile = () => {
                                 }
 
                                 const HandleTostify = new Promise(async (resolve, rejected) => {
-
                                     const uploadedUserImageArray = await userImageUpload();
                                     const uploadedBannerImageArray = await bannerImageUpload();
 
@@ -156,9 +186,9 @@ const EditProfile = () => {
                                         ...uploadedUserImageArray,
                                         ...uploadedBannerImageArray
                                     }, option)
-                                        .then(response => {
+                                        .then(async response => {
+                                            await onProfileUpdate(response);
                                             resolve();
-                                            onProfileUpdate(response);
                                             onModalClose()
                                         })
                                         .catch((error) => {
@@ -233,14 +263,14 @@ const EditProfile = () => {
                                                 <label className="block uppercase text-gray-600 text-xs font-bold" htmlFor="grid-password">
                                                     Username
                                                 </label>
-                                                <Field type="text" name="username" id="username" onChange={(e) => {
-                                                    handleChange(e)
-                                                    setFormData({
-                                                        ...formData,
-                                                        username: e.target.value
-                                                    })
-                                                }}
-                                                    className="border-0 p-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" />
+                                                <div className='w-full flex gap-2 justify-center items-center'>
+                                                    <Field type="text" name="username" id="username" onChange={(e) => {
+                                                        handleChange(e)
+                                                        checkUsernameExists(e)
+                                                    }}
+                                                        className="border-0 p-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" />
+                                                    <FaCircleCheck className={isUsernameValid ? 'text-green-500' : 'text-red-500'} />
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="col-span-1">

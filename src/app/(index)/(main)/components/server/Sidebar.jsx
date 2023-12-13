@@ -35,12 +35,12 @@ const Sidebar = ({ toggleSidebar, setToggleSidebar, sidebarRef }) => {
                     {
                         Data.sidebar.explore.map((item, index) => {
                             return <li key={index}>
-                                <a href={item?.link} className="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 group hover:text-gray-700">
+                                <Link href={item?.link} className="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 group hover:text-gray-700">
                                     {item.icon}
                                     <span className="ml-3">
                                         {item.title}
                                     </span>
-                                </a>
+                                </Link>
                             </li>
                         })
                     }
@@ -51,12 +51,12 @@ const Sidebar = ({ toggleSidebar, setToggleSidebar, sidebarRef }) => {
                     {
                         Data.sidebar.recources.map((item, index) => {
                             return <li key={index}>
-                                <a href={item?.link} className="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 group hover:text-gray-700">
+                                <Link href={item?.link} className="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 group hover:text-gray-700">
                                     {item.icon}
                                     <span className="ml-3">
                                         {item.title}
                                     </span>
-                                </a>
+                                </Link>
                             </li>
                         })
                     }
