@@ -31,7 +31,7 @@ const GoogleAuthButton = ({ msg }) => {
         )
     }
     return (
-        <span className="ml-4 text-black" onClick={FetchGoogleOAuthUrl}>{msg}</span>
+        <span className="ml-4" onClick={FetchGoogleOAuthUrl}>{msg}</span>
     )
 }
 

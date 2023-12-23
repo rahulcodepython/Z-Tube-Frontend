@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import { Context } from '@/context/Context'
+import { Button } from '@/components/ui/button'
 
 const page = () => {
     const { isAuthenticated, setIsAuthenticated, isAccessToken, setIsAccessToken, accessToken, setAccessToken, isRefreshToken, setIsRefreshToken, refreshToken, setRefreshToken, isUserData, setIsUserData, userData, setUserData } = React.useContext(Context)
@@ -27,8 +28,10 @@ const page = () => {
             <div>
                 You are now logout
             </div>
-            <Link href={'/auth/login'} className='px-4 py-2 rounded-lg bg-green-600 text-white'>
-                Go to Login
+            <Link href={'/auth/login'}>
+                <Button className="bg-green-500">
+                    Go to Login
+                </Button>
             </Link>
         </div>
     )

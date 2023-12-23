@@ -1,14 +1,14 @@
 import React from 'react'
-import NavbarSidebarLayout from './components/client/NavbarSidebarLayout'
+import Navbar from './components/client/Navbar'
 
 const MainLayout = ({ children }) => {
     return (
-        <>
-            <NavbarSidebarLayout />
+        <React.Fragment>
+            <Navbar />
             <main className='mt-16'>
                 {children}
             </main>
-        </>
+        </React.Fragment>
     )
 }
 

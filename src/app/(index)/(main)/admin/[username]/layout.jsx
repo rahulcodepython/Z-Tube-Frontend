@@ -1,21 +1,36 @@
 import React from 'react'
 import ProfileTab from './components/client/ProfileTab'
-import Link from 'next/link'
+import {
+    Menubar,
+    MenubarMenu,
+} from "@/components/ui/menubar"
+import { Button } from '@/components/ui/button'
+
 
 const UsernameLayout = ({ children, params }) => {
     return (
-        <div className='flex flex-col divide-y-2 divide-gray-200'>
-            <ProfileTab username={params.username} />
-            <div className='flex justify-start items-center gap-4 font-semibold uppercase bg-gray-800 px-4 py-4 rounded-b-lg'>
-                <Link href={'/user'} className='px-4 py-2 text-sm bg-white text-black rounded-md cursor-pointer'>Posts</Link>
-                <Link href={'/user/profile'} className='px-4 py-2 text-sm bg-white text-black rounded-md cursor-pointer'>Profile</Link>
-                <Link href={'/'} className='px-4 py-2 text-sm bg-white text-black rounded-md cursor-pointer'>Friends</Link>
-                <Link href={'/'} className='px-4 py-2 text-sm bg-white text-black rounded-md cursor-pointer'>videos</Link>
+        <section className='flex flex-col'>
+            <div className='flex flex-col gap-4'>
+                <ProfileTab username={params.username} />
+                <Menubar className="p-0 mt-2 h-auto dark:bg-[#020817] border-0 space-x-2">
+                    <MenubarMenu>
+                        <Button className="p-4 text-base">Posts</Button>
+                    </MenubarMenu>
+                    <MenubarMenu>
+                        <Button className="p-4 text-base">Profile</Button>
+                    </MenubarMenu>
+                    <MenubarMenu>
+                        <Button className="p-4 text-base">Friends</Button>
+                    </MenubarMenu>
+                    <MenubarMenu>
+                        <Button className="p-4 text-base">Videos</Button>
+                    </MenubarMenu>
+                </Menubar>
             </div>
             <div>
                 {children}
             </div>
-        </div>
+        </section>
     )
 }
 

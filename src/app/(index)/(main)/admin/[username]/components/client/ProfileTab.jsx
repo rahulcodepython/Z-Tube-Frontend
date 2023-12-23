@@ -6,6 +6,7 @@ import EditProfile from './EditProfile'
 import axios from 'axios'
 import { Context } from '@/context/Context'
 import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
 
 const ProfileTab = ({ username }) => {
     const [loading, setLoading] = React.useState(true)
@@ -101,9 +102,9 @@ const ProfileTab = ({ username }) => {
     return (
         loading ? "Loading..." : profile === null ? <div className='flex flex-col'>
             No such User is found
-        </div> : <div className='flex flex-col'>
+        </div> : <div className='flex flex-col shadow-lg shadow-slate-500/50 rounded-lg'>
             <Image src={profile.banner ? profile.banner : '/image/profile-banner.png'} width={1536} height={341} priority={false} className='rounded-t-lg w-[1536px] h-[341px]' alt='...' />
-            <div className='bg-gray-800 text-white relative px-4 py-5'>
+            <div className='dark:bg-[#020817] dark:text-white relative px-4 py-5'>
                 <Image src={profile.image ? profile.image : '/image/user.png'} width={120} height={120} className='absolute top-[1.85rem] left-4 rounded-lg w-[120px] h-[120px]' alt='...' />
                 <div className='flex flex-col items-start justify-start gap-2 mx-40'>
                     <div className='flex flex-col items-start justify-center'>
@@ -148,22 +149,22 @@ const ProfileTab = ({ username }) => {
                         </div>
                     </div>
                 </div>
-                <div className='absolute bottom-4 right-4 flex items-center justify-end gap-4'>
+                <div className='absolute bottom-5 right-4 flex items-center justify-end gap-4'>
                     {self ? <EditProfile /> : null}
                     {
-                        self ? null : isAuthenticated && profile?.isFriend ? <button className='bg-white text-black rounded-md px-4 py-2 font-semibold flex items-center justify-center gap-2' onClick={DisconnectPeople}>
+                        self ? null : isAuthenticated && profile?.isFriend ? <Button className='font-semibold flex items-center justify-center gap-2' onClick={DisconnectPeople}>
                             <BsLink />
                             <span>
                                 Disconnect
                             </span>
-                        </button> : <button className='bg-white text-black rounded-md px-4 py-2 font-semibold flex items-center justify-center gap-2' onClick={ConnectPeople}>
+                        </Button> : <button className='font-semibold flex items-center justify-center gap-2' onClick={ConnectPeople}>
                             <MdAddLink />
                             <span>
                                 Connect
                             </span>
                         </button>
                     }
-                    <button className='bg-white text-black rounded-md px-4 py-2 font-semibold flex items-center justify-center gap-2'>
+                    <Button className='font-semibold flex items-center justify-center gap-2'>
                         {
                             profile?.isLocked ?
                                 <>
@@ -179,7 +180,7 @@ const ProfileTab = ({ username }) => {
                                     </span>
                                 </>
                         }
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

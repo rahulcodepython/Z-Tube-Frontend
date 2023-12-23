@@ -1,4 +1,3 @@
-"use client"
 import React from 'react'
 import ImageUploading from 'react-images-uploading';
 import Image from 'next/image';
@@ -28,8 +27,8 @@ const ImageUploader = ({ image, setImage, setIsImageChange, mode }) => {
                 </section>
                     : image.map((image, index) => {
                         return <div className='relative flex justify-center items-center group' key={index}>
-                            <Image src={image.data_url} width={300} height={300} priority={false} alt='user image' className={`${mode === 'full' ? 'w-full h-full rounded-lg' : mode === 'dp' ? 'w-60 h-60 rounded-full' : mode === 'banner' ? 'w-full h-40 rounded-lg' : ''}`} />
-                            <div className={`bg-white bg-opacity-0 absolute ${mode === 'full' ? 'w-full h-full rounded-lg' : mode === 'dp' ? 'w-60 h-60 rounded-full' : mode === 'banner' ? 'w-full h-40 rounded-lg' : ''} text-2xl flex gap-4 items-center justify-center group-hover:bg-opacity-50 transition-all duration-300 ease-in-out`}>
+                            <Image src={image.data_url} width={300} height={300} priority={false} alt='user image' className={`${mode === 'full' ? 'w-full h-full rounded-lg' : mode === 'dp' ? 'w-60 h-60 rounded-full' : mode === 'banner' ? 'w-full h-64 rounded-lg' : ''}`} />
+                            <div className={`bg-white bg-opacity-0 absolute ${mode === 'full' ? 'w-full h-full rounded-lg' : mode === 'dp' ? 'w-60 h-60 rounded-full' : mode === 'banner' ? 'w-full h-64 rounded-lg' : ''} text-2xl flex gap-4 items-center justify-center group-hover:bg-opacity-50 transition-all duration-300 ease-in-out`}>
                                 <BiCamera onClick={() => onImageUpdate(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
                                 <AiOutlineClose onClick={() => {
                                     setIsImageChange(pre => false)

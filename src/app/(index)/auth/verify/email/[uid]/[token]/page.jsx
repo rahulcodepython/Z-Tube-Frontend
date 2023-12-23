@@ -2,7 +2,8 @@ import React from 'react'
 import axios from "axios";
 import Image from 'next/image';
 import Link from 'next/link';
-import AutoLoginButton from './components/client/AutoLoginButton';
+import AutoLoginButton from './components/AutoLoginButton';
+import { Button } from '@/components/ui/button';
 
 const Page = async ({ params }) => {
     try {
@@ -34,8 +35,10 @@ const Page = async ({ params }) => {
                 <div>
                     Sorry! There is some issue. Please try again.
                 </div>
-                <Link href={'/auth/register'} className='px-4 py-2 rounded-lg bg-red-600 text-white'>
-                    Go to Register
+                <Link href={'/auth/register'}>
+                    <Button className="bg-red-600 text-white">
+                        Go to Register
+                    </Button>
                 </Link>
             </div>
         )
