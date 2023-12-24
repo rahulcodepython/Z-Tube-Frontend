@@ -43,7 +43,7 @@ const Navbar = () => {
                 <ThemeToggle />
                 {
                     isAuthenticated && isUserData ?
-                        <Link href={`/admin/${userData?.username}`}>
+                        <Link href={`/admin/${encodeURIComponent(userData?.username)}`}>
                             <Avatar>
                                 <AvatarImage src={userData.image ? userData.image : '/image/user.png'} width={50} height={20} alt='...' />
                                 <AvatarFallback>User</AvatarFallback>

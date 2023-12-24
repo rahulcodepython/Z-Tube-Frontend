@@ -10,8 +10,8 @@ const page = () => {
 
     React.useEffect(() => {
         sessionStorage.removeItem('access');
+        sessionStorage.removeItem('user');
         localStorage.removeItem('refresh');
-        localStorage.removeItem('user');
         setIsAuthenticated(pre => false);
         setIsAccessToken(pre => false);
         setAccessToken(pre => null);

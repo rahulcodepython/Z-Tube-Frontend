@@ -20,7 +20,7 @@ const ProfileTab = ({ username }) => {
     React.useEffect(() => {
         const FetchProfileData = async () => {
             if (isAuthenticated) {
-                if (username === userData?.username) {
+                if (decodeURIComponent(username) === userData?.username) {
                     setSelf(pre => true);
                     if (isProfileData) {
                         setProfile(pre => profileData)
@@ -41,7 +41,6 @@ const ProfileTab = ({ username }) => {
                     }
                 }
                 else {
-                    setSelf(pre => false)
                     const option = {
                         headers: {
                             Authorization: `JWT ${accessToken}`
@@ -58,7 +57,6 @@ const ProfileTab = ({ username }) => {
                 }
             }
             else {
-                setSelf(pre => false)
                 await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/${username}/`)
                     .then(response => {
                         setProfile(pre => response.data)
@@ -71,7 +69,7 @@ const ProfileTab = ({ username }) => {
         }
 
         FetchProfileData();
-    }, [profileData])
+    }, [])
 
     const ConnectPeople = async () => {
         if (isAuthenticated) {
@@ -99,14 +97,15 @@ const ProfileTab = ({ username }) => {
         await axios.delete(`${process.env.BACKEND_DOMAIN_NAME}/auth/connect/${username}/`, option)
             .then(response => setProfile({ ...profile, isFriend: false }))
     }
+
     return (
         loading ? "Loading..." : profile === null ? <div className='flex flex-col'>
             No such User is found
         </div> : <div className='flex flex-col shadow-lg shadow-slate-500/50 rounded-lg'>
             <Image src={profile.banner ? profile.banner : '/image/profile-banner.png'} width={1536} height={341} priority={false} className='rounded-t-lg w-[1536px] h-[341px]' alt='...' />
-            <div className='dark:bg-[#020817] dark:text-white relative px-4 py-5'>
-                <Image src={profile.image ? profile.image : '/image/user.png'} width={120} height={120} className='absolute top-[1.85rem] left-4 rounded-lg w-[120px] h-[120px]' alt='...' />
-                <div className='flex flex-col items-start justify-start gap-2 mx-40'>
+            <div className='dark:bg-[#020817] dark:text-white relative px-4 py-5 h-[168px] flex items-center justify-start gap-8'>
+                <Image src={profile.image ? profile.image : '/image/user.png'} width={120} height={120} className='rounded-lg w-[120px] h-[120px]' alt='...' />
+                <div className='flex flex-col items-start gap-1 justify-start'>
                     <div className='flex flex-col items-start justify-center'>
                         <div className='font-extrabold text-xl'>
                             <span>
@@ -164,21 +163,21 @@ const ProfileTab = ({ username }) => {
                             </span>
                         </button>
                     }
-                    <Button className='font-semibold flex items-center justify-center gap-2'>
+                    <Button>
                         {
                             profile?.isLocked ?
-                                <>
+                                <span className='flex items-center justify-center gap-2'>
                                     <BiSolidLock />
                                     <span>
                                         Locked
                                     </span>
-                                </>
-                                : <>
+                                </span>
+                                : <span className='flex items-center justify-center gap-2'>
                                     <BiSolidLockOpen />
                                     <span>
                                         Unlocked
                                     </span>
-                                </>
+                                </span>
                         }
                     </Button>
                 </div>

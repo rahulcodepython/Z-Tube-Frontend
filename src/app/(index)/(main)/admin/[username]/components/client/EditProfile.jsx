@@ -18,9 +18,12 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from '@/components/ui/input';
+import { useRouter } from 'next/navigation';
 
 const EditProfile = () => {
     const { isAuthenticated, isAccessToken, accessToken, profileData, setProfileData, setIsProfileData, setIsUserData, setUserData } = React.useContext(Context)
+
+    const router = useRouter();
 
     const [isOpen, setIsOpen] = React.useState(false);
     const [userTagsInput, setUserTagsInput] = React.useState('')
@@ -33,6 +36,15 @@ const EditProfile = () => {
         profileData.image.length > 0 ? [{ data_url: profileData.image }] : [])
     const [isUserImageChange, setIsUserImageChange] = React.useState(false)
     const [isUsernameValid, setIsUsernameValid] = React.useState(true)
+
+    const onModalClose = () => {
+        setIsOpen(pre => false)
+        setFormData({})
+        setUserImage(pre => profileData.image ? [{ data_url: profileData.image }] : [])
+        setbannerImage(pre => profileData.banner ? [{ data_url: profileData.banner }] : [])
+        setUserTagsInput(pre => '')
+        setUserTags(pre => profileData.tags ? JSON.parse(profileData.tags) : [])
+    }
 
     const addTags = () => {
         if (userTagsInput.trim().length > 0) {
@@ -47,129 +59,6 @@ const EditProfile = () => {
             }
         }
         setUserTagsInput(pre => '')
-    }
-
-    const removeTags = (tag) => {
-        if (userTags.filter(t => t !== tag).length > 0) {
-            setFormData({
-                ...formData,
-                tags: JSON.stringify(userTags.filter(t => t !== tag)),
-            })
-        }
-        else {
-            delete formData.tags
-        }
-        setUserTags(pre => pre.filter(t => t !== tag))
-    }
-
-    const onModalClose = () => {
-        setFormData({})
-        setUserImage(pre => [profileData.image ? { data_url: profileData.image } : null])
-        setbannerImage(pre => [profileData.banner ? { data_url: profileData.banner } : null])
-        setUserTagsInput(pre => '')
-        setUserTags(pre => profileData.tags ? JSON.parse(profileData.tags) : [])
-    }
-
-    const onProfileUpdate = async (response) => {
-        setIsProfileData(pre => true)
-        setProfileData(pre => response.data.profile)
-        setIsUserData(pre => true)
-        setUserData(pre => response.data.user)
-        sessionStorage.removeItem("user")
-        sessionStorage.setItem("user", Encrypt(JSON.stringify(response.data.user), process.env.ENCRYPTION_KEY));
-    }
-
-    const userImageUpload = async () => {
-        let url = {};
-        if (isUserImageChange) {
-            const fileref = ref(analytics, `User/DP/${userImage[0].file.name}`)
-            await uploadBytes(fileref, userImage[0].file)
-                .then(async response => {
-                    url = { image: await getDownloadURL(response.ref) }
-                })
-        }
-        return url
-    }
-
-    const bannerImageUpload = async () => {
-        let url = {}
-        if (isBannerImageChange) {
-            const fileref = ref(analytics, `User/Banner/${bannerImage[0].file.name}`)
-            await uploadBytes(fileref, bannerImage[0].file)
-                .then(async response => {
-                    url = { banner: await getDownloadURL(response.ref) }
-                })
-        }
-        return url;
-    }
-
-    const checkUsernameExists = async (e) => {
-        if (e.target.value === profileData?.user?.username) {
-            setIsUsernameValid(pre => true)
-            delete formData?.username
-        }
-        else {
-            const option = {
-                headers: {
-                    Authorization: `JWT ${accessToken}`,
-                    "Content-Type": "application/json",
-                }
-            }
-
-            await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/find/username/`, { "username": e.target.value }, option)
-                .then(response => {
-                    setIsUsernameValid(pre => true)
-                    setFormData({
-                        ...formData,
-                        username: e.target.value
-                    })
-                })
-                .catch(error => {
-                    setIsUsernameValid(pre => false)
-                    delete formData?.username
-                })
-        }
-    }
-
-    const handleSubmit = async () => {
-        if (isAuthenticated && isAccessToken) {
-
-            const option = {
-                headers: {
-                    Authorization: `JWT ${accessToken}`,
-                    "Content-Type": "application/json",
-                }
-            }
-
-            const HandleTostify = new Promise(async (resolve, rejected) => {
-                const uploadedUserImageArray = await userImageUpload();
-                const uploadedBannerImageArray = await bannerImageUpload();
-
-                axios.patch(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/`, {
-                    ...formData,
-                    ...uploadedUserImageArray,
-                    ...uploadedBannerImageArray
-                }, option)
-                    .then(async response => {
-                        await onProfileUpdate(response);
-                        resolve();
-                        onModalClose()
-                    })
-                    .catch((error) => {
-                        rejected();
-                        onModalClose()
-                    });
-            });
-
-            toast.promise(
-                HandleTostify,
-                {
-                    pending: 'Your request is on process.',
-                    success: 'You are now updated.',
-                    error: 'There is some issue, Try again.'
-                }
-            )
-        }
     }
 
     React.useEffect(() => {
@@ -197,7 +86,73 @@ const EditProfile = () => {
                     isLocked: profileData?.isLocked,
                     bio: profileData?.bio,
                 }}
-                    onSubmit={async () => await handleSubmit()}>
+                    onSubmit={async () => {
+                        if (isAuthenticated && isAccessToken) {
+
+                            const option = {
+                                headers: {
+                                    Authorization: `JWT ${accessToken}`,
+                                    "Content-Type": "application/json",
+                                }
+                            }
+
+                            const HandleTostify = new Promise(async (resolve, rejected) => {
+                                const uploadedUserImage = async () => {
+                                    let url = {};
+                                    if (isUserImageChange) {
+                                        const fileref = ref(analytics, `User/DP/${userImage[0].file.name}`)
+                                        await uploadBytes(fileref, userImage[0].file)
+                                            .then(async response => {
+                                                url = { image: await getDownloadURL(response.ref) }
+                                            })
+                                    }
+                                    return url
+                                }
+
+                                const uploadedBannerImage = async () => {
+                                    let url = {}
+                                    if (isBannerImageChange) {
+                                        const fileref = ref(analytics, `User/Banner/${bannerImage[0].file.name}`)
+                                        await uploadBytes(fileref, bannerImage[0].file)
+                                            .then(async response => {
+                                                url = { banner: await getDownloadURL(response.ref) }
+                                            })
+                                    }
+                                    return url;
+                                }
+
+                                axios.patch(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/`, {
+                                    ...formData,
+                                    ...uploadedUserImage,
+                                    ...uploadedBannerImage
+                                }, option)
+                                    .then(async response => {
+                                        setIsProfileData(pre => true)
+                                        setProfileData(pre => response.data.profile)
+                                        setIsUserData(pre => true)
+                                        setUserData(pre => response.data.user)
+                                        sessionStorage.removeItem("user")
+                                        sessionStorage.setItem("user", Encrypt(JSON.stringify(response.data.user), process.env.ENCRYPTION_KEY));
+                                        resolve();
+                                        onModalClose()
+                                        router.push(`/admin/${encodeURIComponent(response.data.user.username)}`)
+                                    })
+                                    .catch((error) => {
+                                        rejected();
+                                        onModalClose()
+                                    });
+                            });
+
+                            toast.promise(
+                                HandleTostify,
+                                {
+                                    pending: 'Your request is on process.',
+                                    success: 'You are now updated.',
+                                    error: 'There is some issue, Try again.'
+                                }
+                            )
+                        }
+                    }}>
                     {({ values, handleChange, handleSubmit }) => (
                         <Form onKeyDown={(e) => {
                             e.key === 'Enter' ? e.preventDefault() : null;
@@ -257,9 +212,33 @@ const EditProfile = () => {
                                                 Username
                                             </label>
                                             <div className='w-full flex gap-2 justify-center items-center'>
-                                                <Field type="text" name="username" id="username" onChange={(e) => {
+                                                <Field type="text" name="username" id="username" onChange={async (e) => {
                                                     handleChange(e)
-                                                    checkUsernameExists(e)
+                                                    if (e.target.value === profileData?.user?.username) {
+                                                        setIsUsernameValid(pre => true)
+                                                        delete formData?.username
+                                                    }
+                                                    else {
+                                                        const option = {
+                                                            headers: {
+                                                                Authorization: `JWT ${accessToken}`,
+                                                                "Content-Type": "application/json",
+                                                            }
+                                                        }
+
+                                                        await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/find/username/`, { "username": e.target.value }, option)
+                                                            .then(response => {
+                                                                setIsUsernameValid(pre => true)
+                                                                setFormData({
+                                                                    ...formData,
+                                                                    username: e.target.value
+                                                                })
+                                                            })
+                                                            .catch(error => {
+                                                                setIsUsernameValid(pre => false)
+                                                                delete formData?.username
+                                                            })
+                                                    }
                                                 }}
                                                     className="border-0 p-3 rounded text-sm focus:outline-none focus:ring shadow w-full" />
                                                 <FaCircleCheck className={isUsernameValid ? 'text-green-500' : 'text-red-500'} />
@@ -307,13 +286,28 @@ const EditProfile = () => {
                                             <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
                                                 Tags
                                             </label>
-                                            <Input type="text" className={`border-0 p-3 rounded text-sm shadow focus:outline-none focus:ring ${userTags.length >= 5 ? 'focus:ring-gray-400' : ''} w-full`} value={userTagsInput} onChange={e => setUserTagsInput(pre => e.target.value)} onKeyUp={e => e.key === 'Enter' ? addTags() : null} disabled={userTags.length >= 5 ? true : false} />
+                                            <Input type="text" className={`border-0 p-3 rounded text-sm shadow focus:outline-none focus:ring ${userTags.length >= 5 ? 'focus:ring-gray-400' : ''} w-full`}
+                                                value={userTagsInput}
+                                                onChange={e => setUserTagsInput(pre => e.target.value)}
+                                                onKeyUp={e => e.key === 'Enter' ? addTags() : null}
+                                                disabled={userTags.length >= 5 ? true : false} />
                                             <div className='flex items-center gap-2 my-2'>
                                                 {
                                                     userTags.map((tag, index) => (
                                                         <div key={index} className='flex items-center justify-center gap-2 bg-gray-200 rounded-full pl-4 pr-2 py-2 text-xs font-semibold text-black'>
                                                             #{tag}
-                                                            <span className='cursor-pointer rounded-full p-1 bg-gray-300' onClick={() => removeTags(tag)}>
+                                                            <span className='cursor-pointer rounded-full p-1 bg-gray-300' onClick={() => {
+                                                                if (userTags.filter(t => t !== tag).length > 0) {
+                                                                    setFormData({
+                                                                        ...formData,
+                                                                        tags: JSON.stringify(userTags.filter(t => t !== tag)),
+                                                                    })
+                                                                }
+                                                                else {
+                                                                    delete formData.tags
+                                                                }
+                                                                setUserTags(pre => pre.filter(t => t !== tag))
+                                                            }}>
                                                                 <AiOutlineClose />
                                                             </span>
                                                         </div>
