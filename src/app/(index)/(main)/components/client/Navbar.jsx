@@ -13,6 +13,7 @@ import {
 import Sidebar from "./Sidebar";
 import ToltipButton from "@/app/(index)/components/client/ToltipButton";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const Navbar = () => {
     const [toggleNavbar, setToggleNavbar] = React.useState(false)
@@ -26,16 +27,16 @@ const Navbar = () => {
     }, [])
 
     return (
-        <nav className={`flex flex-wrap justify-between items-center px-5 p-2 w-full fixed top-0 z-50 ${toggleNavbar ? 'shadow-2xl' : 'shadow-none'} transition-all duration-300 ease-in-out`}>
+        <nav className={`bg-white dark:bg-black flex flex-wrap justify-between items-center px-5 p-2 w-full fixed top-0 z-50 ${toggleNavbar ? 'shadow-2xl dark:shadow-white/30' : 'shadow-none'} transition-all duration-300 ease-in-out`}>
             <aside className="flex items-center gap-3">
                 <Sidebar />
                 <span className="text-xl font-semibold cursor-pointer">ZTube</span>
             </aside>
-            <div className="flex items-center justify-center rounded-full border-2 border-black dark:border-gray-100 bg-transparent w-[40rem]">
-                <input type="text" placeholder="Search" className="rounded-l-full px-5 py-1 w-full focus:outline-none bg-transparent" />
-                <div className="bg-transparent py-2 px-5 rounded-r-full cursor-pointer">
+            <div className="flex items-center justify-center w-[40rem]">
+                <Input type="text" placeholder="Search" className="px-5 py-1 rounded-l-full focus:ring-0 focus-visible:ring-0" />
+                <Button variant="outline" className="rounded-l-none rounded-r-full">
                     <BiSearch />
-                </div>
+                </Button>
             </div>
             <div className="flex gap-4 items-center">
                 <CreatePost />

@@ -20,14 +20,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 
-const EditProfile = () => {
+const EditProfile = ({ setProfile }) => {
     const { isAuthenticated, isAccessToken, accessToken, profileData, setProfileData, setIsProfileData, setIsUserData, setUserData } = React.useContext(Context)
 
     const router = useRouter();
 
     const [isOpen, setIsOpen] = React.useState(false);
     const [userTagsInput, setUserTagsInput] = React.useState('')
-    const [userTags, setUserTags] = React.useState(profileData.tags ? JSON.parse(profileData.tags) : [])
+    const [userTags, setUserTags] = React.useState(profileData.tags)
     const [formData, setFormData] = React.useState({})
     const [bannerImage, setbannerImage] = React.useState(
         profileData.banner.length > 0 ? [{ data_url: profileData.banner }] : [])
@@ -43,17 +43,17 @@ const EditProfile = () => {
         setUserImage(pre => profileData.image ? [{ data_url: profileData.image }] : [])
         setbannerImage(pre => profileData.banner ? [{ data_url: profileData.banner }] : [])
         setUserTagsInput(pre => '')
-        setUserTags(pre => profileData.tags ? JSON.parse(profileData.tags) : [])
+        setUserTags(pre => profileData.tags)
     }
 
     const addTags = () => {
         if (userTagsInput.trim().length > 0) {
             if (!userTags.includes(userTagsInput)) {
-                profileData?.tags === JSON.stringify([...userTags, userTagsInput]) ?
+                JSON.stringify(profileData?.tags) === JSON.stringify([...userTags, userTagsInput]) ?
                     delete formData.tags
                     : setFormData({
                         ...formData,
-                        tags: JSON.stringify([...userTags, userTagsInput]),
+                        tags: [...userTags, userTagsInput],
                     })
                 setUserTags(pre => [...pre, userTagsInput])
             }
@@ -131,6 +131,7 @@ const EditProfile = () => {
                                         setProfileData(pre => response.data.profile)
                                         setIsUserData(pre => true)
                                         setUserData(pre => response.data.user)
+                                        setProfile(pre => response.data.profile)
                                         sessionStorage.removeItem("user")
                                         sessionStorage.setItem("user", Encrypt(JSON.stringify(response.data.user), process.env.ENCRYPTION_KEY));
                                         resolve();

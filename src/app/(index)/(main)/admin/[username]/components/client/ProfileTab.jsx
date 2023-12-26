@@ -101,9 +101,9 @@ const ProfileTab = ({ username }) => {
     return (
         loading ? "Loading..." : profile === null ? <div className='flex flex-col'>
             No such User is found
-        </div> : <div className='flex flex-col shadow-lg shadow-slate-500/50 rounded-lg'>
+        </div> : <div className='flex flex-col shadow-lg shadow-slate-500/50 dark:shadow-white/40 rounded-lg'>
             <Image src={profile.banner ? profile.banner : '/image/profile-banner.png'} width={1536} height={341} priority={false} className='rounded-t-lg w-[1536px] h-[341px]' alt='...' />
-            <div className='dark:bg-[#020817] dark:text-white relative px-4 py-5 h-[168px] flex items-center justify-start gap-8'>
+            <div className='dark:bg-[#020817] dark:text-white relative px-4 py-5 flex items-center justify-start gap-8'>
                 <Image src={profile.image ? profile.image : '/image/user.png'} width={120} height={120} className='rounded-lg w-[120px] h-[120px]' alt='...' />
                 <div className='flex flex-col items-start gap-1 justify-start'>
                     <div className='flex flex-col items-start justify-center'>
@@ -117,23 +117,23 @@ const ProfileTab = ({ username }) => {
                                 </sup>
                             }
                         </div>
-                        <span>
+                        <span className='text-sm'>
                             {profile?.user?.username}
                         </span>
                     </div>
                     <div className='text-sm'>
                         {profile?.bio}
                     </div>
-                    <div className='flex font-semibold items-center justify-start gap-4 text-sm'>
+                    <div className='flex font-semibold items-center justify-start gap-2 text-xs'>
                         {
-                            profile?.tags ? JSON.parse(profile?.tags).map((item, index) => {
+                            profile?.tags.map((item, index) => {
                                 return <span key={index}>
                                     #{item}
                                 </span>
-                            }) : null
+                            })
                         }
                     </div>
-                    <div className='flex items-center justify-center gap-4'>
+                    <div className='flex items-center justify-center gap-4 text-sm'>
                         <div className='flex items-center justify-center gap-1 cursor-pointer'>
                             <span>{profile?.posts}</span>
                             <span>Posts</span>
@@ -149,7 +149,7 @@ const ProfileTab = ({ username }) => {
                     </div>
                 </div>
                 <div className='absolute bottom-5 right-4 flex items-center justify-end gap-4'>
-                    {self ? <EditProfile /> : null}
+                    {self ? <EditProfile setProfile={setProfile} /> : null}
                     {
                         self ? null : isAuthenticated && profile?.isFriend ? <Button className='font-semibold flex items-center justify-center gap-2' onClick={DisconnectPeople}>
                             <BsLink />
