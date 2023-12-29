@@ -10,12 +10,12 @@ import { LuHistory } from 'react-icons/lu'
 import { VscLaw } from 'react-icons/vsc'
 import { GiAmpleDress, GiWhiteBook, GiLaptop } from 'react-icons/gi'
 import { LiaSignatureSolid } from 'react-icons/lia'
-import { TbLetterZ } from "react-icons/tb";
+import { TbLetterX, TbLetterZ } from "react-icons/tb";
 import { FiEdit } from "react-icons/fi";
 import { IoMdRemoveCircleOutline, IoIosPause } from "react-icons/io";
 import { GoArrowLeft } from "react-icons/go";
 import { FcGoogle } from "react-icons/fc";
 
 export {
-    HiUsers, HiSpeakerphone, FaFilePen, FaIndianRupeeSign, FaGear, FaRedditAlien, FaPlaceOfWorship, BsTwitter, BsDiscord, BsFillBookmarkFill, BsSteam, BsMusicNoteBeamed, BsFillQuestionCircleFill, AiFillPieChart, AiFillYoutube, AiFillFacebook, AiFillInstagram, AiFillHome, AiFillStar, AiOutlineRadarChart, PiHandbagSimpleFill, PiSignIn, BiSolidBookContent, BiSolidInbox, BiBell, BiSolidHot, BiWorld, BiCodeAlt, BiLogOut, MdLibraryAdd, MdSubscriptions, MdBusiness, MdSportsVolleyball, MdFastfood, MdLocalMovies, MdPlace, MdScience, MdPrivacyTip, LuHistory, PiTelevisionBold, VscLaw, GiAmpleDress, GiWhiteBook, GiLaptop, LiaSignatureSolid, TbLetterZ, BiMenu, BiSearch, HiOutlineViewGridAdd, BsThreeDotsVertical, BiTimeFive, MdPlaylistAdd, PiShareFatLight, AiOutlineStop, MdOutlinedFlag, IoMdRemoveCircleOutline, AiFillCheckCircle, BsFillVolumeUpFill, BsFillVolumeOffFill, BsFillVolumeMuteFill, BsFillVolumeDownFill, BsFillPlayFill, BsPip, IoIosPause, AiFillBackward, MdSpeed, BiFullscreen, BiExitFullscreen, AiFillForward, BiSolidLock, BiSolidLockOpen, BsLink, MdVerified, AiOutlineClose, BiCamera, FiEdit, MdAddLink, FaCircleCheck, GoArrowLeft, FcGoogle
+    HiUsers, HiSpeakerphone, FaFilePen, FaIndianRupeeSign, FaGear, FaRedditAlien, FaPlaceOfWorship, BsTwitter, BsDiscord, BsFillBookmarkFill, BsSteam, BsMusicNoteBeamed, BsFillQuestionCircleFill, AiFillPieChart, AiFillYoutube, AiFillFacebook, AiFillInstagram, AiFillHome, AiFillStar, AiOutlineRadarChart, PiHandbagSimpleFill, PiSignIn, BiSolidBookContent, BiSolidInbox, BiBell, BiSolidHot, BiWorld, BiCodeAlt, BiLogOut, MdLibraryAdd, MdSubscriptions, MdBusiness, MdSportsVolleyball, MdFastfood, MdLocalMovies, MdPlace, MdScience, MdPrivacyTip, LuHistory, PiTelevisionBold, VscLaw, GiAmpleDress, GiWhiteBook, GiLaptop, LiaSignatureSolid, TbLetterZ, BiMenu, BiSearch, HiOutlineViewGridAdd, BsThreeDotsVertical, BiTimeFive, MdPlaylistAdd, PiShareFatLight, AiOutlineStop, MdOutlinedFlag, IoMdRemoveCircleOutline, AiFillCheckCircle, BsFillVolumeUpFill, BsFillVolumeOffFill, BsFillVolumeMuteFill, BsFillVolumeDownFill, BsFillPlayFill, BsPip, IoIosPause, AiFillBackward, MdSpeed, BiFullscreen, BiExitFullscreen, AiFillForward, BiSolidLock, BiSolidLockOpen, BsLink, MdVerified, AiOutlineClose, BiCamera, FiEdit, MdAddLink, FaCircleCheck, GoArrowLeft, FcGoogle, TbLetterX
 } 

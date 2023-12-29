@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
+import { Textarea } from '@/components/ui/textarea';
 
 const EditProfile = ({ setProfile }) => {
     const { isAuthenticated, isAccessToken, accessToken, profileData, setProfileData, setIsProfileData, setIsUserData, setUserData } = React.useContext(Context)
@@ -157,12 +158,12 @@ const EditProfile = ({ setProfile }) => {
                     {({ values, handleChange, handleSubmit }) => (
                         <Form onKeyDown={(e) => {
                             e.key === 'Enter' ? e.preventDefault() : null;
-                        }} className="flex flex-col divide-y-2 gap-4 first:divide-y-0 px-4 lg:px-10 py-10 overflow-y-scroll h-[80vh]">
+                        }} className="flex flex-col divide-y-2 gap-4 first:divide-y-0 px-4 lg:px-10 py-10">
                             <div className='flex flex-col justify-start gap-8 pt-4 first:pt-0'>
                                 <h6 className=" text-sm font-bold uppercase">
                                     Basic Information
                                 </h6>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 gap-4 overflow-y-scroll h-[50vh]">
                                     <div className='col-span-2 flex flex-col justify-center gap-2'>
                                         <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
                                             Banner Image
@@ -188,7 +189,7 @@ const EditProfile = ({ setProfile }) => {
                                                         first_name: e.target.value
                                                     })
                                             }}
-                                                className="border-0 p-3 rounded text-sm focus:outline-none focus:ring shadow w-full" />
+                                                className="border-0 p-3 rounded text-sm focus:outline-none focus:ring-0 shadow w-full" />
                                         </div>
                                     </div>
                                     <div className="col-span-1">
@@ -204,7 +205,7 @@ const EditProfile = ({ setProfile }) => {
                                                         last_name: e.target.value
                                                     })
                                             }}
-                                                className="border-0 p-3 rounded text-sm focus:outline-none focus:ring shadow w-full" />
+                                                className="border-0 p-3 rounded text-sm focus:outline-none focus:ring-0 shadow w-full" />
                                         </div>
                                     </div>
                                     <div className="col-span-1">
@@ -241,7 +242,7 @@ const EditProfile = ({ setProfile }) => {
                                                             })
                                                     }
                                                 }}
-                                                    className="border-0 p-3 rounded text-sm focus:outline-none focus:ring shadow w-full" />
+                                                    className="border-0 p-3 rounded text-sm focus:outline-none focus:ring-0 shadow w-full" />
                                                 <FaCircleCheck className={isUsernameValid ? 'text-green-500' : 'text-red-500'} />
                                             </div>
                                         </div>
@@ -271,7 +272,7 @@ const EditProfile = ({ setProfile }) => {
                                             <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
                                                 About me
                                             </label>
-                                            <Field type="text" name="bio" id="bio" onChange={(e) => {
+                                            <Textarea placeholder="Type your bio here." rows="5" name="bio" id="bio" value={values.bio} onChange={(e) => {
                                                 handleChange(e)
                                                 e.target.value === profileData?.bio ? delete formData?.bio
                                                     : setFormData({
@@ -279,7 +280,7 @@ const EditProfile = ({ setProfile }) => {
                                                         bio: e.target.value
                                                     })
                                             }}
-                                                className="border-0 p-3 rounded text-sm focus:outline-none focus:ring shadow w-full" />
+                                                className="border-0 p-3 rounded text-sm focus:outline-none focus:ring-0 focus-visible:ring-0 shadow w-full" />
                                         </div>
                                     </div>
                                     <div className="col-span-2">
@@ -287,7 +288,7 @@ const EditProfile = ({ setProfile }) => {
                                             <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
                                                 Tags
                                             </label>
-                                            <Input type="text" className={`border-0 p-3 rounded text-sm shadow focus:outline-none focus:ring ${userTags.length >= 5 ? 'focus:ring-gray-400' : ''} w-full`}
+                                            <Input type="text" className="border-0 p-3 rounded text-sm shadow focus:outline-none focus:ring-0 focus-visible:ring-0 w-full"
                                                 value={userTagsInput}
                                                 onChange={e => setUserTagsInput(pre => e.target.value)}
                                                 onKeyUp={e => e.key === 'Enter' ? addTags() : null}
