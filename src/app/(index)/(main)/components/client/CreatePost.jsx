@@ -1,5 +1,5 @@
 "use client"
-import ToltipButton from "@/app/(index)/components/client/ToltipButton"
+import ToltipButton from "@/app/(index)/components/server/ToltipButton"
 import {
     Dialog,
     DialogContent,

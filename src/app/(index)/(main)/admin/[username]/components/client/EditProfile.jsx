@@ -81,9 +81,9 @@ const EditProfile = ({ setProfile }) => {
                     <DialogTitle>My account</DialogTitle>
                 </DialogHeader>
                 <Formik initialValues={{
-                    first_name: profileData?.user?.first_name,
-                    last_name: profileData?.user?.last_name,
-                    username: profileData?.user?.username,
+                    first_name: profileData?.first_name,
+                    last_name: profileData?.last_name,
+                    username: profileData?.username,
                     isLocked: profileData?.isLocked,
                     bio: profileData?.bio,
                 }}
@@ -122,10 +122,13 @@ const EditProfile = ({ setProfile }) => {
                                     return url;
                                 }
 
+                                const userImageData = await uploadedUserImage()
+                                const bannerImageData = await uploadedBannerImage()
+
                                 axios.patch(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/`, {
                                     ...formData,
-                                    ...uploadedUserImage,
-                                    ...uploadedBannerImage
+                                    ...userImageData,
+                                    ...bannerImageData
                                 }, option)
                                     .then(async response => {
                                         setIsProfileData(pre => true)
@@ -183,7 +186,7 @@ const EditProfile = ({ setProfile }) => {
                                             </label>
                                             <Field type="text" name="first_name" id={'first_name'} onChange={(e) => {
                                                 handleChange(e)
-                                                e.target.value === profileData?.user?.first_name ? delete formData?.first_name
+                                                e.target.value === profileData?.first_name ? delete formData?.first_name
                                                     : setFormData({
                                                         ...formData,
                                                         first_name: e.target.value
@@ -199,7 +202,7 @@ const EditProfile = ({ setProfile }) => {
                                             </label>
                                             <Field type="text" name="last_name" id="last_name" onChange={(e) => {
                                                 handleChange(e)
-                                                e.target.value === profileData?.user?.last_name ? delete formData?.last_name
+                                                e.target.value === profileData?.last_name ? delete formData?.last_name
                                                     : setFormData({
                                                         ...formData,
                                                         last_name: e.target.value
@@ -216,7 +219,7 @@ const EditProfile = ({ setProfile }) => {
                                             <div className='w-full flex gap-2 justify-center items-center'>
                                                 <Field type="text" name="username" id="username" onChange={async (e) => {
                                                     handleChange(e)
-                                                    if (e.target.value === profileData?.user?.username) {
+                                                    if (e.target.value === profileData?.username) {
                                                         setIsUsernameValid(pre => true)
                                                         delete formData?.username
                                                     }

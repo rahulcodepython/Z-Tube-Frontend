@@ -1,10 +1,11 @@
 "use client"
+import axios from 'axios'
+import React from 'react'
 import { Context } from '@/context/Context'
 import { Decrypt } from '@/functions/Decrypt'
 import { Encrypt } from '@/functions/Encrypt'
-import axios from 'axios'
 import { usePathname } from 'next/navigation'
-import React from 'react'
+import Loader from './components/server/Loader'
 
 const IndexLayout = ({ children }) => {
     const [loading, setLoading] = React.useState(true)
@@ -113,7 +114,7 @@ const IndexLayout = ({ children }) => {
         Handler();
     }, [pathname])
 
-    return loading ? "Loading..." : children
+    return loading ? <Loader /> : children
 }
 
 export default IndexLayout

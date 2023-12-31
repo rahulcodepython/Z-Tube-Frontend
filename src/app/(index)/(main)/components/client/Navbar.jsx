@@ -11,7 +11,7 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar"
 import Sidebar from "./Sidebar";
-import ToltipButton from "@/app/(index)/components/client/ToltipButton";
+import ToltipButton from "@/app/(index)/components/server/ToltipButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
