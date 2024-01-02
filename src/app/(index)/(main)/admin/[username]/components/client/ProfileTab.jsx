@@ -7,6 +7,7 @@ import axios from 'axios'
 import { Context } from '@/context/Context'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import Loader from '@/app/(index)/components/server/Loader'
 
 const ProfileTab = ({ username }) => {
     const [loading, setLoading] = React.useState(true)
@@ -99,7 +100,7 @@ const ProfileTab = ({ username }) => {
     }
 
     return (
-        loading ? "Loading..." : profile === null ? <div className='flex flex-col'>
+        loading ? <Loader /> : profile === null ? <div className='flex flex-col'>
             No such User is found
         </div> : <div className='flex flex-col shadow-lg shadow-slate-500/50 dark:shadow-white/40 rounded-lg'>
             <Image src={profile.banner ? profile.banner : '/image/profile-banner.png'} width={1536} height={341} priority={false} className='rounded-t-lg w-[1536px] h-[341px]' alt='...' />
@@ -109,7 +110,7 @@ const ProfileTab = ({ username }) => {
                     <div className='flex flex-col items-start justify-center'>
                         <div className='font-extrabold text-xl'>
                             <span>
-                                {profile?.user?.first_name} {profile?.user?.last_name}
+                                {profile?.first_name} {profile?.last_name}
                             </span>
                             {
                                 profile?.isVerified && <sup className='ml-1'>
@@ -118,7 +119,7 @@ const ProfileTab = ({ username }) => {
                             }
                         </div>
                         <span className='text-sm'>
-                            {profile?.user?.username}
+                            {profile?.username}
                         </span>
                     </div>
                     <div className='text-sm'>

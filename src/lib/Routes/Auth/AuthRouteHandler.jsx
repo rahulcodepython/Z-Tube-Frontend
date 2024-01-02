@@ -3,6 +3,7 @@ import React from 'react'
 import { Context } from '@/context/Context'
 import { usePathname, useRouter } from 'next/navigation'
 import { AuthenticatedRoute, UnauthenticatedRoute } from '@/lib/Routes/Auth/Routes'
+import Loader from '@/app/(index)/components/server/Loader'
 
 const AuthRouteHandler = ({ children }) => {
     const [loading, setLoading] = React.useState(true)
@@ -33,7 +34,7 @@ const AuthRouteHandler = ({ children }) => {
         Handler();
     }, [pathname])
 
-    return loading ? "Loading..." : children
+    return loading ? <Loader /> : children
 }
 
 export default AuthRouteHandler
