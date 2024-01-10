@@ -6,7 +6,7 @@ import { Context } from '@/context/Context'
 import { Button } from '@/components/ui/button'
 
 const page = () => {
-    const { isAuthenticated, setIsAuthenticated, isAccessToken, setIsAccessToken, accessToken, setAccessToken, isRefreshToken, setIsRefreshToken, refreshToken, setRefreshToken, isUserData, setIsUserData, userData, setUserData } = React.useContext(Context)
+    const { isAuthenticated, setIsAuthenticated, isAccessToken, setIsAccessToken, accessToken, setAccessToken, isRefreshToken, setIsRefreshToken, refreshToken, setRefreshToken, isProfileData, setIsProfileData, profileData, setProfileData, isUserData, setIsUserData, userData, setUserData } = React.useContext(Context)
 
     React.useEffect(() => {
         sessionStorage.removeItem('access');
@@ -17,6 +17,10 @@ const page = () => {
         setAccessToken(pre => null);
         setIsRefreshToken(pre => false);
         setRefreshToken(pre => null);
+        setIsUserData(pre => false)
+        setIsUserData(pre => { })
+        setIsProfileData(pre => false)
+        setProfileData(pre => { })
     }, [])
 
     return (

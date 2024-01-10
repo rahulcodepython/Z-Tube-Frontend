@@ -1,6 +1,15 @@
 import { HiUsers, HiSpeakerphone, FaFilePen, FaIndianRupeeSign, FaGear, FaRedditAlien, FaPlaceOfWorship, BsTwitter, BsDiscord, BsFillBookmarkFill, BsSteam, BsMusicNoteBeamed, BsFillQuestionCircleFill, AiFillYoutube, AiFillFacebook, AiFillInstagram, AiFillHome, AiFillStar, AiOutlineRadarChart, PiHandbagSimpleFill, PiSignIn, BiSolidBookContent, BiSolidInbox, BiBell, BiSolidHot, BiWorld, BiCodeAlt, BiLogOut, MdLibraryAdd, MdSubscriptions, MdBusiness, MdSportsVolleyball, MdFastfood, MdLocalMovies, MdPlace, MdScience, MdPrivacyTip, LuHistory, PiTelevisionBold, VscLaw, GiAmpleDress, GiWhiteBook, GiLaptop, LiaSignatureSolid, TbLetterZ, BiTimeFive, MdPlaylistAdd, PiShareFatLight, AiOutlineStop, MdOutlinedFlag, IoMdRemoveCircleOutline } from '@/data/icons/icons'
 
 export const Data = {
+    emoji: [
+        { id: 0, icon: '/svg/like.svg', name: 'Like' },
+        { id: 1, icon: '/svg/heart.svg', name: 'Love' },
+        { id: 2, icon: '/svg/care.svg', name: 'care' },
+        { id: 3, icon: '/svg/laugh.svg', name: 'Smile' },
+        { id: 4, icon: '/svg/wow.svg', name: 'Wow' },
+        { id: 5, icon: '/svg/cry.svg', name: 'cry' },
+        { id: 6, icon: '/svg/angry.svg', name: 'Angry' },
+    ],
     sidebar: {
         social: [
             {

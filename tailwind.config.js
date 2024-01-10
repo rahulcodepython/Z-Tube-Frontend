@@ -6,7 +6,7 @@ module.exports = {
     './components/**/*.{js,jsx}',
     './app/**/*.{js,jsx}',
     './src/**/*.{js,jsx}',
-	],
+  ],
   theme: {
     container: {
       center: true,
@@ -14,6 +14,9 @@ module.exports = {
       screens: {
         "2xl": "1400px",
       },
+      colors: {
+        darkModeBG: '#020817'
+      }
     },
     extend: {
       colors: {

@@ -14,7 +14,7 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 import { HiOutlineViewGridAdd } from "@/data/icons/icons"
-import CreateFBPost from "./posts/CreateFBPost"
+import CreateFeed from "./posts/CreateFeed"
 import { Context } from '@/context/Context';
 import React from "react"
 import { toast } from 'react-toastify';
@@ -40,7 +40,7 @@ const CreatePost = () => {
                 <DialogHeader>
                     <DialogTitle>Create Post</DialogTitle>
                 </DialogHeader>
-                <Tabs defaultValue="fd" className="">
+                <Tabs defaultValue="fd">
                     <TabsList className="grid w-full grid-cols-5">
                         <TabsTrigger value="fd">Feed</TabsTrigger>
                         <TabsTrigger value="ct">Content</TabsTrigger>
@@ -49,7 +49,7 @@ const CreatePost = () => {
                         <TabsTrigger value="tw">Tweet</TabsTrigger>
                     </TabsList>
                     <TabsContent value="fd">
-                        <CreateFBPost setIsOpen={setIsOpen} />
+                        <CreateFeed setIsOpen={setIsOpen} />
                     </TabsContent>
                     <TabsContent value="ct">
                         <p>Youtube</p>

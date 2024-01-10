@@ -28,7 +28,7 @@ const VideoUploader = ({ video, setVideo }) => {
                 src={video}
             />
             <div className="bg-opacity-0 absolute top-4 right-4 text-2xl flex gap-4 items-center justify-center group-hover:bg-opacity-50 transition-all duration-300 ease-in-out">
-                <BiCamera onClick={handleChoose} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
+                <BiCamera onClick={handleChoose} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-darkModeBG text-white p-2 rounded-full text-4xl' />
                 <input
                     ref={inputRef}
                     className="hidden"
@@ -36,10 +36,10 @@ const VideoUploader = ({ video, setVideo }) => {
                     onChange={handleFileChange}
                     accept=".mov,.mp4"
                 />
-                <AiOutlineClose onClick={() => setVideo(pre => [])} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full text-4xl' />
+                <AiOutlineClose onClick={() => setVideo(pre => [])} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-darkModeBG text-white p-2 rounded-full text-4xl' />
 
             </div>
-        </div> : <section className='border-dashed border-2 border-black p-8 flex justify-center items-center w-full h-60' onClick={handleChoose}>
+        </div> : <section className='border-dashed border-2 border-darkModeBG dark:bg-white p-8 flex justify-center items-center w-full h-60' onClick={handleChoose}>
             <div className='flex flex-col items-center justify-center'>
                 <input
                     ref={inputRef}

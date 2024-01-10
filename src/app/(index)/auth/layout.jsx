@@ -11,12 +11,12 @@ const AuthLayout = ({ children }) => {
             <section className="flex items-center justify-center overflow-y-scroll my-5">
                 <div className='flex flex-col items-start gap-4'>
                     <Link href={'/'}>
-                        <Button className='px-3 py-2 flex items-center gap-1 text-base'>
+                        <Button className='flex items-center gap-1'>
                             <GoArrowLeft className='text-lg' />
                             Back
                         </Button>
                     </Link>
-                    <div className="bg-gray-100 dark:bg-[#020817] p-5 flex shadow-lg shadow-slate-500/50 rounded-lg max-w-6xl">
+                    <div className="p-5 flex shadow-lg shadow-slate-500/50 rounded-lg max-w-6xl">
                         {children}
                         <div className="w-1/2 md:block hidden">
                             <Image src="/image/loginPage.png" alt="page img" width={800} height={800} className="rounded-2xl" />

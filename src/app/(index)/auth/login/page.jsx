@@ -17,7 +17,7 @@ const Page = () => {
                 <p className="text-center text-sm">OR</p>
                 <hr className="border-gray-500" />
             </div>
-            <Button className="py-4 w-full rounded-lg flex justify-center items-center text-sm">
+            <Button className="flex items-center">
                 <FcGoogle className='text-2xl' />
                 <GoogleAuthButton msg={'Login with Google'} />
             </Button>

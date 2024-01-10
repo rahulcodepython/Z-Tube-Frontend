@@ -1,7 +1,6 @@
 "use client"
 import React from 'react'
 import { AiOutlineClose, FaCircleCheck, FiEdit } from '@/data/icons/icons'
-import { Field, Form, Formik } from 'formik';
 import axios from 'axios';
 import { Context } from '@/context/Context';
 import { toast } from 'react-toastify';
@@ -20,6 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const EditProfile = ({ setProfile }) => {
     const { isAuthenticated, isAccessToken, accessToken, profileData, setProfileData, setIsProfileData, setIsUserData, setUserData } = React.useContext(Context)
@@ -30,6 +30,7 @@ const EditProfile = ({ setProfile }) => {
     const [userTagsInput, setUserTagsInput] = React.useState('')
     const [userTags, setUserTags] = React.useState(profileData.tags)
     const [formData, setFormData] = React.useState({})
+    const [isLocked, setIsLocked] = React.useState(profileData?.isLocked)
     const [bannerImage, setbannerImage] = React.useState(
         profileData.banner.length > 0 ? [{ data_url: profileData.banner }] : [])
     const [isBannerImageChange, setIsBannerImageChange] = React.useState(false)
@@ -62,6 +63,77 @@ const EditProfile = ({ setProfile }) => {
         setUserTagsInput(pre => '')
     }
 
+    const handleSubmit = async () => {
+        if (isAuthenticated && isAccessToken) {
+
+            const option = {
+                headers: {
+                    Authorization: `JWT ${accessToken}`,
+                }
+            }
+
+            const HandleTostify = new Promise(async (resolve, rejected) => {
+                const uploadedUserImage = async () => {
+                    let url = {};
+                    if (isUserImageChange) {
+                        const fileref = ref(analytics, `User/DP/${userImage[0].file.name}`)
+                        await uploadBytes(fileref, userImage[0].file)
+                            .then(async response => {
+                                url = { image: await getDownloadURL(response.ref) }
+                            })
+                    }
+                    return url
+                }
+
+                const uploadedBannerImage = async () => {
+                    let url = {}
+                    if (isBannerImageChange) {
+                        const fileref = ref(analytics, `User/Banner/${bannerImage[0].file.name}`)
+                        await uploadBytes(fileref, bannerImage[0].file)
+                            .then(async response => {
+                                url = { banner: await getDownloadURL(response.ref) }
+                            })
+                    }
+                    return url;
+                }
+
+                const userImageData = await uploadedUserImage()
+                const bannerImageData = await uploadedBannerImage()
+
+                axios.patch(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/`, {
+                    ...formData,
+                    ...userImageData,
+                    ...bannerImageData
+                }, option)
+                    .then(async response => {
+                        setIsProfileData(pre => true)
+                        setProfileData(pre => response.data.profile)
+                        setIsUserData(pre => true)
+                        setUserData(pre => response.data.user)
+                        setProfile(pre => response.data.profile)
+                        sessionStorage.removeItem("user")
+                        sessionStorage.setItem("user", Encrypt(JSON.stringify(response.data.user), process.env.ENCRYPTION_KEY));
+                        resolve();
+                        onModalClose()
+                        router.push(`/admin/${encodeURIComponent(response.data.user.username)}`)
+                    })
+                    .catch((error) => {
+                        rejected();
+                        onModalClose()
+                    });
+            });
+
+            toast.promise(
+                HandleTostify,
+                {
+                    pending: 'Your request is on process.',
+                    success: 'You are now updated.',
+                    error: 'There is some issue, Try again.'
+                }
+            )
+        }
+    }
+
     React.useEffect(() => {
         !isOpen ? onModalClose() : null
     }, [isOpen])
@@ -69,7 +141,7 @@ const EditProfile = ({ setProfile }) => {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button className='px-4 py-2 flex items-center gap-2'>
+                <Button className='flex items-center gap-2'>
                     <FiEdit />
                     <span>
                         Edit Profile
@@ -80,255 +152,169 @@ const EditProfile = ({ setProfile }) => {
                 <DialogHeader>
                     <DialogTitle>My account</DialogTitle>
                 </DialogHeader>
-                <Formik initialValues={{
-                    first_name: profileData?.first_name,
-                    last_name: profileData?.last_name,
-                    username: profileData?.username,
-                    isLocked: profileData?.isLocked,
-                    bio: profileData?.bio,
-                }}
-                    onSubmit={async () => {
-                        if (isAuthenticated && isAccessToken) {
-
-                            const option = {
-                                headers: {
-                                    Authorization: `JWT ${accessToken}`,
-                                    "Content-Type": "application/json",
-                                }
-                            }
-
-                            const HandleTostify = new Promise(async (resolve, rejected) => {
-                                const uploadedUserImage = async () => {
-                                    let url = {};
-                                    if (isUserImageChange) {
-                                        const fileref = ref(analytics, `User/DP/${userImage[0].file.name}`)
-                                        await uploadBytes(fileref, userImage[0].file)
-                                            .then(async response => {
-                                                url = { image: await getDownloadURL(response.ref) }
+                <form onSubmit={(e) => { e.preventDefault() }} onKeyDown={(e) => {
+                    e.key === 'Enter' ? e.preventDefault() : null;
+                }} className="flex flex-col divide-y-2 gap-4 first:divide-y-0 px-4 lg:px-10 py-10">
+                    <div className='flex flex-col justify-start gap-8 pt-4 first:pt-0'>
+                        <h6 className=" text-sm font-bold uppercase">
+                            Basic Information
+                        </h6>
+                        <div className="grid grid-cols-2 gap-4 overflow-y-scroll h-[50vh]">
+                            <div className='col-span-2 flex flex-col justify-center gap-2'>
+                                <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                    Banner Image
+                                </label>
+                                <ImageUploader image={bannerImage} setImage={setbannerImage} setIsImageChange={setIsBannerImageChange} mode="banner" />
+                            </div>
+                            <div className='col-span-2 flex flex-col justify-center gap-2'>
+                                <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                    User Image
+                                </label>
+                                <ImageUploader image={userImage} setImage={setUserImage} setIsImageChange={setIsUserImageChange} mode="dp" />
+                            </div>
+                            <div className="col-span-1">
+                                <div className="w-full flex flex-col gap-2">
+                                    <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                        First Name
+                                    </label>
+                                    <Input type="text" name="first_name" id='first_name' value={profileData?.first_name} onChange={(e) => {
+                                        e.target.value === profileData?.first_name ? delete formData?.first_name
+                                            : setFormData({
+                                                ...formData,
+                                                first_name: e.target.value
                                             })
-                                    }
-                                    return url
-                                }
-
-                                const uploadedBannerImage = async () => {
-                                    let url = {}
-                                    if (isBannerImageChange) {
-                                        const fileref = ref(analytics, `User/Banner/${bannerImage[0].file.name}`)
-                                        await uploadBytes(fileref, bannerImage[0].file)
-                                            .then(async response => {
-                                                url = { banner: await getDownloadURL(response.ref) }
+                                    }}
+                                        className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                </div>
+                            </div>
+                            <div className="col-span-1">
+                                <div className="w-full flex flex-col gap-2">
+                                    <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                        Last Name
+                                    </label>
+                                    <Input type="text" name="last_name" id="last_name" value={profileData?.last_name} onChange={(e) => {
+                                        e.target.value === profileData?.last_name ? delete formData?.last_name
+                                            : setFormData({
+                                                ...formData,
+                                                last_name: e.target.value
                                             })
-                                    }
-                                    return url;
-                                }
-
-                                const userImageData = await uploadedUserImage()
-                                const bannerImageData = await uploadedBannerImage()
-
-                                axios.patch(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/`, {
-                                    ...formData,
-                                    ...userImageData,
-                                    ...bannerImageData
-                                }, option)
-                                    .then(async response => {
-                                        setIsProfileData(pre => true)
-                                        setProfileData(pre => response.data.profile)
-                                        setIsUserData(pre => true)
-                                        setUserData(pre => response.data.user)
-                                        setProfile(pre => response.data.profile)
-                                        sessionStorage.removeItem("user")
-                                        sessionStorage.setItem("user", Encrypt(JSON.stringify(response.data.user), process.env.ENCRYPTION_KEY));
-                                        resolve();
-                                        onModalClose()
-                                        router.push(`/admin/${encodeURIComponent(response.data.user.username)}`)
-                                    })
-                                    .catch((error) => {
-                                        rejected();
-                                        onModalClose()
-                                    });
-                            });
-
-                            toast.promise(
-                                HandleTostify,
-                                {
-                                    pending: 'Your request is on process.',
-                                    success: 'You are now updated.',
-                                    error: 'There is some issue, Try again.'
-                                }
-                            )
-                        }
-                    }}>
-                    {({ values, handleChange, handleSubmit }) => (
-                        <Form onKeyDown={(e) => {
-                            e.key === 'Enter' ? e.preventDefault() : null;
-                        }} className="flex flex-col divide-y-2 gap-4 first:divide-y-0 px-4 lg:px-10 py-10">
-                            <div className='flex flex-col justify-start gap-8 pt-4 first:pt-0'>
-                                <h6 className=" text-sm font-bold uppercase">
-                                    Basic Information
-                                </h6>
-                                <div className="grid grid-cols-2 gap-4 overflow-y-scroll h-[50vh]">
-                                    <div className='col-span-2 flex flex-col justify-center gap-2'>
-                                        <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
-                                            Banner Image
-                                        </label>
-                                        <ImageUploader image={bannerImage} setImage={setbannerImage} setIsImageChange={setIsBannerImageChange} mode="banner" />
-                                    </div>
-                                    <div className='col-span-2 flex flex-col justify-center gap-2'>
-                                        <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
-                                            User Image
-                                        </label>
-                                        <ImageUploader image={userImage} setImage={setUserImage} setIsImageChange={setIsUserImageChange} mode="dp" />
-                                    </div>
-                                    <div className="col-span-1">
-                                        <div className="w-full flex flex-col gap-2">
-                                            <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
-                                                First Name
-                                            </label>
-                                            <Field type="text" name="first_name" id={'first_name'} onChange={(e) => {
-                                                handleChange(e)
-                                                e.target.value === profileData?.first_name ? delete formData?.first_name
-                                                    : setFormData({
-                                                        ...formData,
-                                                        first_name: e.target.value
-                                                    })
-                                            }}
-                                                className="border-0 p-3 rounded text-sm focus:outline-none focus:ring-0 shadow w-full" />
-                                        </div>
-                                    </div>
-                                    <div className="col-span-1">
-                                        <div className="w-full flex flex-col gap-2">
-                                            <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
-                                                Last Name
-                                            </label>
-                                            <Field type="text" name="last_name" id="last_name" onChange={(e) => {
-                                                handleChange(e)
-                                                e.target.value === profileData?.last_name ? delete formData?.last_name
-                                                    : setFormData({
-                                                        ...formData,
-                                                        last_name: e.target.value
-                                                    })
-                                            }}
-                                                className="border-0 p-3 rounded text-sm focus:outline-none focus:ring-0 shadow w-full" />
-                                        </div>
-                                    </div>
-                                    <div className="col-span-1">
-                                        <div className="w-full flex flex-col gap-2">
-                                            <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
-                                                Username
-                                            </label>
-                                            <div className='w-full flex gap-2 justify-center items-center'>
-                                                <Field type="text" name="username" id="username" onChange={async (e) => {
-                                                    handleChange(e)
-                                                    if (e.target.value === profileData?.username) {
-                                                        setIsUsernameValid(pre => true)
-                                                        delete formData?.username
+                                    }}
+                                        className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                </div>
+                            </div>
+                            <div className="col-span-1">
+                                <div className="w-full flex flex-col gap-2">
+                                    <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                        Username
+                                    </label>
+                                    <div className='w-full flex gap-2 justify-center items-center'>
+                                        <Input type="text" name="username" id="username" value={profileData?.username} onChange={async (e) => {
+                                            if (e.target.value === profileData?.username) {
+                                                setIsUsernameValid(pre => true)
+                                                delete formData?.username
+                                            }
+                                            else {
+                                                const option = {
+                                                    headers: {
+                                                        Authorization: `JWT ${accessToken}`,
                                                     }
-                                                    else {
-                                                        const option = {
-                                                            headers: {
-                                                                Authorization: `JWT ${accessToken}`,
-                                                                "Content-Type": "application/json",
-                                                            }
-                                                        }
-
-                                                        await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/find/username/`, { "username": e.target.value }, option)
-                                                            .then(response => {
-                                                                setIsUsernameValid(pre => true)
-                                                                setFormData({
-                                                                    ...formData,
-                                                                    username: e.target.value
-                                                                })
-                                                            })
-                                                            .catch(error => {
-                                                                setIsUsernameValid(pre => false)
-                                                                delete formData?.username
-                                                            })
-                                                    }
-                                                }}
-                                                    className="border-0 p-3 rounded text-sm focus:outline-none focus:ring-0 shadow w-full" />
-                                                <FaCircleCheck className={isUsernameValid ? 'text-green-500' : 'text-red-500'} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-span-1">
-                                        <div className="w-full flex flex-col gap-2">
-                                            <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
-                                                Lock Profile
-                                            </label>
-                                            <div className='flex gap-4 justify-center items-center'>
-                                                <Field type="checkbox" name="isLocked" id="isLocked" onChange={(e) => {
-                                                    handleChange(e)
-                                                    e.target.checked === profileData?.isLocked ? delete formData?.isLocked
-                                                        : setFormData({
-                                                            ...formData,
-                                                            isLocked: e.target.checked
-                                                        })
-                                                }} />
-                                                <span>
-                                                    {`${values.isLocked ? 'Locked' : 'Lock'}`}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-span-2">
-                                        <div className="w-full flex flex-col gap-2">
-                                            <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
-                                                About me
-                                            </label>
-                                            <Textarea placeholder="Type your bio here." rows="5" name="bio" id="bio" value={values.bio} onChange={(e) => {
-                                                handleChange(e)
-                                                e.target.value === profileData?.bio ? delete formData?.bio
-                                                    : setFormData({
-                                                        ...formData,
-                                                        bio: e.target.value
-                                                    })
-                                            }}
-                                                className="border-0 p-3 rounded text-sm focus:outline-none focus:ring-0 focus-visible:ring-0 shadow w-full" />
-                                        </div>
-                                    </div>
-                                    <div className="col-span-2">
-                                        <div className="w-full flex flex-col gap-2">
-                                            <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
-                                                Tags
-                                            </label>
-                                            <Input type="text" className="border-0 p-3 rounded text-sm shadow focus:outline-none focus:ring-0 focus-visible:ring-0 w-full"
-                                                value={userTagsInput}
-                                                onChange={e => setUserTagsInput(pre => e.target.value)}
-                                                onKeyUp={e => e.key === 'Enter' ? addTags() : null}
-                                                disabled={userTags.length >= 5 ? true : false} />
-                                            <div className='flex items-center gap-2 my-2'>
-                                                {
-                                                    userTags.map((tag, index) => (
-                                                        <div key={index} className='flex items-center justify-center gap-2 bg-gray-200 rounded-full pl-4 pr-2 py-2 text-xs font-semibold text-black'>
-                                                            #{tag}
-                                                            <span className='cursor-pointer rounded-full p-1 bg-gray-300' onClick={() => {
-                                                                if (userTags.filter(t => t !== tag).length > 0) {
-                                                                    setFormData({
-                                                                        ...formData,
-                                                                        tags: JSON.stringify(userTags.filter(t => t !== tag)),
-                                                                    })
-                                                                }
-                                                                else {
-                                                                    delete formData.tags
-                                                                }
-                                                                setUserTags(pre => pre.filter(t => t !== tag))
-                                                            }}>
-                                                                <AiOutlineClose />
-                                                            </span>
-                                                        </div>
-                                                    ))
                                                 }
-                                            </div>
-                                        </div>
+
+                                                await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/find/username/`, { "username": e.target.value }, option)
+                                                    .then(response => {
+                                                        setIsUsernameValid(pre => true)
+                                                        setFormData({
+                                                            ...formData,
+                                                            username: e.target.value
+                                                        })
+                                                    })
+                                                    .catch(error => {
+                                                        setIsUsernameValid(pre => false)
+                                                        delete formData?.username
+                                                    })
+                                            }
+                                        }}
+                                            className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                        <FaCircleCheck className={isUsernameValid ? 'text-green-500' : 'text-red-500'} />
                                     </div>
                                 </div>
                             </div>
-                            <Button type='submit' onClick={handleSubmit} className="py-2">
-                                Update
-                            </Button>
-                        </Form>
-                    )}
-                </Formik>
+                            <div className="col-span-1">
+                                <div className="w-full flex flex-col gap-2">
+                                    <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                        Lock Profile
+                                    </label>
+                                    <div className='flex gap-4 justify-center items-center text-sm'>
+                                        <Checkbox id="isLocked" name="isLocked" checked={isLocked} onCheckedChange={(e) => {
+                                            setIsLocked(pre => e)
+                                            e === profileData?.isLocked ? delete formData?.isLocked
+                                                : setFormData({
+                                                    ...formData,
+                                                    isLocked: e
+                                                })
+                                        }} />
+                                        <span>
+                                            {`${isLocked ? 'Locked' : 'Lock'}`}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-span-2">
+                                <div className="w-full flex flex-col gap-2">
+                                    <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                        About me
+                                    </label>
+                                    <Textarea placeholder="Type your bio here." rows="5" name="bio" id="bio" value={profileData?.bio} onChange={(e) => {
+                                        e.target.value === profileData?.bio ? delete formData?.bio
+                                            : setFormData({
+                                                ...formData,
+                                                bio: e.target.value
+                                            })
+                                    }}
+                                        className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                </div>
+                            </div>
+                            <div className="col-span-2">
+                                <div className="w-full flex flex-col gap-2">
+                                    <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                        Tags
+                                    </label>
+                                    <Input type="text" className="focus:outline-none focus:ring-0 focus-visible:ring-0"
+                                        value={userTagsInput}
+                                        onChange={e => setUserTagsInput(pre => e.target.value)}
+                                        onKeyUp={e => e.key === 'Enter' ? addTags() : null}
+                                        disabled={userTags.length >= 5 ? true : false} />
+                                    <div className='flex items-center gap-2 my-2'>
+                                        {
+                                            userTags.map((tag, index) => (
+                                                <div key={index} className='flex items-center justify-center gap-2 bg-gray-200 rounded-full pl-4 pr-2 py-2 text-xs font-semibold text-black'>
+                                                    #{tag}
+                                                    <span className='cursor-pointer rounded-full p-1 bg-gray-300' onClick={() => {
+                                                        if (userTags.filter(t => t !== tag).length > 0) {
+                                                            setFormData({
+                                                                ...formData,
+                                                                tags: JSON.stringify(userTags.filter(t => t !== tag)),
+                                                            })
+                                                        }
+                                                        else {
+                                                            delete formData.tags
+                                                        }
+                                                        setUserTags(pre => pre.filter(t => t !== tag))
+                                                    }}>
+                                                        <AiOutlineClose />
+                                                    </span>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <Button type='submit' onClick={handleSubmit}>
+                        Update
+                    </Button>
+                </form>
             </DialogContent>
         </Dialog>
     )

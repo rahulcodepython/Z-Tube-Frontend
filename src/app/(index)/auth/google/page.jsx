@@ -54,7 +54,7 @@ const Page = () => {
 
     return loading ? <div className="md:w-1/2 px-5 flex flex-col items-center justify-center gap-6">
         <Image src={'/gif/loading.gif'} width={200} height={200} alt='success' className='mix-blend-multiply' />
-        <div className='text-black text-3xl font-extrabold'>
+        <div className='text-background text-3xl font-extrabold'>
             Proccessing
         </div>
         <div>
