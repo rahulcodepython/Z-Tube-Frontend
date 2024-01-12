@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog"
 import { RiShareForwardLine } from '@/data/icons/icons'
 
-const ShareModal = () => {
+const Share = () => {
     return (
         <MenubarMenu className="w-full">
             <MenubarTrigger className="w-1/3 flex justify-center items-center cursor-pointer">
@@ -39,4 +39,4 @@ const ShareModal = () => {
     )
 }
 
-export default ShareModal
+export default Share

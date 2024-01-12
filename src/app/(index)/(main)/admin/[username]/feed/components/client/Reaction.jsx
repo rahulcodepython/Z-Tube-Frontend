@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { AiOutlineLike } from '@/data/icons/icons'
 import { Data } from '@/data/data/data';
 
-const ReactionButton = ({ type }) => {
+const Reaction = ({ type }) => {
     const [reaction, setReaction] = React.useState(null)
 
     return (
@@ -39,4 +39,4 @@ const ReactionButton = ({ type }) => {
     )
 }
 
-export default ReactionButton
+export default Reaction

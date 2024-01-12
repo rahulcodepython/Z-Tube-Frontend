@@ -5,10 +5,13 @@ import { Context } from '@/context/Context'
 import { Decrypt } from '@/functions/Decrypt'
 import { Encrypt } from '@/functions/Encrypt'
 import Loader from './components/server/Loader'
+import { usePathname } from 'next/navigation'
 
 const IndexLayout = ({ children }) => {
     const [loading, setLoading] = React.useState(true)
     const { isAuthenticated, setIsAuthenticated, isAccessToken, setIsAccessToken, accessToken, setAccessToken, isRefreshToken, setIsRefreshToken, refreshToken, setRefreshToken, isUserData, setIsUserData, userData, setUserData } = React.useContext(Context)
+
+    const pathname = usePathname()
 
     React.useEffect(() => {
         const setAuthUserFalse = async () => {
@@ -109,7 +112,7 @@ const IndexLayout = ({ children }) => {
             setLoading(pre => false);
         }
 
-        Handler();
+        Handler(pathname);
     }, [])
 
     return loading ? <Loader /> : children

@@ -44,19 +44,19 @@ const RegisterForm = () => {
                     <div className='flex flex-col gap-4'>
                         <div className='flex flex-col gap-2'>
                             <Label htmlFor="first_name" className="uppercase text-gray-600 text-xs">First Name</Label>
-                            <Input type="text" name="first_name" value={values.first_name} onChange={handleChange} placeholder="Enter your first name" id="first_name" className="w-full p-6 rounded-lg focus:outline-none" autoFocus autoComplete="first_name" required />
+                            <Input type="text" name="first_name" value={values.first_name} onChange={handleChange} placeholder="Enter your first name" id="first_name" className="w-full focus-visible:ring-0" autoFocus autoComplete="first_name" required />
                         </div>
                         <div className='flex flex-col gap-2'>
                             <Label htmlFor="last_name" className="uppercase text-gray-600 text-xs">Last Name</Label>
-                            <Input type="text" name="last_name" value={values.last_name} onChange={handleChange} placeholder="Enter your last name" id="last_name" className="w-full p-6 rounded-lg focus:outline-none" autoFocus autoComplete="last_name" required />
+                            <Input type="text" name="last_name" value={values.last_name} onChange={handleChange} placeholder="Enter your last name" id="last_name" className="w-full focus-visible:ring-0" autoFocus autoComplete="last_name" required />
                         </div>
                         <div className='flex flex-col gap-2'>
                             <Label htmlFor="email" className="uppercase text-gray-600 text-xs">Email</Label>
-                            <Input type="email" name="email" value={values.email} onChange={handleChange} placeholder="Enter your email" id="email" className="w-full p-6 rounded-lg focus:outline-none" autoFocus autoComplete="email" required />
+                            <Input type="email" name="email" value={values.email} onChange={handleChange} placeholder="Enter your email" id="email" className="w-full focus-visible:ring-0" autoFocus autoComplete="email" required />
                         </div>
                         <div className='flex flex-col gap-2'>
                             <Label htmlFor="password" className="uppercase text-gray-600 text-xs">Password</Label>
-                            <Input type="password" name="password" value={values.password} onChange={handleChange} placeholder="Choose a password" id="password" className="w-full p-6 rounded-lg focus:outline-none" autoFocus autoComplete="password" required />
+                            <Input type="password" name="password" value={values.password} onChange={handleChange} placeholder="Choose a password" id="password" className="w-full focus-visible:ring-0" autoFocus autoComplete="password" required />
                         </div>
                         <div className="text-right">
                             <a href="#" className="text-sm font-semibold text-gray-700 hover:text-gray-500 focus:text-gray-500">

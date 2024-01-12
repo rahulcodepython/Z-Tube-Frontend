@@ -8,10 +8,10 @@ import {
 } from "@/components/ui/menubar"
 import { BsThreeDots } from '@/data/icons/icons'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import ReactionButton from './ReactionButton';
+import ReactionButton from '../client/Reaction';
 import ReplyModal from './ReplyModal';
-import ReactionModal from './ReactionModal';
 import Image from 'next/image';
+import Reaction from '../client/Reaction';
 
 const FeedComment = ({ index }) => {
     return (
@@ -60,7 +60,7 @@ const FeedComment = ({ index }) => {
                 </MenubarMenu>
             </Menubar>
             <div className='absolute bottom-2 right-8'>
-                <ReactionModal />
+                <Reaction />
             </div>
         </div>
     )

@@ -14,13 +14,10 @@ import Sidebar from "./Sidebar";
 import ToltipButton from "@/app/(index)/components/server/ToltipButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 const Navbar = () => {
     const [toggleNavbar, setToggleNavbar] = React.useState(false)
-    const [isUser, setIsUser] = React.useState(false)
-
-    const pathname = usePathname()
 
     const { isAuthenticated, isUserData, userData } = React.useContext(Context)
 
@@ -29,10 +26,6 @@ const Navbar = () => {
             document.documentElement.scrollTop !== 0 ? setToggleNavbar(pre => true) : setToggleNavbar(pre => false);
         });
     }, [])
-
-    React.useEffect(() => {
-        isAuthenticated && isUserData ? setIsUser(pre => true) : setIsUser(pre => false)
-    }, [pathname])
 
 
     return (
@@ -52,10 +45,10 @@ const Navbar = () => {
                 <ToltipButton title={<BiBell />} desc={`Notifications`} />
                 <ThemeToggle />
                 {
-                    isUser ?
+                    isAuthenticated && isUserData ?
                         <Link href={`/admin/${encodeURIComponent(userData?.username)}`}>
-                            <Avatar>
-                                <AvatarImage src={userData.image ? userData.image : '/image/user.png'} width={50} height={20} alt='...' />
+                            <Avatar className="w-8 h-8">
+                                <Image src={userData.image ? userData.image : '/image/user.png'} width={32} height={32} alt='...' />
                                 <AvatarFallback>User</AvatarFallback>
                             </Avatar>
                         </Link> :
