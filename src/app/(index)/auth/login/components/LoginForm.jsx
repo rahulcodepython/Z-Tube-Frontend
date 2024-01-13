@@ -2,14 +2,17 @@
 import React from 'react'
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { Encrypt } from '@/functions/Encrypt';
 import { useRouter } from 'next/navigation';
 import { Formik, Form } from 'formik';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { ValidateUser } from '@/utils';
+import { Context } from '@/context/Context';
 
 const LoginForm = () => {
+    const { setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken } = React.useContext(Context)
+
     const router = useRouter();
 
     return (
@@ -20,15 +23,12 @@ const LoginForm = () => {
             onSubmit={(values) => {
                 const HandleTostify = new Promise((resolve, rejected) => {
                     axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/create/`, values)
-                        .then((response) => {
-                            setTimeout(() => {
-                                router.push("/")
-                            }, 3000);
-                            localStorage.setItem('refresh', Encrypt(response.data.refresh, process.env.ENCRYPTION_KEY));
-                            sessionStorage.setItem('access', Encrypt(response.data.access, process.env.ENCRYPTION_KEY));
+                        .then(async response => {
+                            await ValidateUser(response.data.access, response.data.refresh, setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken)
+                            router.push("/")
                             resolve();
                         })
-                        .catch((error) => {
+                        .catch(error => {
                             rejected();
                         });
                 });

@@ -8,7 +8,6 @@ import Link from 'next/link'
 import {
     Avatar,
     AvatarFallback,
-    AvatarImage,
 } from "@/components/ui/avatar"
 import Sidebar from "./Sidebar";
 import ToltipButton from "@/app/(index)/components/server/ToltipButton";

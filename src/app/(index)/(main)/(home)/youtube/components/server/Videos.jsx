@@ -3,7 +3,7 @@ import VideosMenu from '../client/VideosMenu'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import TimeParser from '@/functions/TimeParser'
+import TimeParser from '@/utils/index'
 
 const Videos = ({ item }) => {
     return (

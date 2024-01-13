@@ -2,7 +2,7 @@
 import React from 'react'
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { Encrypt } from '@/functions/Encrypt';
+import { Encrypt } from '@/utils/index';
 import { Formik, Form } from 'formik';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';

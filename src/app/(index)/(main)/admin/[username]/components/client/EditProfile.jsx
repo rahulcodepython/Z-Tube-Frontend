@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { analytics } from '@/lib/firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import ImageUploader from '@/app/(index)/(main)/components/server/ImageUploader';
-import { Encrypt } from '@/functions/Encrypt';
+import { Encrypt } from '@/utils/index';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
