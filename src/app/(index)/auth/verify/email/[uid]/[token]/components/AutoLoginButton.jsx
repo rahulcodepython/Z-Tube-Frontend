@@ -2,8 +2,6 @@
 import { Button } from '@/components/ui/button'
 import { Context } from '@/context/Context'
 import { AutoLoginUser, Decrypt } from '@/utils/index'
-// import { Encrypt } from '@/utils/index'
-// import axios from 'axios'
 import Link from 'next/link'
 import React from 'react'
 
@@ -14,25 +12,6 @@ const AutoLoginButton = () => {
     const { setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken, setIsUserData, setUserData } = React.useContext(Context)
 
     React.useEffect(() => {
-        // const fetchTokens = async () => {
-        //     const values = {
-        //         "email": `${localStorage.getItem("email")}`,
-        //         "password": `${Decrypt(localStorage.getItem("password"), process.env.ENCRYPTION_KEY)}`
-        //     }
-        //     await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/create/`, values)
-        //         .then((response) => {
-        //             localStorage.setItem('refresh', Encrypt(response.data.refresh, process.env.ENCRYPTION_KEY));
-        //             sessionStorage.setItem('access', Encrypt(response.data.access, process.env.ENCRYPTION_KEY));
-        //             setIsValidated(pre => true)
-        //             localStorage.removeItem('email')
-        //             localStorage.removeItem('password')
-        //         })
-        //         .catch((error) => {
-        //             setIsValidated(pre => false)
-        //         });
-
-        // }
-
         const handler = async () => {
             const email = localStorage.getItem("email") || null;
             const password = Decrypt(localStorage.getItem("password"), process.env.ENCRYPTION_KEY) || null;
