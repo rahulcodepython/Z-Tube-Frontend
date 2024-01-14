@@ -1,5 +1,4 @@
 "use client"
-import { Button } from '@/components/ui/button';
 import GoogleAuthButton from '../components/client/GoogleAuthButton';
 import Link from 'next/link';
 import { FcGoogle } from '@/data/icons/icons';
