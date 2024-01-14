@@ -10,14 +10,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Image from 'next/image'
 import { Data } from '@/data/data/data'
 
-const ReactionModal = () => {
+const ReactionModal = ({ like }) => {
     return (
         <Dialog>
             <DialogTrigger>
                 <div className='flex items-center justify-center gap-1'>
                     <Image src={'/svg/like.svg'} width={15} height={15} />
                     <Image src={'/svg/heart.svg'} width={15} height={15} className='-ml-2' />
-                    <span className='text-sm'>2.3k</span>
+                    <span className='text-sm'>{like}</span>
                 </div>
             </DialogTrigger>
             <DialogContent className="max-w-2xl w-[672px]">

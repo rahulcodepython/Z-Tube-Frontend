@@ -22,8 +22,9 @@ import Reaction from '../client/Reaction'
 import Comment from './Comment'
 import Share from './Share'
 import ReactionModal from './ReactionModal'
+import { DateTimeParser } from '@/utils'
 
-const PostCard = () => {
+const PostCard = ({ post }) => {
     return (
         <Card>
             <CardHeader className="px-2 py-3">
@@ -33,7 +34,7 @@ const PostCard = () => {
                             <Image src={'/image/user.png'} width={36} height={36} className="h-9 w-9 rounded-full" />
                             <div className="leading-3">
                                 <div className='text-sm leading-3'>Rahul Das</div>
-                                <div className='text-xs'>21 December 2023 at 17:26</div>
+                                <div className='text-xs'>{DateTimeParser(post.createdAt)}</div>
                             </div>
                         </div>
                         <Menubar className="border-none p-0">
@@ -54,23 +55,42 @@ const PostCard = () => {
                             </MenubarMenu>
                         </Menubar>
                     </div>
-                    <div className='text-sm'>This is the caption for it</div>
+                    <div className='text-sm'>
+                        {post.caption}
+                    </div>
+                    <div className='text-xs flex items-center gap-2'>
+                        {
+                            post.tags.map((item, index) => {
+                                <span key={index}>#{item}</span>
+                            })
+                        }
+                    </div>
                 </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
                 <AspectRatio ratio={1 / 1} className='flex items-center justify-center'>
-                    <Image src="/image/image.png" width={250} height={250} alt="Image" className="" />
+                    {
+                        post.media.map((item, index) => {
+                            return JSON.parse(item).type.includes("image/") ? <Image src={JSON.parse(item).url} width={250} height={250} alt="Image" style={{
+                                "width": "auto",
+                                "height": "auto"
+                            }} key={index} /> : null
+                        })
+                    }
                 </AspectRatio>
             </CardContent>
             <CardFooter className="px-2 pt-1 pb-0 flex flex-col">
                 <div className='flex items-center justify-between w-full'>
-                    <ReactionModal />
+                    <ReactionModal like={post.like} />
                     <div className='flex items-center justify-center gap-2 text-xs'>
                         <span>
-                            2k Comments
+                            {post.views} Views
                         </span>
                         <span>
-                            2k Shares
+                            {post.commentNo} Comments
+                        </span>
+                        <span>
+                            {post.share} Shares
                         </span>
                     </div>
                 </div>

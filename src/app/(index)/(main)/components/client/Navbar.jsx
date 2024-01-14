@@ -18,7 +18,7 @@ import Image from "next/image";
 const Navbar = () => {
     const [toggleNavbar, setToggleNavbar] = React.useState(false)
 
-    const { isAuthenticated, isUserData, userData } = React.useContext(Context)
+    const { isAuthenticated, accessToken, isUserData, userData } = React.useContext(Context)
 
     React.useEffect(() => {
         window.addEventListener("scroll", () => {

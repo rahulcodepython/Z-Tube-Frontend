@@ -20,10 +20,12 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { analytics } from '@/lib/firebase/config';
 import axios from 'axios';
 import { Context } from '@/context/Context';
+import { ReloadIcon } from "@radix-ui/react-icons"
 
 const CreateFeed = ({ setIsOpen }) => {
     const { accessToken } = React.useContext(Context)
 
+    const [uploading, setUploading] = React.useState(false)
     const [caption, setCaption] = React.useState('')
     const [visibility, setvisibility] = React.useState({
         type: 'public',
@@ -56,6 +58,8 @@ const CreateFeed = ({ setIsOpen }) => {
 
     const handleSubmit = async () => {
         if (media.length > 0) {
+            setUploading(pre => true)
+
             const option = {
                 headers: {
                     Authorization: `JWT ${accessToken}`,
@@ -80,15 +84,9 @@ const CreateFeed = ({ setIsOpen }) => {
                     media: mediaURL,
                 }, option)
                     .then(response => {
-                        console.log({
-                            caption: caption,
-                            tags: tags,
-                            visibility: visibility,
-                            media: mediaURL,
-                        })
                         resolve();
                         setIsOpen(pre => false)
-                        console.log(response);
+                        setUploading(pre => false)
                     })
                     .catch(error => {
                         rejected()
@@ -171,9 +169,15 @@ const CreateFeed = ({ setIsOpen }) => {
                     <MediaUploader media={media} />
                 </div>
             </div>
-            <Button type='submit' onClick={handleSubmit}>
-                Upload
-            </Button>
+            {
+                uploading ? <Button disabled>
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait
+                </Button>
+                    : <Button type='submit' onClick={handleSubmit}>
+                        Upload
+                    </Button>
+            }
         </form>
     );
 };

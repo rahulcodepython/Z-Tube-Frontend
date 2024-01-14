@@ -16,6 +16,19 @@ export const Encrypt = (token, key) => {
     return encryptedToken;
 }
 
+export const DateTimeParser = (strdate) => {
+    const formattedDate = new Date(strdate).toLocaleString('en-US', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+        timeZone: 'UTC'
+    });
+    return formattedDate
+}
+
 export const TimeParser = (time) => {
     const hours = Math.floor(time / 3600);
     const minutes = Math.floor((time % 3600) / 60);
@@ -117,4 +130,16 @@ export const AutoLoginUser = async (email, password, setIsValidated, setIsAuthen
             await LogoutUser(setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setIsUserData, setAccessToken, setRefreshToken, setUserData)
             setIsValidated(pre => false)
         });
+}
+
+export const FetchFeedPost = async (accessToken, setPosts) => {
+    const options = {
+        headers: {
+            Authorization: `JWT ${accessToken}`
+        }
+    };
+
+    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/feed/posts/`, options)
+        .then(response => setPosts(response.data))
+        .catch(error => { });
 }
