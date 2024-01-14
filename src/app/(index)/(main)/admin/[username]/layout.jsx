@@ -7,9 +7,9 @@ import {
 } from "@/components/ui/menubar"
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import axios from 'axios'
 import { Context } from '@/context/Context'
 import ProfileLoadingSkeleton from './components/server/ProfileLoadingSkeleton'
+import { FetchProfileData } from '@/utils'
 
 const UsernameLayout = ({ children, params }) => {
     const [loading, setLoading] = React.useState(true)
@@ -19,46 +19,12 @@ const UsernameLayout = ({ children, params }) => {
     const { isAuthenticated, accessToken, isProfileData, setIsProfileData, profileData, setProfileData, userData } = React.useContext(Context)
 
     React.useEffect(() => {
-        const FetchProfileData = async () => {
-            if (isAuthenticated && decodeURIComponent(params.username) === userData?.username) {
-                setSelf(pre => true);
-                if (isProfileData) {
-                    setProfile(pre => profileData)
-                }
-                else {
-                    const option = {
-                        headers: {
-                            Authorization: `JWT ${accessToken}`
-                        },
-                    }
-
-                    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/`, option)
-                        .then(response => {
-                            setIsProfileData(pre => true)
-                            setProfileData(pre => response.data)
-                            setProfile(pre => response.data)
-                        })
-                }
-            }
-            else {
-                const option = isAuthenticated ? {
-                    headers: {
-                        Authorization: `JWT ${accessToken}`
-                    },
-                } : {}
-
-                await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/${params.username}/`, option)
-                    .then(response => {
-                        setProfile(pre => response.data)
-                    })
-                    .catch(error => {
-                        setProfile(pre => null)
-                    })
-            }
+        const handler = async () => {
+            await FetchProfileData(isAuthenticated, params, userData, setSelf, isProfileData, setProfile, profileData, accessToken, setIsProfileData, setProfileData);
             setLoading(pre => false)
         }
 
-        FetchProfileData();
+        handler();
     }, [])
 
     return (

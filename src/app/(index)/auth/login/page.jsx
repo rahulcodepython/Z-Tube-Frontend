@@ -3,13 +3,11 @@ import { Button } from '@/components/ui/button';
 import GoogleAuthButton from '../components/client/GoogleAuthButton';
 import Link from 'next/link';
 import { FcGoogle } from '@/data/icons/icons';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { Formik, Form } from 'formik';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { ValidateUser } from '@/utils';
+import { Login } from '@/utils';
 import { Context } from '@/context/Context';
 import React from 'react';
 
@@ -28,28 +26,7 @@ const Page = () => {
                 email: '',
                 password: ''
             }}
-                onSubmit={(values) => {
-                    const HandleTostify = new Promise((resolve, rejected) => {
-                        axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/create/`, values)
-                            .then(async response => {
-                                await ValidateUser(response.data.access, response.data.refresh, setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken)
-                                router.push("/")
-                                resolve();
-                            })
-                            .catch(error => {
-                                rejected();
-                            });
-                    });
-
-                    toast.promise(
-                        HandleTostify,
-                        {
-                            pending: 'Your request is on process.',
-                            success: 'Your are logged in.',
-                            error: 'There is some issue, Try again.'
-                        }
-                    )
-                }}>
+                onSubmit={async values => await Login(values, router, setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken)}>
                 {({ values, handleChange, handleSubmit }) => (
                     <Form className="flex flex-col gap-6">
                         <div className='flex flex-col gap-4'>

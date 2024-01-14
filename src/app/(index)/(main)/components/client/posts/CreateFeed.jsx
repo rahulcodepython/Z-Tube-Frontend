@@ -15,12 +15,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { toast } from 'react-toastify';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { analytics } from '@/lib/firebase/config';
-import axios from 'axios';
 import { Context } from '@/context/Context';
 import { ReloadIcon } from "@radix-ui/react-icons"
+import { AddTagsCreateFeed, CreateFeedPost, RemoveTagsCreateFeed } from '@/utils';
 
 const CreateFeed = ({ setIsOpen }) => {
     const { accessToken } = React.useContext(Context)
@@ -34,79 +31,6 @@ const CreateFeed = ({ setIsOpen }) => {
     const [tagsInput, setTagsInput] = React.useState('')
     const [tags, setTags] = React.useState([])
     const [media, setMedia] = React.useState([])
-
-    const addTags = () => {
-        if (tagsInput.trim().length > 0) {
-            if (!tags.includes(tagsInput)) {
-                setTags(pre => [...pre, tagsInput])
-            }
-        }
-        setTagsInput(pre => '')
-    }
-
-    const removeTags = (tag) => {
-        setTags(pre => pre.filter(t => t !== tag))
-    }
-
-    const uploadMediaFiles = async (item) => {
-        let url;
-        const fileref = ref(analytics, `Feed/${item.name}`);
-        const response = await uploadBytes(fileref, item);
-        url = await getDownloadURL(response.ref);
-        return url;
-    };
-
-    const handleSubmit = async () => {
-        if (media.length > 0) {
-            setUploading(pre => true)
-
-            const option = {
-                headers: {
-                    Authorization: `JWT ${accessToken}`,
-                }
-            }
-
-            const HandleTostify = new Promise(async (resolve, rejected) => {
-                let mediaURL = [];
-                await Promise.all(media.map(async (item) => {
-                    if (item.type.includes('image/') || item.type.includes('video/')) {
-                        const url = await uploadMediaFiles(item);
-                        mediaURL.push(JSON.stringify({
-                            type: item.type,
-                            url: url
-                        }));
-                    }
-                }));
-                axios.post(`${process.env.BACKEND_DOMAIN_NAME}/feed/createpost/`, {
-                    caption: caption,
-                    tags: tags,
-                    visibility: visibility,
-                    media: mediaURL,
-                }, option)
-                    .then(response => {
-                        resolve();
-                        setIsOpen(pre => false)
-                        setUploading(pre => false)
-                    })
-                    .catch(error => {
-                        rejected()
-                        setIsOpen(pre => false)
-                    })
-            })
-
-            toast.promise(
-                HandleTostify,
-                {
-                    pending: 'Your request is on process.',
-                    success: 'You post is uploaded.',
-                    error: 'There is some issue, Try again.'
-                }
-            )
-        }
-        else {
-            toast.warn("You can not upload without any media file.")
-        }
-    }
 
     return (
         <form onKeyDown={e => {
@@ -148,14 +72,14 @@ const CreateFeed = ({ setIsOpen }) => {
                     <Label htmlFor="tags" className="uppercase text-gray-600 text-xs">Tags</Label>
                     <Input type="text" placeholder="Enter a tags"
                         className="focus:ring-0 focus-visible:ring-0"
-                        disabled={tags.length >= 3 ? true : false} value={tagsInput} onChange={e => setTagsInput(pre => e.target.value)} onKeyUp={e => e.key === 'Enter' ? addTags() : null} />
+                        disabled={tags.length >= 3 ? true : false} value={tagsInput} onChange={e => setTagsInput(pre => e.target.value)} onKeyUp={e => e.key === 'Enter' ? AddTagsCreateFeed(tagsInput, setTagsInput, tags, setTags) : null} />
                     {
                         tags.length > 0 ? <div className='flex items-center gap-2 my-2'>
                             {
                                 tags.map((tag, index) => (
                                     <div key={index} className='flex items-center justify-center gap-2 bg-gray-200 rounded-full pl-4 pr-2 py-2 text-xs font-semibold text-black'>
                                         #{tag}
-                                        <span className='cursor-pointer rounded-full bg-gray-300 p-1' onClick={() => removeTags(tag)}>
+                                        <span className='cursor-pointer rounded-full bg-gray-300 p-1' onClick={() => RemoveTagsCreateFeed(tag, setTags)}>
                                             <AiOutlineClose />
                                         </span>
                                     </div>
@@ -174,7 +98,7 @@ const CreateFeed = ({ setIsOpen }) => {
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                     Please wait
                 </Button>
-                    : <Button type='submit' onClick={handleSubmit}>
+                    : <Button type='submit' onClick={async () => await CreateFeedPost(media, setUploading, accessToken, caption, tags, visibility, setIsOpen)}>
                         Upload
                     </Button>
             }

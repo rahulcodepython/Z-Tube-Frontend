@@ -3,9 +3,7 @@ import { Button } from '@/components/ui/button';
 import GoogleAuthButton from '../components/client/GoogleAuthButton';
 import Link from 'next/link';
 import { FcGoogle } from '@/data/icons/icons';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { Encrypt } from '@/utils/index';
+import { Register } from '@/utils/index';
 import { Formik, Form } from 'formik';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -26,28 +24,7 @@ const Page = () => {
                     email: '',
                     password: '',
                 }}
-                onSubmit={values => {
-                    const HandleTostify = new Promise((resolve, rejected) => {
-                        axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/dj/users/`, values)
-                            .then((response) => {
-                                localStorage.setItem("email", values.email)
-                                localStorage.setItem("password", Encrypt(values.password, process.env.ENCRYPTION_KEY))
-                                resolve();
-                            })
-                            .catch((error) => {
-                                rejected();
-                            });
-                    });
-
-                    toast.promise(
-                        HandleTostify,
-                        {
-                            pending: 'Your request is on process.',
-                            success: 'Your request is accepted.',
-                            error: 'Your request is denied.'
-                        }
-                    )
-                }}>
+                onSubmit={async values => await Register(values)}>
                 {({ values, handleChange, handleSubmit }) => (
                     <Form className="flex flex-col gap-6">
                         <div className='flex flex-col gap-4'>

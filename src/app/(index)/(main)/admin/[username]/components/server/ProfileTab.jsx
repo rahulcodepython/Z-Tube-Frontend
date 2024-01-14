@@ -2,43 +2,15 @@ import React from 'react'
 import Image from 'next/image'
 import { BiSolidLock, BsLink, MdVerified, BiSolidLockOpen, MdAddLink } from '@/data/icons/icons'
 import EditProfile from '../client/EditProfile'
-import axios from 'axios'
 import { Button } from '@/components/ui/button'
-import { toast } from 'react-toastify';
 import {
     Card,
     CardContent,
     CardHeader
 } from "@/components/ui/card"
+import { ConnectPeople, DisconnectPeople } from '@/utils'
 
 const ProfileTab = ({ self, profile, setProfile, isAuthenticated }) => {
-    const ConnectPeople = async () => {
-        if (isAuthenticated) {
-            const option = {
-                headers: {
-                    Authorization: `JWT ${accessToken}`
-                },
-            }
-
-            await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/connect/${username}/`, option)
-                .then(response => setProfile({ ...profile, isFriend: true }))
-        }
-        else {
-            toast.warn("Please Login first to connect people.")
-        }
-    }
-
-    const DisconnectPeople = async () => {
-        const option = {
-            headers: {
-                Authorization: `JWT ${accessToken}`
-            },
-        }
-
-        await axios.delete(`${process.env.BACKEND_DOMAIN_NAME}/auth/connect/${username}/`, option)
-            .then(response => setProfile({ ...profile, isFriend: false }))
-    }
-
     return (
         <Card className="h-[457.66px] rounded-lg shadow-none divide-y">
             <CardHeader className='h-[297.66px] p-0'>
@@ -96,12 +68,12 @@ const ProfileTab = ({ self, profile, setProfile, isAuthenticated }) => {
                 <div className='absolute bottom-5 right-4 flex items-center justify-end gap-4'>
                     {self ? <EditProfile setProfile={setProfile} /> :
                         isAuthenticated && profile?.isFriend ?
-                            <Button className='flex items-center gap-2' onClick={DisconnectPeople}>
+                            <Button className='flex items-center gap-2' onClick={async () => await DisconnectPeople(isAuthenticated, accessToken, username, setProfile)}>
                                 <BsLink />
                                 <span>
                                     Disconnect
                                 </span>
-                            </Button> : <Button className='flex items-center gap-2' onClick={ConnectPeople}>
+                            </Button> : <Button className='flex items-center gap-2' onClick={async () => await ConnectPeople(isAuthenticated, accessToken, username, setProfile)}>
                                 <MdAddLink />
                                 <span>
                                     Connect
