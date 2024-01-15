@@ -1,5 +1,4 @@
 "use client"
-import ToltipButton from "@/app/(index)/components/server/ToltipButton"
 import {
     Dialog,
     DialogContent,
@@ -18,6 +17,12 @@ import CreateFeed from "./CreateFeed"
 import { Context } from '@/context/Context';
 import React from "react"
 import { toast } from 'react-toastify';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const CreatePost = () => {
     const [isOpen, setIsOpen] = React.useState(false)
@@ -33,7 +38,18 @@ const CreatePost = () => {
         <Dialog open={isOpen} onOpenChange={setIsOpen} modal={false}>
             <DialogTrigger asChild>
                 <p onClick={() => { !isAccessToken && !isAuthenticated ? toast.warn("You re not signed in.") : null }}>
-                    <ToltipButton title={<HiOutlineViewGridAdd />} desc={`Create Post`} />
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <span className="text-xl cursor-pointer">
+                                    <HiOutlineViewGridAdd />
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Create Post
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </p>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">

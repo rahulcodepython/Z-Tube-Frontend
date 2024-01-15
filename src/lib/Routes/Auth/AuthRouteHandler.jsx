@@ -27,7 +27,9 @@ const AuthRouteHandler = ({ children }) => {
         );
 
         const Handler = () => {
-            isAuthenticated ? AuthenticatedRouteMatcher() ? null : router.push("/") : UnauthenticatedRouteMatcher() ? null : router.push("/")
+            isAuthenticated ?
+                AuthenticatedRouteMatcher() ? null : router.push("/")
+                : UnauthenticatedRouteMatcher() ? null : router.push("/")
             setLoading(pre => false)
         }
 

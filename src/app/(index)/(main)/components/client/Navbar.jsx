@@ -5,15 +5,17 @@ import CreatePost from "./CreatePost";
 import { ThemeToggle } from "./ThemeToggle";
 import { Context } from '@/context/Context'
 import Link from 'next/link'
-import {
-    Avatar,
-    AvatarFallback,
-} from "@/components/ui/avatar"
+import { Avatar } from "@/components/ui/avatar"
 import Sidebar from "./Sidebar";
-import ToltipButton from "@/app/(index)/components/server/ToltipButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const Navbar = () => {
     const [toggleNavbar, setToggleNavbar] = React.useState(false)
@@ -41,14 +43,24 @@ const Navbar = () => {
             </div>
             <div className="flex gap-4 items-center">
                 <CreatePost />
-                <ToltipButton title={<BiBell />} desc={`Notifications`} />
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="text-xl cursor-pointer">
+                                <BiBell />
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            Notifications
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
                 <ThemeToggle />
                 {
                     isAuthenticated && isUserData ?
                         <Link href={`/admin/${encodeURIComponent(userData?.username)}`}>
                             <Avatar className="w-8 h-8">
                                 <Image src={userData.image ? userData.image : '/image/user.png'} width={32} height={32} alt='...' />
-                                <AvatarFallback>User</AvatarFallback>
                             </Avatar>
                         </Link> :
                         <Link href={'/auth/login'}>
