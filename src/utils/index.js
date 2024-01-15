@@ -133,7 +133,7 @@ export const AuthenticateUser = async (access, refresh, user_data, setIsAuthenti
     setIsRefreshToken(pre => true);
     setRefreshToken(pre => refresh);
     setIsUserData(pre => true);
-    setUserData(pre => user_data)
+    setUserData(pre => JSON.parse(user_data))
 }
 
 export const ValidateUser = async (access, refresh, setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken) => {
@@ -328,7 +328,7 @@ export const DisconnectPeople = async (isAuthenticated, accessToken, username, s
     }
 }
 
-export const UpdateProfile = async (isAuthenticated, isAccessToken, accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, setIsProfileData, setProfileData, setIsUserData, setUserData, setProfile, router, onModalClose, setIsUpdating) => {
+export const UpdateProfile = async (isAuthenticated, isAccessToken, accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, formData, setIsProfileData, setProfileData, setIsUserData, setUserData, setProfile, router, onModalClose, setIsUpdating) => {
     if (isAuthenticated && isAccessToken) {
         setIsUpdating(pre => true)
 

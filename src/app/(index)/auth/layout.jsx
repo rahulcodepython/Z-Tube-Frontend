@@ -11,7 +11,7 @@ const AuthLayout = ({ children }) => {
             <section className="flex items-center justify-center overflow-y-scroll my-5">
                 <div className='flex flex-col items-start gap-4'>
                     <Link href={'/'}>
-                        <Button className='flex items-center gap-1'>
+                        <Button>
                             <GoArrowLeft className='text-lg' />
                             Back
                         </Button>

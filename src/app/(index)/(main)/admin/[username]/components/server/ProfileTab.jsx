@@ -80,23 +80,21 @@ const ProfileTab = ({ self, profile, setProfile, isAuthenticated }) => {
                                 </span>
                             </Button>
                     }
-                    <Button>
-                        {
-                            profile?.isLocked ?
-                                <span className='flex items-center justify-center gap-2'>
-                                    <BiSolidLock />
-                                    <span>
-                                        Locked
-                                    </span>
+                    {
+                        profile?.isLocked ?
+                            <Button>
+                                <BiSolidLock />
+                                <span>
+                                    Locked
                                 </span>
-                                : <span className='flex items-center justify-center gap-2'>
-                                    <BiSolidLockOpen />
-                                    <span>
-                                        Unlocked
-                                    </span>
+                            </Button>
+                            : <Button>
+                                <BiSolidLockOpen />
+                                <span>
+                                    Unlocked
                                 </span>
-                        }
-                    </Button>
+                            </Button>
+                    }
                 </div>
 
             </CardContent>

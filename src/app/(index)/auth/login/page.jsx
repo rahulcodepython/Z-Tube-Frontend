@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import GoogleAuthButton from '../components/client/GoogleAuthButton';
 import Link from 'next/link';
-import { FcGoogle } from '@/data/icons/icons';
+import { BiSend, FcGoogle } from '@/data/icons/icons';
 import { useRouter } from 'next/navigation';
 import { Formik, Form } from 'formik';
 import { Label } from '@/components/ui/label';
@@ -45,7 +45,10 @@ const Page = () => {
                             </div>
                         </div>
                         <Button type='submit' onClick={handleSubmit}>
-                            Log In
+                            <BiSend className='text-base' />
+                            <span>
+                                Log In
+                            </span>
                         </Button>
                     </Form>
                 )}

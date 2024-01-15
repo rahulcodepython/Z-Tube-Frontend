@@ -1,7 +1,7 @@
 "use client"
 import React from 'react';
-import { AiOutlineClose } from '@/data/icons/icons';
-import MediaUploader from '../MediaUploader';
+import { AiOutlineClose, BiSend } from '@/data/icons/icons';
+import MediaUploader from './MediaUploader';
 import { Button } from '@/components/ui/button';
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from '@/components/ui/label';
@@ -99,7 +99,10 @@ const CreateFeed = ({ setIsOpen }) => {
                     Please wait
                 </Button>
                     : <Button type='submit' onClick={async () => await CreateFeedPost(media, setUploading, accessToken, caption, tags, visibility, setIsOpen)}>
-                        Upload
+                        <BiSend className='text-base' />
+                        <span>
+                            Upload
+                        </span>
                     </Button>
             }
         </form>

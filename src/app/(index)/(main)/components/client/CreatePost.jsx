@@ -14,7 +14,7 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 import { HiOutlineViewGridAdd } from "@/data/icons/icons"
-import CreateFeed from "./posts/CreateFeed"
+import CreateFeed from "./CreateFeed"
 import { Context } from '@/context/Context';
 import React from "react"
 import { toast } from 'react-toastify';

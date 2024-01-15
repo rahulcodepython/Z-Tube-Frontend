@@ -1,7 +1,7 @@
 "use client"
 import GoogleAuthButton from '../components/client/GoogleAuthButton';
 import Link from 'next/link';
-import { FcGoogle } from '@/data/icons/icons';
+import { BiSend, FcGoogle } from '@/data/icons/icons';
 import { Register } from '@/utils/index';
 import { Formik, Form } from 'formik';
 import { Button } from '@/components/ui/button';
@@ -50,7 +50,10 @@ const Page = () => {
                             </div>
                         </div>
                         <Button type="submit" onClick={handleSubmit}>
-                            Register
+                            <BiSend className='text-base' />
+                            <span>
+                                Register
+                            </span>
                         </Button>
                     </Form>
                 )}

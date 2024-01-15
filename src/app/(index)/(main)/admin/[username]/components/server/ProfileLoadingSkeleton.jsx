@@ -32,7 +32,7 @@ const ProfileLoadingSkeleton = () => {
                     </div>
                 </CardContent>
             </Card>
-            <Menubar className="p-0 mt-2 h-auto dark:bg-darkModeBG border-none shadow-none space-x-2">
+            <Menubar className="p-0 mt-2 h-auto border-none shadow-none space-x-2">
                 <MenubarMenu>
                     <Skeleton className="h-10 w-28" />
                 </MenubarMenu>

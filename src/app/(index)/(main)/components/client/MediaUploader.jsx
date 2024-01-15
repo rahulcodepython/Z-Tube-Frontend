@@ -32,7 +32,7 @@ const MediaUploader = ({ media }) => {
                         </div> : null
                     }
                 </div>
-                    : <section className='border-dashed border-2 border-darkModeBG p-8 flex justify-center items-center w-full h-60' {...getRootProps()}>
+                    : <section className='border-dashed border-2 p-8 flex justify-center items-center w-full h-60' {...getRootProps()}>
                         <div className='flex flex-col items-center justify-center'>
                             <input type="file" id="files" name="files" accept='.jpg , .jpeg , .jfif , .pjpeg , .pjp, .gif, .png, .mp4' multiple className='hidden' {...getInputProps()} />
                             <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24"

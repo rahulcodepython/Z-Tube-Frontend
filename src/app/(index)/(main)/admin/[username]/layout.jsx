@@ -33,7 +33,7 @@ const UsernameLayout = ({ children, params }) => {
         </div> : <section className='space-y-4'>
             <div className='space-y-4'>
                 <ProfileTab self={self} profile={profile} setProfile={setProfile} isAuthenticated={isAuthenticated} />
-                <Menubar className="p-0 mt-2 h-auto dark:bg-darkModeBG border-none shadow-none space-x-2">
+                <Menubar className="p-0 mt-2 h-auto border-none shadow-none space-x-2">
                     <MenubarMenu>
                         <Link href={`/admin/${params.username}/`}>
                             <Button>Profile</Button>
