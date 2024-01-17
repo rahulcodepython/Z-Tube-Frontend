@@ -2,7 +2,6 @@
 import React from 'react'
 import { AiOutlineClose, BiSend, FaCircleCheck, FiEdit } from '@/data/icons/icons'
 import { Context } from '@/context/Context';
-import ImageUploader from '@/app/(index)/(main)/admin/[username]/components/server/ImageUploader';
 import { AddTagsEditProfile, CheckUser, OnModalCloseEditProfile, RemoveTagsEditProfile, UpdateProfile } from '@/utils/index';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,6 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { Form, Formik } from 'formik';
+import ImageUploader from '../server/ImageUploader';
 
 const EditProfile = ({ setProfile }) => {
     const { isAuthenticated, isAccessToken, accessToken, profileData, setProfileData, setIsProfileData, setIsUserData, setUserData } = React.useContext(Context)
