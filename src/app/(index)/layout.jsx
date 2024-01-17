@@ -2,7 +2,6 @@
 import React from 'react'
 import { Context } from '@/context/Context'
 import { AuthenticateUser, Decrypt, FetchUserData, LogoutUser, RevalidateAccessToken, VerifyToken } from '@/utils/index'
-import Loader from './components/server/Loader'
 import { usePathname } from 'next/navigation'
 
 const IndexLayout = ({ children }) => {
@@ -47,7 +46,7 @@ const IndexLayout = ({ children }) => {
         Handler();
     }, [pathname])
 
-    return loading ? <Loader /> : children
+    return !loading && children
 }
 
 export default IndexLayout

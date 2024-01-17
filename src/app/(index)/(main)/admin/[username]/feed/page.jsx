@@ -1,6 +1,5 @@
 "use client"
 import React from 'react'
-import PostCardSkeleton from './components/server/PostCardSkeleton'
 import PostCard from './components/server/PostCard'
 import { Context } from '@/context/Context'
 import { FetchFeedPost } from '@/utils'
@@ -20,7 +19,7 @@ const Page = () => {
 
 
     return (
-        loading ? <PostCardSkeleton /> : <div className='grid grid-cols-3 gap-4'>
+        !loading && <div className='grid grid-cols-3 gap-4'>
             {
                 posts.map((item, index) => {
                     return <PostCard key={index} post={item} />
