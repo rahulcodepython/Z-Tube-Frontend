@@ -2,7 +2,7 @@
 import React from 'react'
 import { AiOutlineClose, BiSend, FaCircleCheck, FiEdit } from '@/data/icons/icons'
 import { Context } from '@/context/Context';
-import { AddTagsEditProfile, CheckUser, OnModalCloseEditProfile, RemoveTagsEditProfile, UpdateProfile } from '@/utils/index';
+import { AddTagsEditProfile, CheckUsername, OnModalCloseEditProfile, RemoveTagsEditProfile, UpdateProfile } from '@/utils/index';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -125,7 +125,7 @@ const EditProfile = ({ setProfile }) => {
                                             <div className='w-full flex gap-2 justify-center items-center'>
                                                 <Input type="text" name="username" id="username" value={values.username} onChange={async (e) => {
                                                     handleChange(e)
-                                                    await CheckUser(e, profileData, setIsUsernameValid, formData, accessToken, setFormData)
+                                                    await CheckUsername(e, profileData, setIsUsernameValid, formData, accessToken, setFormData)
                                                 }}
                                                     className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
                                                 <FaCircleCheck className={isUsernameValid ? 'text-green-500' : 'text-red-500'} />

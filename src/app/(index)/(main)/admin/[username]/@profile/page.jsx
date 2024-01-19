@@ -24,9 +24,7 @@ const Page = ({ params }) => {
     React.useEffect(() => {
         const handler = async () => {
             await FetchProfileData(isAuthenticated, params, userData, setSelf, isProfileData, setProfile, profileData, accessToken, setIsProfileData, setProfileData);
-            setTimeout(() => {
-                setLoading(pre => false)
-            }, 5000);
+            setLoading(pre => false)
         }
 
         handler();

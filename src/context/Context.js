@@ -18,7 +18,10 @@ export const ContextProvider = ({ children }) => {
     const [isProfileData, setIsProfileData] = React.useState(false)
     const [profileData, setProfileData] = React.useState({})
 
-    return <Context.Provider value={{ isAuthenticated, setIsAuthenticated, isAccessToken, setIsAccessToken, accessToken, setAccessToken, isRefreshToken, setIsRefreshToken, refreshToken, setRefreshToken, isProfileData, setIsProfileData, profileData, setProfileData, isUserData, setIsUserData, userData, setUserData }}>
+    const [isFeedPost, setIsFeedPost] = React.useState(false)
+    const [feedPost, setFeedPost] = React.useState([])
+
+    return <Context.Provider value={{ isAuthenticated, setIsAuthenticated, isAccessToken, setIsAccessToken, accessToken, setAccessToken, isRefreshToken, setIsRefreshToken, refreshToken, setRefreshToken, isProfileData, setIsProfileData, profileData, setProfileData, isUserData, setIsUserData, userData, setUserData, isFeedPost, setIsFeedPost, feedPost, setFeedPost }}>
         {children}
     </Context.Provider>
 }

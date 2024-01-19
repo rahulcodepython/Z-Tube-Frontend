@@ -34,7 +34,7 @@ const PostCard = ({ post }) => {
                             <Image src={'/image/user.png'} width={36} height={36} className="h-9 w-9 rounded-full" />
                             <div className="leading-3">
                                 <div className='text-sm leading-3'>Rahul Das</div>
-                                <div className='text-xs'>{DateTimeParser(post.createdAt)}</div>
+                                <div className='text-xs'>{(post.createdAt)}</div>
                             </div>
                         </div>
                         <Menubar className="border-none p-0">

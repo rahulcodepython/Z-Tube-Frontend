@@ -69,17 +69,16 @@ export const OnModalCloseEditProfile = (setIsOpen, setFormData, setUserImage, pr
     setUserTags(pre => profileData.tags)
 }
 
-export const DateTimeParser = (strdate) => {
-    const formattedDate = new Date(strdate).toLocaleString('en-US', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true,
-        timeZone: 'UTC'
-    });
-    return formattedDate
+export const DateTimeParser = (timestamp) => {
+    const date = new Date(timestamp);
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const twelveHourFormat = hours % 12 || 12;
+
+    const formattedTime = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()} at ${twelveHourFormat}:${minutes < 10 ? '0' + minutes : minutes} ${ampm}`;
+    return formattedTime;
 }
 
 export const TimeParser = (time) => {
@@ -185,16 +184,25 @@ export const AutoLoginUser = async (email, password, setIsValidated, setIsAuthen
         });
 }
 
-export const FetchFeedPost = async (accessToken, setPosts) => {
-    const options = {
-        headers: {
-            Authorization: `JWT ${accessToken}`
-        }
-    };
+export const FetchFeedPost = async (accessToken, setPosts, isFeedPost, setIsFeedPost, feedPost, setFeedPost) => {
+    if (isFeedPost) {
+        setPosts(pre => feedPost);
+    }
+    else {
+        const options = {
+            headers: {
+                Authorization: `JWT ${accessToken}`
+            }
+        };
 
-    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/feed/posts/`, options)
-        .then(response => setPosts(response.data))
-        .catch(error => { });
+        await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/feed/posts/`, options)
+            .then(response => {
+                setPosts(pre => response.data)
+                setFeedPost(pre => response.data)
+                setIsFeedPost(pre => true)
+            })
+            .catch(error => { });
+    }
 }
 
 export const UploadMediaFiles = async (item, uploadFilePath) => {
@@ -231,6 +239,7 @@ export const CreateFeedPost = async (media, setUploading, accessToken, caption, 
                 tags: tags,
                 visibility: visibility,
                 media: mediaURL,
+                createdAt: DateTimeParser(Date.now())
             }, option)
                 .then(response => {
                     resolve();
@@ -382,7 +391,7 @@ export const UpdateProfile = async (isAuthenticated, isAccessToken, accessToken,
     }
 }
 
-export const CheckUser = async (e, profileData, setIsUsernameValid, formData, accessToken, setFormData) => {
+export const CheckUsername = async (e, profileData, setIsUsernameValid, formData, accessToken, setFormData) => {
     if (e.target.value === profileData?.username) {
         setIsUsernameValid(pre => true)
         delete formData?.username
