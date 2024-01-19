@@ -3,6 +3,7 @@ import React from 'react'
 import { Context } from '@/context/Context'
 import { AuthenticateUser, Decrypt, FetchUserData, LogoutUser, RevalidateAccessToken, VerifyToken } from '@/utils/index'
 import { usePathname } from 'next/navigation'
+import Loading from './loading'
 
 const IndexLayout = ({ children }) => {
     const [loading, setLoading] = React.useState(true)
@@ -46,7 +47,7 @@ const IndexLayout = ({ children }) => {
         Handler();
     }, [pathname])
 
-    return !loading && children
+    return loading ? <Loading /> : children
 }
 
 export default IndexLayout

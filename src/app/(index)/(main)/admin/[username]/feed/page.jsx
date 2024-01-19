@@ -3,6 +3,7 @@ import React from 'react'
 import PostCard from './components/server/PostCard'
 import { Context } from '@/context/Context'
 import { FetchFeedPost } from '@/utils'
+import Loading from './loading'
 
 const Page = () => {
     const [loading, setLoading] = React.useState(true)
@@ -16,10 +17,11 @@ const Page = () => {
         }
         handler();
     }, [])
+    console.log(posts);
 
 
     return (
-        !loading && <div className='grid grid-cols-3 gap-4'>
+        loading ? <Loading /> : <div className='grid grid-cols-3 gap-4'>
             {
                 posts.map((item, index) => {
                     return <PostCard key={index} post={item} />

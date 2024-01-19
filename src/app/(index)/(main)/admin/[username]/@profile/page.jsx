@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card"
 import { ConnectPeople, DisconnectPeople } from '@/utils'
 import EditProfile from './components/client/EditProfile'
+import Loading from './loading'
 
 const Page = ({ params }) => {
     const [loading, setLoading] = React.useState(true)
@@ -23,14 +24,16 @@ const Page = ({ params }) => {
     React.useEffect(() => {
         const handler = async () => {
             await FetchProfileData(isAuthenticated, params, userData, setSelf, isProfileData, setProfile, profileData, accessToken, setIsProfileData, setProfileData);
-            setLoading(pre => false)
+            setTimeout(() => {
+                setLoading(pre => false)
+            }, 5000);
         }
 
         handler();
     }, [])
 
     return (
-        !loading && <Card className="h-[457.66px] rounded-lg shadow-none divide-y">
+        loading ? <Loading /> : <Card className="h-[457.66px] rounded-lg shadow-none divide-y">
             <CardHeader className='h-[297.66px] p-0'>
                 <Image src={profile?.banner ? profile?.banner : '/image/profile-banner.png'} width={1334} height={297.66} priority={true} className='rounded-t-lg w-[1334px] h-[297.66px]' alt='...' placeholder='blur' blurDataURL="/image/profile-banner.png" style={{ "width": "auto", "height": "auto" }} />
             </CardHeader>

@@ -4,8 +4,8 @@ import Link from 'next/link'
 import React from 'react'
 import { Context } from '@/context/Context'
 import { Button } from '@/components/ui/button'
-import Loader from '../../../components/server/Loader'
 import { LogoutUser } from '@/utils'
+import Loading from './loading'
 
 const page = () => {
     const [loading, setLoading] = React.useState(true)
@@ -21,7 +21,7 @@ const page = () => {
     }, [])
 
     return (
-        loading ? <Loader /> : <div className="px-5 flex flex-col items-center justify-center gap-6">
+        loading ? <Loading /> : <div className="px-5 flex flex-col items-center justify-center gap-6">
             <Image src={'/gif/success.gif'} width={200} height={200} alt='success' className='mix-blend-multiply' />
             <div className='text-green-600 text-3xl font-extrabold'>
                 Success

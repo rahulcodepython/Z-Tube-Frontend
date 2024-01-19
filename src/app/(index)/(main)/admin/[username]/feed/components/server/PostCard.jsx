@@ -81,10 +81,10 @@ const PostCard = ({ post }) => {
             </CardContent>
             <CardFooter className="px-2 pt-1 pb-0 flex flex-col">
                 <div className='flex items-center justify-between w-full'>
-                    <ReactionModal like={post.like} />
+                    <ReactionModal like={post.likeNo} />
                     <div className='flex items-center justify-center gap-2 text-xs'>
                         <span>
-                            {post.views} Views
+                            {post.viewsNo} Views
                         </span>
                         <span>
                             {post.commentNo} Comments
