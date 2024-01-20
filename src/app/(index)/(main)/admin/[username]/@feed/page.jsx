@@ -3,24 +3,25 @@ import React from 'react'
 import PostCard from './components/server/PostCard'
 import { Context } from '@/context/Context'
 import { FetchFeedPost } from '@/utils'
+import Loading from './loading'
 
-const Page = () => {
+const Page = ({ params }) => {
     const [loading, setLoading] = React.useState(true)
     const [posts, setPosts] = React.useState([])
-    const { isAuthenticated, isAccessToken, accessToken, isFeedPost, setIsFeedPost, feedPost, setFeedPost } = React.useContext(Context)
+    const { accessToken, isFeedPost, setIsFeedPost, feedPost, setFeedPost } = React.useContext(Context)
 
     React.useEffect(() => {
         const handler = async () => {
-            isAuthenticated && isAccessToken ? await FetchFeedPost(accessToken, setPosts, isFeedPost, setIsFeedPost, feedPost, setFeedPost) : null
+            await FetchFeedPost(accessToken, setPosts, isFeedPost, setIsFeedPost, feedPost, setFeedPost, decodeURIComponent(params.username))
             setLoading(pre => false)
         }
         handler();
     }, [])
 
     return (
-        loading ? "Loading..." : <div className='grid grid-cols-3 gap-4'>
+        loading ? <Loading /> : <div className='grid grid-cols-3 gap-4'>
             {
-                isFeedPost && posts.map((item, index) => {
+                posts.map((item, index) => {
                     return <PostCard key={index} post={item} />
                 })
             }

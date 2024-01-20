@@ -16,14 +16,13 @@ import Loading from './loading'
 
 const Page = ({ params }) => {
     const [loading, setLoading] = React.useState(true)
-    const [self, setSelf] = React.useState(false)
     const [profile, setProfile] = React.useState({})
 
-    const { isAuthenticated, accessToken, isProfileData, setIsProfileData, profileData, setProfileData, userData } = React.useContext(Context)
+    const { accessToken, isProfileData, setIsProfileData, profileData, setProfileData, userData } = React.useContext(Context)
 
     React.useEffect(() => {
         const handler = async () => {
-            await FetchProfileData(isAuthenticated, params, userData, setSelf, isProfileData, setProfile, profileData, accessToken, setIsProfileData, setProfileData);
+            await FetchProfileData(params, userData, isProfileData, setProfile, profileData, accessToken, setIsProfileData, setProfileData);
             setLoading(pre => false)
         }
 
@@ -85,8 +84,8 @@ const Page = ({ params }) => {
                 </div>
 
                 <div className='absolute bottom-5 right-4 flex items-center justify-end gap-4'>
-                    {self ? <EditProfile setProfile={setProfile} /> :
-                        isAuthenticated && profile?.isFriend ?
+                    {profile.self ? <EditProfile setProfile={setProfile} /> :
+                        profile?.isFriend ?
                             <Button className='flex items-center gap-2' onClick={async () => await DisconnectPeople(isAuthenticated, accessToken, username, setProfile)}>
                                 <BsLink />
                                 <span>

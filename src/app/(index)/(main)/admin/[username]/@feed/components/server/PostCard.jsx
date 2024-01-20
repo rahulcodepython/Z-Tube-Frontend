@@ -22,7 +22,6 @@ import Reaction from '../client/Reaction'
 import Comment from './Comment'
 import Share from './Share'
 import ReactionModal from './ReactionModal'
-import { DateTimeParser } from '@/utils'
 
 const PostCard = ({ post }) => {
     return (
@@ -44,7 +43,7 @@ const PostCard = ({ post }) => {
                                 </MenubarTrigger>
                                 <MenubarContent>
                                     <MenubarItem>Save Post</MenubarItem>
-                                    <MenubarItem>Edit Post</MenubarItem>
+                                    {post.self ? <MenubarItem>Edit Post</MenubarItem> : null}
                                     <MenubarSeparator />
                                     <MenubarItem>Hide Post</MenubarItem>
                                     <MenubarItem>Hide From Someone</MenubarItem>

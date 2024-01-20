@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import ReactionButton from '../client/Reaction';
 import ReplyModal from './ReplyModal';
 import Image from 'next/image';
-import Reaction from '../client/Reaction';
+import ReactionModal from './ReactionModal';
 
 const FeedComment = ({ index }) => {
     return (
@@ -60,7 +60,7 @@ const FeedComment = ({ index }) => {
                 </MenubarMenu>
             </Menubar>
             <div className='absolute bottom-2 right-8'>
-                <Reaction />
+                <ReactionModal like={0} />
             </div>
         </div>
     )

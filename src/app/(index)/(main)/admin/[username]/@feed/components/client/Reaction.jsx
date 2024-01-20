@@ -7,7 +7,7 @@ import {
     MenubarTrigger,
 } from "@/components/ui/menubar"
 import Image from 'next/image';
-import { AiOutlineLike } from '@/data/icons/icons'
+import { AiOutlineLike, MdDoNotDisturb } from '@/data/icons/icons'
 import { Data } from '@/data/data/data';
 
 const Reaction = ({ type }) => {
@@ -21,7 +21,7 @@ const Reaction = ({ type }) => {
                         <AiOutlineLike className='text-lg' />
                         <span className='text-xs'>Like</span>
                     </div> : <div className='flex justify-center items-center gap-1 cursor-pointer'>
-                        <img src={Data.emoji[reaction].icon} width={15} height={15} />
+                        <Image src={Data.emoji[reaction].icon} width={15} height={15} />
                         <span className='text-xs'>{Data.emoji[reaction].name}</span>
                     </div>
                 }
@@ -34,6 +34,9 @@ const Reaction = ({ type }) => {
                         </MenubarItem>
                     })
                 }
+                <MenubarItem className='flex items-center cursor-pointer p-0 hover:-translate-y-2 transition-all duration-100 ease-in-out' onClick={() => { setReaction(pre => null) }}>
+                    <MdDoNotDisturb className='text-3xl' />
+                </MenubarItem>
             </MenubarContent>
         </MenubarMenu>
     )

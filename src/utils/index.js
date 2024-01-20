@@ -184,7 +184,7 @@ export const AutoLoginUser = async (email, password, setIsValidated, setIsAuthen
         });
 }
 
-export const FetchFeedPost = async (accessToken, setPosts, isFeedPost, setIsFeedPost, feedPost, setFeedPost) => {
+export const FetchFeedPost = async (accessToken, setPosts, isFeedPost, setIsFeedPost, feedPost, setFeedPost, username) => {
     if (isFeedPost) {
         setPosts(pre => feedPost);
     }
@@ -195,7 +195,7 @@ export const FetchFeedPost = async (accessToken, setPosts, isFeedPost, setIsFeed
             }
         };
 
-        await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/feed/posts/`, options)
+        await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/feed/posts/${username}/`, options)
             .then(response => {
                 setPosts(pre => response.data)
                 setFeedPost(pre => response.data)
@@ -267,36 +267,23 @@ export const CreateFeedPost = async (media, setUploading, accessToken, caption, 
     }
 }
 
-export const FetchProfileData = async (isAuthenticated, params, userData, setSelf, isProfileData, setProfile, profileData, accessToken, setIsProfileData, setProfileData) => {
-    if (isAuthenticated && decodeURIComponent(params.username) === userData?.username) {
-        setSelf(pre => true);
-        if (isProfileData) {
-            setProfile(pre => profileData)
-        }
-        else {
-            const option = {
-                headers: {
-                    Authorization: `JWT ${accessToken}`
-                },
-            }
-
-            await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/`, option)
-                .then(response => {
-                    setIsProfileData(pre => true)
-                    setProfileData(pre => response.data)
-                    setProfile(pre => response.data)
-                })
-        }
+export const FetchProfileData = async (params, userData, isProfileData, setProfile, profileData, accessToken, setIsProfileData, setProfileData) => {
+    if (decodeURIComponent(params.username) === userData?.username && isProfileData) {
+        setProfile(pre => profileData)
     }
     else {
-        const option = isAuthenticated ? {
+        const option = {
             headers: {
                 Authorization: `JWT ${accessToken}`
             },
-        } : {}
+        }
 
         await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/${params.username}/`, option)
             .then(response => {
+                if (response.data.self) {
+                    setIsProfileData(pre => true)
+                    setProfileData(pre => response.data)
+                }
                 setProfile(pre => response.data)
             })
             .catch(error => {

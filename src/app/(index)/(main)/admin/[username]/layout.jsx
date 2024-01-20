@@ -1,24 +1,26 @@
 "use client"
 import React from 'react'
-import {
-    Menubar,
-    MenubarMenu,
-} from "@/components/ui/menubar"
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRouter, useSearchParams } from 'next/navigation'
+import { Context } from '@/context/Context'
 
 const Layout = ({ children, params, profile, feed }) => {
     const [defaultTab, setDefaultTab] = React.useState(null)
     const [loading, setLoading] = React.useState(true)
 
+    const { isAuthenticated } = React.useContext(Context)
+
     const search = useSearchParams()
     const router = useRouter()
 
     React.useEffect(() => {
-        setDefaultTab(pre => search.get('tabs'))
-        setLoading(pre => false)
+        if (isAuthenticated) {
+            setDefaultTab(pre => search.get('tabs'))
+            setLoading(pre => false)
+        }
+        else {
+            router.push("/auth/login")
+        }
     }, [search.get('tabs')])
 
     return (
