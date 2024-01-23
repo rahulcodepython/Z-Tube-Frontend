@@ -14,9 +14,7 @@ import {
 } from "@/components/ui/tabs"
 import { HiOutlineViewGridAdd } from "@/data/icons/icons"
 import CreateFeed from "./CreateFeed"
-import { Context } from '@/context/Context';
 import React from "react"
-import { toast } from 'react-toastify';
 import {
     Tooltip,
     TooltipContent,
@@ -27,17 +25,10 @@ import {
 const CreatePost = () => {
     const [isOpen, setIsOpen] = React.useState(false)
 
-    const { isAuthenticated, isAccessToken } = React.useContext(Context)
-
-    React.useEffect(() => {
-        (!isAccessToken && !isAuthenticated) ? setIsOpen(pre => false) : null
-    }, [isOpen])
-
-
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen} modal={false}>
             <DialogTrigger asChild>
-                <p onClick={() => { !isAccessToken && !isAuthenticated ? toast.warn("You re not signed in.") : null }}>
+                <p>
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>

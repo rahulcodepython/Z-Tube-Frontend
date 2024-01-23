@@ -96,7 +96,7 @@ const PostCard = ({ post }) => {
                 <Separator className="mt-1" />
                 <Menubar className="w-full justify-between border-none p-0">
                     <Reaction type="post" />
-                    <Comment />
+                    <Comment post={post} />
                     <Share />
                 </Menubar>
             </CardFooter>

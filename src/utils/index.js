@@ -184,24 +184,29 @@ export const AutoLoginUser = async (email, password, setIsValidated, setIsAuthen
         });
 }
 
-export const FetchFeedPost = async (accessToken, setPosts, isFeedPost, setIsFeedPost, feedPost, setFeedPost, username) => {
+export const FetchFeedPost = async (isAccessToken, accessToken, setPosts, isFeedPost, setIsFeedPost, feedPost, setFeedPost, username) => {
     if (isFeedPost) {
         setPosts(pre => feedPost);
     }
     else {
-        const options = {
-            headers: {
-                Authorization: `JWT ${accessToken}`
-            }
-        };
+        if (isAccessToken) {
+            const options = {
+                headers: {
+                    Authorization: `JWT ${accessToken}`
+                }
+            };
 
-        await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/feed/posts/${username}/`, options)
-            .then(response => {
-                setPosts(pre => response.data)
-                setFeedPost(pre => response.data)
-                setIsFeedPost(pre => true)
-            })
-            .catch(error => { });
+            await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/feed/posts/${username}/`, options)
+                .then(response => {
+                    setPosts(pre => response.data)
+                    setFeedPost(pre => response.data)
+                    setIsFeedPost(pre => true)
+                })
+                .catch(error => { });
+        }
+        else {
+            toast.warn("Access token is not valid");
+        }
     }
 }
 
@@ -213,119 +218,120 @@ export const UploadMediaFiles = async (item, uploadFilePath) => {
     return url;
 };
 
-export const CreateFeedPost = async (media, setUploading, accessToken, caption, tags, visibility, setIsOpen) => {
-    if (media.length > 0) {
-        setUploading(pre => true)
+export const CreateFeedPost = async (media, setUploading, isAccessToken, accessToken, caption, tags, visibility, setIsOpen) => {
+    if (isAccessToken) {
+        if (media.length > 0) {
+            setUploading(pre => true)
 
-        const option = {
-            headers: {
-                Authorization: `JWT ${accessToken}`,
-            }
-        }
-
-        const HandleTostify = new Promise(async (resolve, rejected) => {
-            let mediaURL = [];
-            await Promise.all(media.map(async (item) => {
-                if (item.type.includes('image/') || item.type.includes('video/')) {
-                    const url = await UploadMediaFiles(item, `Feed/${item.name}`);
-                    mediaURL.push(JSON.stringify({
-                        type: item.type,
-                        url: url
-                    }));
+            const option = {
+                headers: {
+                    Authorization: `JWT ${accessToken}`,
                 }
-            }));
-            await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/feed/createpost/`, {
-                caption: caption,
-                tags: tags,
-                visibility: visibility,
-                media: mediaURL,
-                createdAt: DateTimeParser(Date.now())
-            }, option)
-                .then(response => {
-                    resolve();
-                    setIsOpen(pre => false)
-                    setUploading(pre => false)
-                })
-                .catch(error => {
-                    rejected()
-                    setUploading(pre => false)
-                    setIsOpen(pre => false)
-                })
-        })
-
-        toast.promise(
-            HandleTostify,
-            {
-                pending: 'Your request is on process.',
-                success: 'You post is uploaded.',
-                error: 'There is some issue, Try again.'
             }
-        )
+
+            const HandleTostify = new Promise(async (resolve, rejected) => {
+                let mediaURL = [];
+                await Promise.all(media.map(async (item) => {
+                    if (item.type.includes('image/') || item.type.includes('video/')) {
+                        const url = await UploadMediaFiles(item, `Feed/${item.name}`);
+                        mediaURL.push(JSON.stringify({
+                            type: item.type,
+                            url: url
+                        }));
+                    }
+                }));
+                await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/feed/createpost/`, {
+                    caption: caption,
+                    tags: tags,
+                    visibility: visibility,
+                    media: mediaURL,
+                    createdAt: DateTimeParser(Date.now())
+                }, option)
+                    .then(response => {
+                        resolve();
+                        setIsOpen(pre => false)
+                        setUploading(pre => false)
+                    })
+                    .catch(error => {
+                        rejected()
+                        setUploading(pre => false)
+                        setIsOpen(pre => false)
+                    })
+            })
+
+            toast.promise(
+                HandleTostify,
+                {
+                    pending: 'Your request is on process.',
+                    success: 'You post is uploaded.',
+                    error: 'There is some issue, Try again.'
+                }
+            )
+        }
+        else {
+            toast.warn("You can not upload without any media file.")
+        }
     }
     else {
-        toast.warn("You can not upload without any media file.")
+        toast.warn("Access token is not valid.");
     }
 }
 
-export const FetchProfileData = async (params, userData, isProfileData, setProfile, profileData, accessToken, setIsProfileData, setProfileData) => {
+export const FetchProfileData = async (params, userData, isProfileData, setProfile, profileData, isAccessToken, accessToken, setIsProfileData, setProfileData) => {
     if (decodeURIComponent(params.username) === userData?.username && isProfileData) {
         setProfile(pre => profileData)
     }
     else {
-        const option = {
-            headers: {
-                Authorization: `JWT ${accessToken}`
-            },
-        }
+        if (isAccessToken) {
+            const option = {
+                headers: {
+                    Authorization: `JWT ${accessToken}`
+                },
+            }
 
-        await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/${params.username}/`, option)
-            .then(response => {
-                if (response.data.self) {
-                    setIsProfileData(pre => true)
-                    setProfileData(pre => response.data)
-                }
-                setProfile(pre => response.data)
-            })
-            .catch(error => {
-                setProfile(pre => null)
-            })
+            await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/${params.username}/`, option)
+                .then(response => {
+                    if (response.data.self) {
+                        setIsProfileData(pre => true)
+                        setProfileData(pre => response.data)
+                    }
+                    setProfile(pre => response.data)
+                })
+                .catch(error => {
+                    setProfile(pre => null)
+                    toast.warn("There is some issue.")
+                })
+        }
+        else {
+            toast.warn("Access token is not valid.")
+        }
     }
 }
 
-export const ConnectPeople = async (isAuthenticated, accessToken, username, setProfile) => {
-    if (isAuthenticated) {
-        const option = {
-            headers: {
-                Authorization: `JWT ${accessToken}`
-            },
-        }
+export const ConnectPeople = async (accessToken, username, setProfile) => {
+    const option = {
+        headers: {
+            Authorization: `JWT ${accessToken}`
+        },
+    }
 
-        await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/connect/${username}/`, option)
-            .then(response => setProfile({ ...profile, isFriend: true }))
-    }
-    else {
-        toast.warn("Please Login first to connect people.")
-    }
+    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/connect/${username}/`, option)
+        .then(response => setProfile({ ...profile, isFriend: true }))
 }
 
-export const DisconnectPeople = async (isAuthenticated, accessToken, username, setProfile) => {
-    if (isAuthenticated) {
-        const option = {
-            headers: {
-                Authorization: `JWT ${accessToken}`
-            },
-        }
+export const DisconnectPeople = async (accessToken, username, setProfile) => {
+    const option = {
+        headers: {
+            Authorization: `JWT ${accessToken}`
+        },
+    }
 
-        await axios.delete(`${process.env.BACKEND_DOMAIN_NAME}/auth/connect/${username}/`, option)
-            .then(response => setProfile({ ...profile, isFriend: false }))
-    }
-    else {
-        toast.warn("Please Login first to connect people.")
-    }
+    await axios.delete(`${process.env.BACKEND_DOMAIN_NAME}/auth/connect/${username}/`, option)
+        .then(response => setProfile({ ...profile, isFriend: false }))
 }
 
-export const UpdateProfile = async (isAuthenticated, isAccessToken, accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, formData, setIsProfileData, setProfileData, setIsUserData, setUserData, setProfile, router, onModalClose, setIsUpdating) => {
-    if (isAuthenticated && isAccessToken) {
+export const UpdateProfile = async (isAccessToken, accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, formData, setIsProfileData, setProfileData, setIsUserData, setUserData, setProfile, router, onModalClose, setIsUpdating) => {
+    if (isAccessToken) {
         setIsUpdating(pre => true)
 
         const option = {
@@ -376,32 +382,40 @@ export const UpdateProfile = async (isAuthenticated, isAccessToken, accessToken,
             }
         )
     }
+    else {
+        toast.warn("Access token is not valid.")
+    }
 }
 
-export const CheckUsername = async (e, profileData, setIsUsernameValid, formData, accessToken, setFormData) => {
+export const CheckUsername = async (e, profileData, setIsUsernameValid, formData, isAccessToken, accessToken, setFormData) => {
     if (e.target.value === profileData?.username) {
         setIsUsernameValid(pre => true)
         delete formData?.username
     }
     else {
-        const option = {
-            headers: {
-                Authorization: `JWT ${accessToken}`,
+        if (isAccessToken) {
+            const option = {
+                headers: {
+                    Authorization: `JWT ${accessToken}`,
+                }
             }
-        }
 
-        await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/find/username/`, { "username": e.target.value }, option)
-            .then(response => {
-                setIsUsernameValid(pre => true)
-                setFormData({
-                    ...formData,
-                    username: e.target.value
+            await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/find/username/`, { "username": e.target.value }, option)
+                .then(response => {
+                    setIsUsernameValid(pre => true)
+                    setFormData({
+                        ...formData,
+                        username: e.target.value
+                    })
                 })
-            })
-            .catch(error => {
-                setIsUsernameValid(pre => false)
-                delete formData?.username
-            })
+                .catch(error => {
+                    setIsUsernameValid(pre => false)
+                    delete formData?.username
+                })
+        }
+        else {
+            toast.warn("Access token is not valid.")
+        }
     }
 }
 

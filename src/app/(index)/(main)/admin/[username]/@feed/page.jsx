@@ -8,11 +8,11 @@ import Loading from './loading'
 const Page = ({ params }) => {
     const [loading, setLoading] = React.useState(true)
     const [posts, setPosts] = React.useState([])
-    const { accessToken, isFeedPost, setIsFeedPost, feedPost, setFeedPost } = React.useContext(Context)
+    const { isAccessToken, accessToken, isFeedPost, setIsFeedPost, feedPost, setFeedPost } = React.useContext(Context)
 
     React.useEffect(() => {
         const handler = async () => {
-            await FetchFeedPost(accessToken, setPosts, isFeedPost, setIsFeedPost, feedPost, setFeedPost, decodeURIComponent(params.username))
+            await FetchFeedPost(isAccessToken, accessToken, setPosts, isFeedPost, setIsFeedPost, feedPost, setFeedPost, decodeURIComponent(params.username))
             setLoading(pre => false)
         }
         handler();

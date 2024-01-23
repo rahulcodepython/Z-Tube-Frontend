@@ -11,7 +11,7 @@ import { Data } from '@/data/data/data'
 import Link from 'next/link'
 import { AiFillPieChart } from '@/data/icons/icons'
 
-const Sidebar = ({ isAuthenticated, isUserData, userData, showTopicAll, setShowTopicAll }) => {
+const Sidebar = ({ isUserData, userData, showTopicAll, setShowTopicAll }) => {
     return (
         <Sheet>
             <SheetTrigger asChild>
@@ -26,7 +26,7 @@ const Sidebar = ({ isAuthenticated, isUserData, userData, showTopicAll, setShowT
                         Object.entries(Data.sidebar).map(([key, value]) => {
                             return <ul className="space-y-1 py-2 first:pt-0 last:pb-0">
                                 {
-                                    key === 'recources' ? <Link href={isAuthenticated && isUserData ? `/admin/${userData?.username}` : '/'} className="flex items-center p-2 rounded-lg hover:bg-gray-300 group hover:text-gray-700">
+                                    key === 'recources' ? <Link href={isUserData ? `/admin/${userData?.username}` : '/'} className="flex items-center p-2 rounded-lg hover:bg-gray-300 group hover:text-gray-700">
                                         <AiFillPieChart />
                                         <span className="ml-3">
                                             Dashboard

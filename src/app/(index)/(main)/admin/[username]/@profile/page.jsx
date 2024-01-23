@@ -16,13 +16,13 @@ import Loading from './loading'
 
 const Page = ({ params }) => {
     const [loading, setLoading] = React.useState(true)
-    const [profile, setProfile] = React.useState({})
+    const [profile, setProfile] = React.useState(null)
 
-    const { accessToken, isProfileData, setIsProfileData, profileData, setProfileData, userData } = React.useContext(Context)
+    const { isAccessToken, accessToken, isProfileData, setIsProfileData, profileData, setProfileData, userData } = React.useContext(Context)
 
     React.useEffect(() => {
         const handler = async () => {
-            await FetchProfileData(params, userData, isProfileData, setProfile, profileData, accessToken, setIsProfileData, setProfileData);
+            await FetchProfileData(params, userData, isProfileData, setProfile, profileData, isAccessToken, accessToken, setIsProfileData, setProfileData);
             setLoading(pre => false)
         }
 
@@ -30,7 +30,7 @@ const Page = ({ params }) => {
     }, [])
 
     return (
-        loading ? <Loading /> : <Card className="h-[457.66px] rounded-lg shadow-none divide-y">
+        loading ? <Loading /> : profile === null ? "There is so such user." : <Card className="h-[457.66px] rounded-lg shadow-none divide-y">
             <CardHeader className='h-[297.66px] p-0'>
                 <Image src={profile?.banner ? profile?.banner : '/image/profile-banner.png'} width={1334} height={297.66} priority={true} className='rounded-t-lg w-[1334px] h-[297.66px]' alt='...' placeholder='blur' blurDataURL="/image/profile-banner.png" style={{ "width": "auto", "height": "auto" }} />
             </CardHeader>
@@ -86,12 +86,12 @@ const Page = ({ params }) => {
                 <div className='absolute bottom-5 right-4 flex items-center justify-end gap-4'>
                     {profile.self ? <EditProfile setProfile={setProfile} /> :
                         profile?.isFriend ?
-                            <Button className='flex items-center gap-2' onClick={async () => await DisconnectPeople(isAuthenticated, accessToken, username, setProfile)}>
+                            <Button className='flex items-center gap-2' onClick={async () => await DisconnectPeople(accessToken, username, setProfile)}>
                                 <BsLink />
                                 <span>
                                     Disconnect
                                 </span>
-                            </Button> : <Button className='flex items-center gap-2' onClick={async () => await ConnectPeople(isAuthenticated, accessToken, username, setProfile)}>
+                            </Button> : <Button className='flex items-center gap-2' onClick={async () => await ConnectPeople(accessToken, username, setProfile)}>
                                 <MdAddLink />
                                 <span>
                                     Connect

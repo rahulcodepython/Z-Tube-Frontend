@@ -2,25 +2,17 @@
 import React from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Context } from '@/context/Context'
 
 const Layout = ({ children, params, profile, feed }) => {
     const [defaultTab, setDefaultTab] = React.useState(null)
     const [loading, setLoading] = React.useState(true)
 
-    const { isAuthenticated } = React.useContext(Context)
-
     const search = useSearchParams()
     const router = useRouter()
 
     React.useEffect(() => {
-        if (isAuthenticated) {
-            setDefaultTab(pre => search.get('tabs'))
-            setLoading(pre => false)
-        }
-        else {
-            router.push("/auth/login")
-        }
+        setDefaultTab(pre => search.get('tabs'))
+        setLoading(pre => false)
     }, [search.get('tabs')])
 
     return (

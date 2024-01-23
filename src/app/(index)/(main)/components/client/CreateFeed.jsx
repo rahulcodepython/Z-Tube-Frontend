@@ -20,7 +20,7 @@ import { ReloadIcon } from "@radix-ui/react-icons"
 import { AddTagsCreateFeed, CreateFeedPost, RemoveTagsCreateFeed } from '@/utils';
 
 const CreateFeed = ({ setIsOpen }) => {
-    const { accessToken } = React.useContext(Context)
+    const { isAccessToken, accessToken } = React.useContext(Context)
 
     const [uploading, setUploading] = React.useState(false)
     const [caption, setCaption] = React.useState('')
@@ -98,7 +98,7 @@ const CreateFeed = ({ setIsOpen }) => {
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                     Please wait
                 </Button>
-                    : <Button type='submit' onClick={async () => await CreateFeedPost(media, setUploading, accessToken, caption, tags, visibility, setIsOpen)}>
+                    : <Button type='submit' onClick={async () => await CreateFeedPost(media, setUploading, isAccessToken, accessToken, caption, tags, visibility, setIsOpen)}>
                         <BiSend className='text-base' />
                         <span>
                             Upload

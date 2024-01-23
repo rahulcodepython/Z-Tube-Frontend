@@ -20,7 +20,7 @@ import { Form, Formik } from 'formik';
 import ImageUploader from '../server/ImageUploader';
 
 const EditProfile = ({ setProfile }) => {
-    const { isAuthenticated, isAccessToken, accessToken, profileData, setProfileData, setIsProfileData, setIsUserData, setUserData } = React.useContext(Context)
+    const { isAccessToken, accessToken, profileData, setProfileData, setIsProfileData, setIsUserData, setUserData } = React.useContext(Context)
 
     const router = useRouter();
 
@@ -125,7 +125,7 @@ const EditProfile = ({ setProfile }) => {
                                             <div className='w-full flex gap-2 justify-center items-center'>
                                                 <Input type="text" name="username" id="username" value={values.username} onChange={async (e) => {
                                                     handleChange(e)
-                                                    await CheckUsername(e, profileData, setIsUsernameValid, formData, accessToken, setFormData)
+                                                    await CheckUsername(e, profileData, setIsUsernameValid, formData, isAccessToken, accessToken, setFormData)
                                                 }}
                                                     className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
                                                 <FaCircleCheck className={isUsernameValid ? 'text-green-500' : 'text-red-500'} />
@@ -199,7 +199,7 @@ const EditProfile = ({ setProfile }) => {
                                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                                     Please wait
                                 </Button> :
-                                    <Button type='submit' onClick={async () => await UpdateProfile(isAuthenticated, isAccessToken, accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, formData, setIsProfileData, setProfileData, setIsUserData, setUserData, setProfile, router, onModalClose, setIsUpdating)}>
+                                    <Button type='submit' onClick={async () => await UpdateProfile(isAccessToken, accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, formData, setIsProfileData, setProfileData, setIsUserData, setUserData, setProfile, router, onModalClose, setIsUpdating)}>
                                         <BiSend className='text-base' />
                                         <span>
                                             Update

@@ -13,7 +13,7 @@ import FeedComment from './FeedComment'
 import ReplyForm from './ReplyForm'
 import { MenubarMenu, MenubarTrigger } from '@/components/ui/menubar'
 
-const Comment = () => {
+const Comment = ({ post }) => {
     const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
     return (
@@ -28,7 +28,7 @@ const Comment = () => {
                     </DialogTrigger>
                     <DialogContent className="max-w-5xl w-[600px]">
                         <DialogHeader>
-                            <DialogTitle>2k Comments</DialogTitle>
+                            <DialogTitle>{post.commentNo} Comment</DialogTitle>
                             <DialogDescription>
                                 <ScrollArea className="h-[300px] pt-4 pb-2 pr-4 space-y-3">
                                     {
