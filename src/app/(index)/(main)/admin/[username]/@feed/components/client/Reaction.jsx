@@ -14,8 +14,8 @@ const Reaction = ({ type }) => {
     const [reaction, setReaction] = React.useState(null)
 
     return (
-        <MenubarMenu className="w-full">
-            <MenubarTrigger className={`${type === 'reply' ? '' : 'w-1/3'} flex justify-center items-center cursor-pointer`}>
+        <MenubarMenu>
+            <MenubarTrigger className={`${type === 'reply' ? '' : 'w-1/3'} flex justify-center items-center cursor-pointer focus:bg-transparent data-[state=open]:bg-transparent`}>
                 {
                     reaction === null ? <div className='flex items-center gap-1'>
                         <AiOutlineLike className='text-lg' />

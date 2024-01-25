@@ -86,12 +86,12 @@ const Page = ({ params }) => {
                 <div className='absolute bottom-5 right-4 flex items-center justify-end gap-4'>
                     {profile.self ? <EditProfile setProfile={setProfile} /> :
                         profile?.isFriend ?
-                            <Button className='flex items-center gap-2' onClick={async () => await DisconnectPeople(accessToken, username, setProfile)}>
+                            <Button className='flex items-center gap-2' onClick={async () => await DisconnectPeople(accessToken, params.username, profile, setProfile)}>
                                 <BsLink />
                                 <span>
                                     Disconnect
                                 </span>
-                            </Button> : <Button className='flex items-center gap-2' onClick={async () => await ConnectPeople(accessToken, username, setProfile)}>
+                            </Button> : <Button className='flex items-center gap-2' onClick={async () => await ConnectPeople(accessToken, params.username, profile, setProfile)}>
                                 <MdAddLink />
                                 <span>
                                     Connect

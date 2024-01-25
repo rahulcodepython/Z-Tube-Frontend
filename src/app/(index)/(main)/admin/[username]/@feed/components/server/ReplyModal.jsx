@@ -8,7 +8,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { IoChatbubbleOutline } from '@/data/icons/icons'
-import ReplyForm from './ReplyForm';
+import ReplyForm from '../client/ReplyForm';
 
 const ReplyModal = () => {
     return (
@@ -23,7 +23,7 @@ const ReplyModal = () => {
                 <DialogHeader>
                     <DialogTitle>Reply</DialogTitle>
                     <DialogDescription>
-                        <ReplyForm />
+                        <ReplyForm type="reply" />
                     </DialogDescription>
                 </DialogHeader>
             </DialogContent>

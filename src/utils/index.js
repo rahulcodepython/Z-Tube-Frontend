@@ -184,29 +184,22 @@ export const AutoLoginUser = async (email, password, setIsValidated, setIsAuthen
         });
 }
 
-export const FetchFeedPost = async (isAccessToken, accessToken, setPosts, isFeedPost, setIsFeedPost, feedPost, setFeedPost, username) => {
-    if (isFeedPost) {
-        setPosts(pre => feedPost);
+export const FetchFeedPost = async (isAccessToken, accessToken, setFeedPost, username) => {
+    if (isAccessToken) {
+        const options = {
+            headers: {
+                Authorization: `JWT ${accessToken}`
+            }
+        };
+
+        await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/feed/posts/${username}/`, options)
+            .then(response => {
+                setFeedPost(pre => response.data)
+            })
+            .catch(error => { });
     }
     else {
-        if (isAccessToken) {
-            const options = {
-                headers: {
-                    Authorization: `JWT ${accessToken}`
-                }
-            };
-
-            await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/feed/posts/${username}/`, options)
-                .then(response => {
-                    setPosts(pre => response.data)
-                    setFeedPost(pre => response.data)
-                    setIsFeedPost(pre => true)
-                })
-                .catch(error => { });
-        }
-        else {
-            toast.warn("Access token is not valid");
-        }
+        toast.warn("Access token is not valid");
     }
 }
 
@@ -308,7 +301,7 @@ export const FetchProfileData = async (params, userData, isProfileData, setProfi
     }
 }
 
-export const ConnectPeople = async (accessToken, username, setProfile) => {
+export const ConnectPeople = async (accessToken, username, profile, setProfile) => {
     const option = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -319,7 +312,7 @@ export const ConnectPeople = async (accessToken, username, setProfile) => {
         .then(response => setProfile({ ...profile, isFriend: true }))
 }
 
-export const DisconnectPeople = async (accessToken, username, setProfile) => {
+export const DisconnectPeople = async (accessToken, username, profile, setProfile) => {
     const option = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -463,4 +456,49 @@ export const Register = async (values) => {
             error: 'Your request is denied.'
         }
     )
+}
+
+export const CreateComment = async (isAccessToken, accessToken, comment, postid, setComments, setLoading) => {
+    if (isAccessToken) {
+        setLoading(pre => true)
+        const option = {
+            headers: {
+                Authorization: `JWT ${accessToken}`,
+            }
+        };
+
+        await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/feed/createcomment/${postid}/`, {
+            comment: comment,
+            createdAt: DateTimeParser(Date.now()),
+        }, option)
+            .then(response => {
+                setComments(pre => [...pre, response.data]);
+            })
+            .catch(error => { });
+        setLoading(pre => false)
+    }
+    else {
+        toast.warn("Access token is not valid.")
+    }
+}
+
+export const FetchComments = async (isAccessToken, accessToken, postid, setComments) => {
+    if (isAccessToken) {
+        const options = {
+            headers: {
+                Authorization: `JWT ${accessToken}`
+            }
+        };
+
+        await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/feed/viewcomment/${postid}/`, options)
+            .then(response => {
+                setComments(pre => response.data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+    else {
+        toast.warn("Access token is not valid.")
+    }
 }

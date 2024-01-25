@@ -1,18 +1,18 @@
 "use client"
 import React from 'react'
-import PostCard from './components/server/PostCard'
+import PostCard from './components/client/PostCard'
 import { Context } from '@/context/Context'
 import { FetchFeedPost } from '@/utils'
 import Loading from './loading'
 
 const Page = ({ params }) => {
     const [loading, setLoading] = React.useState(true)
-    const [posts, setPosts] = React.useState([])
-    const { isAccessToken, accessToken, isFeedPost, setIsFeedPost, feedPost, setFeedPost } = React.useContext(Context)
+    const [feedPost, setFeedPost] = React.useState([])
+    const { isAccessToken, accessToken } = React.useContext(Context)
 
     React.useEffect(() => {
         const handler = async () => {
-            await FetchFeedPost(isAccessToken, accessToken, setPosts, isFeedPost, setIsFeedPost, feedPost, setFeedPost, decodeURIComponent(params.username))
+            await FetchFeedPost(isAccessToken, accessToken, setFeedPost, decodeURIComponent(params.username))
             setLoading(pre => false)
         }
         handler();
@@ -21,8 +21,8 @@ const Page = ({ params }) => {
     return (
         loading ? <Loading /> : <div className='grid grid-cols-3 gap-4'>
             {
-                posts.map((item, index) => {
-                    return <PostCard key={index} post={item} />
+                feedPost.length === 0 ? <div>No Post There</div> : feedPost.map((item, index) => {
+                    return <PostCard key={index} feed={item} />
                 })
             }
         </div>

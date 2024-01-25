@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import {
     Menubar,
@@ -8,34 +9,36 @@ import {
 } from "@/components/ui/menubar"
 import { BsThreeDots } from '@/data/icons/icons'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import ReactionButton from '../client/Reaction';
-import ReplyModal from './ReplyModal';
+import ReactionButton from './Reaction';
+import ReplyModal from '../server/ReplyModal';
 import Image from 'next/image';
-import ReactionModal from './ReactionModal';
+import ReactionModal from '../server/ReactionModal';
 
-const FeedComment = ({ index }) => {
+const FeedComment = ({ comments, postid, setComments }) => {
+    const [comment, setComment] = React.useState(comments)
+
     return (
-        <div className={`flex items-center justify-between w-full ${index % 2 !== 0 ? 'pl-4' : null} relative`}>
+        <div className={`flex items-center justify-between w-full relative`}>
             <div className='flex items-start gap-2'>
                 <Avatar className="w-8 h-8">
-                    <Image src="/image/user.png" width={32} height={32} />
+                    <Image src={comment.uploader.image} width={32} height={32} />
                     <AvatarFallback>VC</AvatarFallback>
                 </Avatar>
                 <div className="space-y-1">
-                    <h4 className="text-sm font-semibold">@nextjs</h4>
+                    <h4 className="text-sm font-semibold">{comment.uploader.name}</h4>
                     <p className="text-xs">
-                        The React Framework – created and maintained by @vercel.
+                        {comment.comment}
                     </p>
                     <div className="flex items-center">
                         <span className="text-xs text-muted-foreground">
                             <Menubar className="w-full justify-between border-none p-0">
                                 <ReactionButton type="reply" />
-                                <MenubarMenu className="w-full">
+                                {/* <MenubarMenu className="w-full">
                                     <MenubarTrigger className="flex justify-center items-center cursor-pointer">
-                                        <ReplyModal />
+                                        <ReplyModal postid={postid} setComments={setComments} />
                                     </MenubarTrigger>
-                                </MenubarMenu>
-                                <div>1h</div>
+                                </MenubarMenu> */}
+                                <div>{comment.createdAt}</div>
                             </Menubar>
                         </span>
                     </div>

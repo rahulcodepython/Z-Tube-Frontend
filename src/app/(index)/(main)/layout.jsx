@@ -15,7 +15,6 @@ const Layout = ({ children }) => {
 
     React.useEffect(() => {
         if (isAuthenticated) {
-            setLoading(pre => false)
             window.addEventListener("scroll", () => {
                 document.documentElement.scrollTop !== 0 ? setToggleNavbar(pre => true) : setToggleNavbar(pre => false);
             });
@@ -23,6 +22,7 @@ const Layout = ({ children }) => {
         else {
             router.push('/auth/login')
         }
+        setLoading(pre => false)
     }, [])
 
     return (

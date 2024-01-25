@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import {
     Card,
@@ -14,16 +15,19 @@ import {
     MenubarSeparator,
     MenubarTrigger,
 } from "@/components/ui/menubar"
-import { BsThreeDots } from '@/data/icons/icons'
+import { BsThreeDots, IoChatbubbleOutline } from '@/data/icons/icons'
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { Separator } from "@/components/ui/separator"
 import Image from 'next/image';
-import Reaction from '../client/Reaction'
+import Reaction from './Reaction'
 import Comment from './Comment'
-import Share from './Share'
-import ReactionModal from './ReactionModal'
+import Share from '../server/Share'
+import ReactionModal from '../server/ReactionModal'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
-const PostCard = ({ post }) => {
+const PostCard = ({ feed }) => {
+    const [post, setPost] = React.useState(feed)
+
     return (
         <Card>
             <CardHeader className="px-2 py-3">
@@ -94,11 +98,26 @@ const PostCard = ({ post }) => {
                     </div>
                 </div>
                 <Separator className="mt-1" />
-                <Menubar className="w-full justify-between border-none p-0">
-                    <Reaction type="post" />
-                    <Comment post={post} />
+                <div className='flex items-center justify-around w-full'>
+                    <Menubar className="justify-center border-none p-0">
+                        <Reaction type="post" />
+                    </Menubar>
+                    <Dialog>
+                        <DialogTrigger>
+                            <div className='flex justify-center items-center gap-1 text-xs'>
+                                <IoChatbubbleOutline className='text-lg' />
+                                <span>Comments</span>
+                            </div>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-5xl w-[600px]">
+                            <DialogHeader>
+                                <DialogTitle>{post.commentNo} Comment</DialogTitle>
+                                <Comment post={post} />
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
                     <Share />
-                </Menubar>
+                </div>
             </CardFooter>
         </Card>
     )
