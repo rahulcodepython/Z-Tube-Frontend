@@ -7,7 +7,7 @@ import { CreateComment } from '@/utils/index'
 import { Context } from '@/context/Context'
 import { ReloadIcon } from '@radix-ui/react-icons'
 
-const ReplyForm = ({ postid, setComments }) => {
+const ReplyForm = ({ post, setComments, setPost }) => {
     const [comment, setComment] = React.useState("");
     const [loading, setLoading] = React.useState(false)
 
@@ -20,7 +20,7 @@ const ReplyForm = ({ postid, setComments }) => {
                 loading ? <Button disabled>
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                     Please wait
-                </Button> : <Button onClick={() => CreateComment(isAccessToken, accessToken, comment, postid, setComments, setLoading)}>
+                </Button> : <Button onClick={() => CreateComment(isAccessToken, accessToken, comment, post, setComments, setLoading, setPost)}>
                     <BiSend className='text-base' />
                     <span>
                         Send

@@ -458,7 +458,7 @@ export const Register = async (values) => {
     )
 }
 
-export const CreateComment = async (isAccessToken, accessToken, comment, postid, setComments, setLoading) => {
+export const CreateComment = async (isAccessToken, accessToken, comment, post, setComments, setLoading, setPost) => {
     if (isAccessToken) {
         setLoading(pre => true)
         const option = {
@@ -467,12 +467,13 @@ export const CreateComment = async (isAccessToken, accessToken, comment, postid,
             }
         };
 
-        await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/feed/createcomment/${postid}/`, {
+        await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/feed/createcomment/${post.id}/`, {
             comment: comment,
             createdAt: DateTimeParser(Date.now()),
         }, option)
             .then(response => {
                 setComments(pre => [...pre, response.data]);
+                setPost({ ...post, commentNo: post.commentNo + 1 })
             })
             .catch(error => { });
         setLoading(pre => false)

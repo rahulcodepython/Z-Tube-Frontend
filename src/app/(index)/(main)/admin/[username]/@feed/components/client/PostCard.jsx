@@ -27,7 +27,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 const PostCard = ({ feed }) => {
     const [post, setPost] = React.useState(feed)
-
+    console.log("post", post);
     return (
         <Card>
             <CardHeader className="px-2 py-3">
@@ -102,20 +102,22 @@ const PostCard = ({ feed }) => {
                     <Menubar className="justify-center border-none p-0">
                         <Reaction type="post" />
                     </Menubar>
-                    <Dialog>
-                        <DialogTrigger>
-                            <div className='flex justify-center items-center gap-1 text-xs'>
-                                <IoChatbubbleOutline className='text-lg' />
-                                <span>Comments</span>
-                            </div>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-5xl w-[600px]">
-                            <DialogHeader>
-                                <DialogTitle>{post.commentNo} Comment</DialogTitle>
-                                <Comment post={post} />
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
+                    {
+                        post.allowComments && <Dialog>
+                            <DialogTrigger>
+                                <div className='flex justify-center items-center gap-1 text-xs'>
+                                    <IoChatbubbleOutline className='text-lg' />
+                                    <span>Comments</span>
+                                </div>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-5xl w-[600px]">
+                                <DialogHeader>
+                                    <DialogTitle>{post.commentNo} Comment</DialogTitle>
+                                    <Comment post={post} setPost={setPost} />
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
+                    }
                     <Share />
                 </div>
             </CardFooter>

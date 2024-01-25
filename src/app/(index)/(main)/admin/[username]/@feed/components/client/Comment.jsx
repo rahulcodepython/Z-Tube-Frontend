@@ -7,7 +7,7 @@ import ReplyForm from './ReplyForm'
 import { FetchComments } from '@/utils'
 import { Context } from "@/context/Context";
 
-const Comment = ({ post }) => {
+const Comment = ({ post, setPost }) => {
     const { isAccessToken, accessToken } = React.useContext(Context)
 
     const [comments, setComments] = React.useState([])
@@ -32,7 +32,7 @@ const Comment = ({ post }) => {
                         })
                     }
                 </ScrollArea>
-                <ReplyForm postid={post.id} setComments={setComments} />
+                <ReplyForm post={post} setComments={setComments} setPost={setPost} />
             </DialogDescription>
     )
 }
