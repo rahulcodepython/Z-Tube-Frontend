@@ -32,24 +32,6 @@ const Layout = ({ children, params, profile, feed }) => {
                             {feed}
                         </TabsContent>
                     </Tabs>
-
-                    {/* <Menubar className="p-0 mt-2 h-auto border-none shadow-none space-x-2">
-                        <MenubarMenu>
-                            <Link href={`/admin/${params.username}/`}>
-                                <Button>Profile</Button>
-                            </Link>
-                        </MenubarMenu>
-                        <MenubarMenu>
-                            <Link href={'#'}>
-                                <Button>Friends</Button>
-                            </Link>
-                        </MenubarMenu>
-                        <MenubarMenu>
-                            <Link href={`/admin/${params.username}/feed/`}>
-                                <Button>Feed</Button>
-                            </Link>
-                        </MenubarMenu>
-                    </Menubar> */}
                 </div>
             </section>
         </div>

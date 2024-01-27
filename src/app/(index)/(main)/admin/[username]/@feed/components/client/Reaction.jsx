@@ -9,9 +9,13 @@ import {
 import Image from 'next/image';
 import { AiOutlineLike, MdDoNotDisturb } from '@/data/icons/icons'
 import { Data } from '@/data/data/data';
+import { ReactOnPost, RemoveReactOnPost } from '@/utils';
+import { Context } from '@/context/Context';
 
-const Reaction = ({ type }) => {
+const Reaction = ({ type, post, setPost }) => {
     const [reaction, setReaction] = React.useState(null)
+
+    const { isAccessToken, accessToken } = React.useContext(Context)
 
     return (
         <MenubarMenu>
@@ -29,12 +33,16 @@ const Reaction = ({ type }) => {
             <MenubarContent className="flex items-center gap-2 rounded-full p-2">
                 {
                     Data.emoji.map((item, index) => {
-                        return <MenubarItem key={index} className='flex items-center cursor-pointer p-0 hover:-translate-y-2 transition-all duration-100 ease-in-out' onClick={() => { setReaction(pre => index) }}>
+                        return <MenubarItem key={index} className='flex items-center cursor-pointer p-0 hover:-translate-y-2 transition-all duration-100 ease-in-out' onClick={() => {
+                            ReactOnPost(isAccessToken, accessToken, post, setPost, item.name, setReaction, index)
+                        }}>
                             <Image src={item.icon} width={30} height={30} />
                         </MenubarItem>
                     })
                 }
-                <MenubarItem className='flex items-center cursor-pointer p-0 hover:-translate-y-2 transition-all duration-100 ease-in-out' onClick={() => { setReaction(pre => null) }}>
+                <MenubarItem className='flex items-center cursor-pointer p-0 hover:-translate-y-2 transition-all duration-100 ease-in-out' onClick={() => {
+                    RemoveReactOnPost(isAccessToken, accessToken, post, setPost, Data.emoji[reaction].name, setReaction)
+                }}>
                     <MdDoNotDisturb className='text-3xl' />
                 </MenubarItem>
             </MenubarContent>

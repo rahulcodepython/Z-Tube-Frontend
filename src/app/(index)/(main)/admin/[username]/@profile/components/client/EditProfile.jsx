@@ -19,7 +19,7 @@ import { ReloadIcon } from '@radix-ui/react-icons';
 import { Form, Formik } from 'formik';
 import ImageUploader from '../server/ImageUploader';
 
-const EditProfile = ({ setProfile }) => {
+const EditProfile = ({ setProfile, username }) => {
     const { isAccessToken, accessToken, profileData, setProfileData, setIsProfileData, setIsUserData, setUserData } = React.useContext(Context)
 
     const router = useRouter();
@@ -199,7 +199,7 @@ const EditProfile = ({ setProfile }) => {
                                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                                     Please wait
                                 </Button> :
-                                    <Button type='submit' onClick={async () => await UpdateProfile(isAccessToken, accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, formData, setIsProfileData, setProfileData, setIsUserData, setUserData, setProfile, router, onModalClose, setIsUpdating)}>
+                                    <Button type='submit' onClick={async () => await UpdateProfile(isAccessToken, accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, formData, setIsProfileData, setProfileData, setIsUserData, setUserData, setProfile, router, onModalClose, setIsUpdating, username)}>
                                         <BiSend className='text-base' />
                                         <span>
                                             Update

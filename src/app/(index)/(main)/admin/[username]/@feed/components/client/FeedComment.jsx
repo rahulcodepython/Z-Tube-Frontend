@@ -13,6 +13,7 @@ import ReactionButton from './Reaction';
 import ReplyModal from '../server/ReplyModal';
 import Image from 'next/image';
 import ReactionModal from '../server/ReactionModal';
+import Link from 'next/link';
 
 const FeedComment = ({ comments, postid, setComments }) => {
     const [comment, setComment] = React.useState(comments)
@@ -25,7 +26,7 @@ const FeedComment = ({ comments, postid, setComments }) => {
                     <AvatarFallback>VC</AvatarFallback>
                 </Avatar>
                 <div className="space-y-1">
-                    <h4 className="text-sm font-semibold">{comment.uploader.name}</h4>
+                    <Link href={`/admin/${comment.uploader.username}`} className="text-sm font-semibold">{comment.uploader.name}</Link>
                     <p className="text-xs">
                         {comment.comment}
                     </p>

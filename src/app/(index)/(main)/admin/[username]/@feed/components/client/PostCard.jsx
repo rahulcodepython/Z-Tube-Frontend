@@ -27,16 +27,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 const PostCard = ({ feed }) => {
     const [post, setPost] = React.useState(feed)
-    console.log("post", post);
+
     return (
         <Card>
             <CardHeader className="px-2 py-3">
                 <CardTitle className="flex flex-col space-y-2">
                     <div className='flex justify-between items-center'>
                         <div className='flex items-center space-x-4'>
-                            <Image src={'/image/user.png'} width={36} height={36} className="h-9 w-9 rounded-full" />
+                            <Image src={post.uploader.image ? post.uploader.image : '/image/user.png'} width={36} height={36} className="h-9 w-9 rounded-full" />
                             <div className="leading-3">
-                                <div className='text-sm leading-3'>Rahul Das</div>
+                                <div className='text-sm leading-3'>{post.uploader.name}</div>
                                 <div className='text-xs'>{(post.createdAt)}</div>
                             </div>
                         </div>
@@ -89,9 +89,11 @@ const PostCard = ({ feed }) => {
                         <span>
                             {post.viewsNo} Views
                         </span>
-                        <span>
-                            {post.commentNo} Comments
-                        </span>
+                        {
+                            post.allowComments && <span>
+                                {post.commentNo} Comments
+                            </span>
+                        }
                         <span>
                             {post.share} Shares
                         </span>
@@ -100,7 +102,7 @@ const PostCard = ({ feed }) => {
                 <Separator className="mt-1" />
                 <div className='flex items-center justify-around w-full'>
                     <Menubar className="justify-center border-none p-0">
-                        <Reaction type="post" />
+                        <Reaction type="post" post={post} setPost={setPost} />
                     </Menubar>
                     {
                         post.allowComments && <Dialog>

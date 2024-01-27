@@ -84,7 +84,7 @@ const Page = ({ params }) => {
                 </div>
 
                 <div className='absolute bottom-5 right-4 flex items-center justify-end gap-4'>
-                    {profile.self ? <EditProfile setProfile={setProfile} /> :
+                    {profile.self ? <EditProfile setProfile={setProfile} username={params.username} /> :
                         profile?.isFriend ?
                             <Button className='flex items-center gap-2' onClick={async () => await DisconnectPeople(accessToken, params.username, profile, setProfile)}>
                                 <BsLink />

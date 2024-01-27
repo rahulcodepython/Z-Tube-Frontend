@@ -103,7 +103,15 @@ export const TimeParser = (time) => {
 
 export const VerifyToken = async (token) => {
     try {
-        await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/verify/`, { "token": token })
+        const options = {
+            url: `${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/verify/`,
+            method: 'POST',
+            data: {
+                "token": token
+            }
+        }
+
+        await axios.request(options)
         return true
     } catch (error) {
         return false
@@ -111,13 +119,15 @@ export const VerifyToken = async (token) => {
 }
 
 export const FetchUserData = async (token, setIsUserData, setUserData) => {
-    const option = {
+    const options = {
         headers: {
             Authorization: `JWT ${token}`
-        }
+        },
+        url: `${process.env.BACKEND_DOMAIN_NAME}/auth/me/`,
+        method: 'GET',
     };
 
-    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/me/`, option)
+    await axios.request(options)
         .then(response => {
             setIsUserData(pre => true);
             setUserData(pre => response.data);
@@ -146,7 +156,14 @@ export const ValidateUser = async (access, refresh, setIsAuthenticated, setIsAcc
 }
 
 export const RevalidateAccessToken = async (token) => {
-    await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/refresh/`, { "refresh": token })
+    const options = {
+        url: `${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/verify/`,
+        method: 'POST',
+        data: {
+            "token": token
+        }
+    }
+    await axios.request(options)
         .then(async response => {
             await ValidateUser(response.data.access, response.data.refresh, setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken);
         })
@@ -166,12 +183,16 @@ export const LogoutUser = async (setIsAuthenticated, setIsAccessToken, setIsRefr
 }
 
 export const AutoLoginUser = async (email, password, setIsValidated, setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken, setIsUserData, setUserData) => {
-    const values = {
-        "email": email,
-        "password": password
+    const options = {
+        url: `${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/create/`,
+        method: 'POST',
+        data: {
+            "email": email,
+            "password": password
+        }
     }
 
-    await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/create/`, values)
+    await axios.request(options)
         .then(async response => {
             await ValidateUser(response.data.access, response.data.refresh, setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken)
             setIsValidated(pre => true)
@@ -189,10 +210,12 @@ export const FetchFeedPost = async (isAccessToken, accessToken, setFeedPost, use
         const options = {
             headers: {
                 Authorization: `JWT ${accessToken}`
-            }
+            },
+            url: `${process.env.BACKEND_DOMAIN_NAME}/feed/posts/${username}/`,
+            method: 'GET',
         };
 
-        await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/feed/posts/${username}/`, options)
+        await axios.request(options)
             .then(response => {
                 setFeedPost(pre => response.data)
             })
@@ -216,14 +239,9 @@ export const CreateFeedPost = async (media, setUploading, isAccessToken, accessT
         if (media.length > 0) {
             setUploading(pre => true)
 
-            const option = {
-                headers: {
-                    Authorization: `JWT ${accessToken}`,
-                }
-            }
-
             const HandleTostify = new Promise(async (resolve, rejected) => {
                 let mediaURL = [];
+
                 await Promise.all(media.map(async (item) => {
                     if (item.type.includes('image/') || item.type.includes('video/')) {
                         const url = await UploadMediaFiles(item, `Feed/${item.name}`);
@@ -233,13 +251,24 @@ export const CreateFeedPost = async (media, setUploading, isAccessToken, accessT
                         }));
                     }
                 }));
-                await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/feed/createpost/`, {
-                    caption: caption,
-                    tags: tags,
-                    visibility: visibility,
-                    media: mediaURL,
-                    createdAt: DateTimeParser(Date.now())
-                }, option)
+
+
+                const options = {
+                    headers: {
+                        Authorization: `JWT ${accessToken}`,
+                    },
+                    url: `${process.env.BACKEND_DOMAIN_NAME}/feed/createpost/`,
+                    method: 'POST',
+                    data: {
+                        caption: caption,
+                        tags: tags,
+                        visibility: visibility,
+                        media: mediaURL,
+                        createdAt: DateTimeParser(Date.now())
+                    }
+                }
+
+                await axios.request(options)
                     .then(response => {
                         resolve();
                         setIsOpen(pre => false)
@@ -276,13 +305,15 @@ export const FetchProfileData = async (params, userData, isProfileData, setProfi
     }
     else {
         if (isAccessToken) {
-            const option = {
+            const options = {
                 headers: {
                     Authorization: `JWT ${accessToken}`
                 },
+                url: `${process.env.BACKEND_DOMAIN_NAME}/auth/profile/${params.username}/`,
+                method: 'GET',
             }
 
-            await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/${params.username}/`, option)
+            await axios.request(options)
                 .then(response => {
                     if (response.data.self) {
                         setIsProfileData(pre => true)
@@ -302,36 +333,34 @@ export const FetchProfileData = async (params, userData, isProfileData, setProfi
 }
 
 export const ConnectPeople = async (accessToken, username, profile, setProfile) => {
-    const option = {
+    const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
         },
+        url: `${process.env.BACKEND_DOMAIN_NAME}/auth/connect/${username}/`,
+        method: 'POST',
     }
 
-    await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/auth/connect/${username}/`, option)
+    await axios.request(options)
         .then(response => setProfile({ ...profile, isFriend: true }))
 }
 
 export const DisconnectPeople = async (accessToken, username, profile, setProfile) => {
-    const option = {
+    const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
         },
+        url: `${process.env.BACKEND_DOMAIN_NAME}/auth/connect/${username}/`,
+        method: 'DELETE',
     }
 
-    await axios.delete(`${process.env.BACKEND_DOMAIN_NAME}/auth/connect/${username}/`, option)
+    await axios.request(options)
         .then(response => setProfile({ ...profile, isFriend: false }))
 }
 
-export const UpdateProfile = async (isAccessToken, accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, formData, setIsProfileData, setProfileData, setIsUserData, setUserData, setProfile, router, onModalClose, setIsUpdating) => {
+export const UpdateProfile = async (isAccessToken, accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, formData, setIsProfileData, setProfileData, setIsUserData, setUserData, setProfile, router, onModalClose, setIsUpdating, username) => {
     if (isAccessToken) {
         setIsUpdating(pre => true)
-
-        const option = {
-            headers: {
-                Authorization: `JWT ${accessToken}`,
-            }
-        }
 
         const HandleTostify = new Promise(async (resolve, rejected) => {
             const userImageData = isUserImageChange ? {
@@ -341,11 +370,20 @@ export const UpdateProfile = async (isAccessToken, accessToken, isUserImageChang
                 banner: await UploadMediaFiles(bannerImage[0].file, `User/Banner/${bannerImage[0].file.name}`)
             } : null
 
-            await axios.patch(`${process.env.BACKEND_DOMAIN_NAME}/auth/profile/`, {
-                ...formData,
-                ...userImageData,
-                ...bannerImageData
-            }, option)
+            const options = {
+                headers: {
+                    Authorization: `JWT ${accessToken}`,
+                },
+                url: `${process.env.BACKEND_DOMAIN_NAME}/auth/profile/${username}/`,
+                method: 'PATCH',
+                data: {
+                    ...formData,
+                    ...userImageData,
+                    ...bannerImageData
+                },
+            }
+
+            await axios.request(options)
                 .then(async response => {
                     setIsProfileData(pre => true)
                     setProfileData(pre => response.data.profile)
@@ -387,13 +425,16 @@ export const CheckUsername = async (e, profileData, setIsUsernameValid, formData
     }
     else {
         if (isAccessToken) {
-            const option = {
+            const options = {
                 headers: {
                     Authorization: `JWT ${accessToken}`,
-                }
+                },
+                url: `${process.env.BACKEND_DOMAIN_NAME}/auth/find/username/`,
+                method: 'POST',
+                data: { "username": e.target.value },
             }
 
-            await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/find/username/`, { "username": e.target.value }, option)
+            await axios.request(options)
                 .then(response => {
                     setIsUsernameValid(pre => true)
                     setFormData({
@@ -414,7 +455,12 @@ export const CheckUsername = async (e, profileData, setIsUsernameValid, formData
 
 export const Login = async (values, router, setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken) => {
     const HandleTostify = new Promise((resolve, rejected) => {
-        axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/create/`, values)
+        const options = {
+            url: `${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/create/`,
+            method: 'POST',
+            data: values,
+        }
+        axios.request(options)
             .then(async response => {
                 await ValidateUser(response.data.access, response.data.refresh, setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken)
                 router.push("/")
@@ -437,7 +483,12 @@ export const Login = async (values, router, setIsAuthenticated, setIsAccessToken
 
 export const Register = async (values) => {
     const HandleTostify = new Promise((resolve, rejected) => {
-        axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/dj/users/`, values)
+        const options = {
+            url: `${process.env.BACKEND_DOMAIN_NAME}/auth/dj/users/`,
+            method: 'POST',
+            data: values,
+        }
+        axios.request(options)
             .then((response) => {
                 localStorage.setItem("email", values.email)
                 localStorage.setItem("password", Encrypt(values.password, process.env.ENCRYPTION_KEY))
@@ -461,19 +512,21 @@ export const Register = async (values) => {
 export const CreateComment = async (isAccessToken, accessToken, comment, post, setComments, setLoading, setPost) => {
     if (isAccessToken) {
         setLoading(pre => true)
-        const option = {
+        const options = {
+            method: 'POST',
+            url: `${process.env.BACKEND_DOMAIN_NAME}/feed/createcomment/${post.id}/`,
             headers: {
                 Authorization: `JWT ${accessToken}`,
+            },
+            data: {
+                comment: comment,
+                createdAt: DateTimeParser(Date.now()),
             }
         };
-
-        await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/feed/createcomment/${post.id}/`, {
-            comment: comment,
-            createdAt: DateTimeParser(Date.now()),
-        }, option)
+        await axios.request(options)
             .then(response => {
-                setComments(pre => [...pre, response.data]);
-                setPost({ ...post, commentNo: post.commentNo + 1 })
+                setComments(pre => [...pre, response.data.comment]);
+                setPost({ ...post, commentNo: response.data.commentNo })
             })
             .catch(error => { });
         setLoading(pre => false)
@@ -486,17 +539,67 @@ export const CreateComment = async (isAccessToken, accessToken, comment, post, s
 export const FetchComments = async (isAccessToken, accessToken, postid, setComments) => {
     if (isAccessToken) {
         const options = {
+            method: 'GET',
+            url: `${process.env.BACKEND_DOMAIN_NAME}/feed/viewcomment/${postid}/`,
             headers: {
                 Authorization: `JWT ${accessToken}`
             }
         };
 
-        await axios.get(`${process.env.BACKEND_DOMAIN_NAME}/feed/viewcomment/${postid}/`, options)
+        await axios.request(options)
             .then(response => {
                 setComments(pre => response.data);
             })
             .catch(error => {
                 console.error(error);
+            });
+    }
+    else {
+        toast.warn("Access token is not valid.")
+    }
+}
+
+export const ReactOnPost = async (isAccessToken, accessToken, post, setPost, reaction, setReaction, index) => {
+    if (isAccessToken) {
+        const options = {
+            method: 'PATCH',
+            url: `${process.env.BACKEND_DOMAIN_NAME}/feed/postreaction/${post.id}/${reaction.toLowerCase()}/`,
+            headers: {
+                Authorization: `JWT ${accessToken}`
+            }
+        };
+
+        await axios.request(options)
+            .then(response => {
+                setPost({ ...post, likeNo: response.data.likeNo });
+                setReaction(pre => index)
+            })
+            .catch(error => {
+
+            });
+    }
+    else {
+        toast.warn("Access token is not valid.")
+    }
+}
+
+export const RemoveReactOnPost = async (isAccessToken, accessToken, post, setPost, reaction, setReaction) => {
+    if (isAccessToken) {
+        const options = {
+            method: 'DELETE',
+            url: `${process.env.BACKEND_DOMAIN_NAME}/feed/postreaction/${post.id}/${reaction.toLowerCase()}/`,
+            headers: {
+                Authorization: `JWT ${accessToken}`
+            }
+        };
+
+        await axios.request(options)
+            .then(response => {
+                setPost({ ...post, likeNo: response.data.likeNo });
+                setReaction(pre => null)
+            })
+            .catch(error => {
+
             });
     }
     else {

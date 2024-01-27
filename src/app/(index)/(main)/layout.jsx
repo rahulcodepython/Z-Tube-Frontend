@@ -18,11 +18,11 @@ const Layout = ({ children }) => {
             window.addEventListener("scroll", () => {
                 document.documentElement.scrollTop !== 0 ? setToggleNavbar(pre => true) : setToggleNavbar(pre => false);
             });
+            setLoading(pre => false)
         }
         else {
             router.push('/auth/login')
         }
-        setLoading(pre => false)
     }, [])
 
     return (
