@@ -217,6 +217,7 @@ export const FetchFeedPost = async (isAccessToken, accessToken, setFeedPost, use
 
         await axios.request(options)
             .then(response => {
+                console.log(response.data);
                 setFeedPost(pre => response.data)
             })
             .catch(error => { });
@@ -562,7 +563,7 @@ export const FetchComments = async (isAccessToken, accessToken, postid, setComme
 export const ReactOnPost = async (isAccessToken, accessToken, post, setPost, reaction, setReaction, index) => {
     if (isAccessToken) {
         const options = {
-            method: 'PATCH',
+            method: 'POST',
             url: `${process.env.BACKEND_DOMAIN_NAME}/feed/postreaction/${post.id}/${reaction.toLowerCase()}/`,
             headers: {
                 Authorization: `JWT ${accessToken}`

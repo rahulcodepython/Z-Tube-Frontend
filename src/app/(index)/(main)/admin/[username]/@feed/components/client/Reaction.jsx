@@ -13,7 +13,7 @@ import { ReactOnPost, RemoveReactOnPost } from '@/utils';
 import { Context } from '@/context/Context';
 
 const Reaction = ({ type, post, setPost }) => {
-    const [reaction, setReaction] = React.useState(null)
+    const [reaction, setReaction] = React.useState(post.user_reaction ? Data.emoji.find(item => item.name.toLowerCase() === post.user_reaction.toLowerCase())?.id || null : null)
 
     const { isAccessToken, accessToken } = React.useContext(Context)
 
@@ -25,8 +25,8 @@ const Reaction = ({ type, post, setPost }) => {
                         <AiOutlineLike className='text-lg' />
                         <span className='text-xs'>Like</span>
                     </div> : <div className='flex justify-center items-center gap-1 cursor-pointer'>
-                        <Image src={Data.emoji[reaction].icon} width={15} height={15} />
-                        <span className='text-xs'>{Data.emoji[reaction].name}</span>
+                        <Image src={Data.emoji[reaction]?.icon} width={15} height={15} />
+                        <span className='text-xs'>{Data.emoji[reaction]?.name}</span>
                     </div>
                 }
             </MenubarTrigger>

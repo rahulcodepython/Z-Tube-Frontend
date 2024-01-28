@@ -4,10 +4,10 @@ export const Data = {
     emoji: [
         { id: 0, icon: '/svg/like.svg', name: 'Like' },
         { id: 1, icon: '/svg/heart.svg', name: 'Love' },
-        { id: 2, icon: '/svg/care.svg', name: 'care' },
+        { id: 2, icon: '/svg/care.svg', name: 'Care' },
         { id: 3, icon: '/svg/laugh.svg', name: 'Smile' },
         { id: 4, icon: '/svg/wow.svg', name: 'Wow' },
-        { id: 5, icon: '/svg/cry.svg', name: 'cry' },
+        { id: 5, icon: '/svg/cry.svg', name: 'Cry' },
         { id: 6, icon: '/svg/angry.svg', name: 'Angry' },
     ],
     sidebar: {
