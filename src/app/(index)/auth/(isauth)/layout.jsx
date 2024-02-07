@@ -4,10 +4,10 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 const Layout = ({ children }) => {
-    const { isAuthenticate } = React.useContext(Context)
+    const { isAuthenticated } = React.useContext(Context)
     const router = useRouter()
 
-    if (isAuthenticate) {
+    if (isAuthenticated) {
         return children
     }
     else {

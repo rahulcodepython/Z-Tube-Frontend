@@ -551,9 +551,7 @@ export const FetchComments = async (isAccessToken, accessToken, postid, setComme
             .then(response => {
                 setComments(pre => response.data);
             })
-            .catch(error => {
-                console.error(error);
-            });
+            .catch(error => { });
     }
     else {
         toast.warn("Access token is not valid.")
@@ -575,9 +573,7 @@ export const ReactOnPost = async (isAccessToken, accessToken, post, setPost, rea
                 setPost({ ...post, likeNo: response.data.likeNo });
                 setReaction(pre => index)
             })
-            .catch(error => {
-
-            });
+            .catch(error => { });
     }
     else {
         toast.warn("Access token is not valid.")
@@ -599,9 +595,7 @@ export const RemoveReactOnPost = async (isAccessToken, accessToken, post, setPos
                 setPost({ ...post, likeNo: response.data.likeNo });
                 setReaction(pre => null)
             })
-            .catch(error => {
-
-            });
+            .catch(error => { });
     }
     else {
         toast.warn("Access token is not valid.")
