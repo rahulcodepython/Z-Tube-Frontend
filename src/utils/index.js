@@ -104,7 +104,7 @@ export const TimeParser = (time) => {
 export const VerifyToken = async (token) => {
     try {
         const options = {
-            url: `${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/verify/`,
+            url: `${process.env.BASE_API_URL}/auth/token/jwt/verify/`,
             method: 'POST',
             data: {
                 "token": token
@@ -123,7 +123,7 @@ export const FetchUserData = async (token, setIsUserData, setUserData) => {
         headers: {
             Authorization: `JWT ${token}`
         },
-        url: `${process.env.BACKEND_DOMAIN_NAME}/auth/me/`,
+        url: `${process.env.BASE_API_URL}/auth/me/`,
         method: 'GET',
     };
 
@@ -157,7 +157,7 @@ export const ValidateUser = async (access, refresh, setIsAuthenticated, setIsAcc
 
 export const RevalidateAccessToken = async (token) => {
     const options = {
-        url: `${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/verify/`,
+        url: `${process.env.BASE_API_URL}/auth/token/jwt/verify/`,
         method: 'POST',
         data: {
             "token": token
@@ -184,7 +184,7 @@ export const LogoutUser = async (setIsAuthenticated, setIsAccessToken, setIsRefr
 
 export const AutoLoginUser = async (email, password, setIsValidated, setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken, setIsUserData, setUserData) => {
     const options = {
-        url: `${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/create/`,
+        url: `${process.env.BASE_API_URL}/auth/token/jwt/create/`,
         method: 'POST',
         data: {
             "email": email,
@@ -211,13 +211,12 @@ export const FetchFeedPost = async (isAccessToken, accessToken, setFeedPost, use
             headers: {
                 Authorization: `JWT ${accessToken}`
             },
-            url: `${process.env.BACKEND_DOMAIN_NAME}/feed/posts/${username}/`,
+            url: `${process.env.BASE_API_URL}/feed/posts/${username}/`,
             method: 'GET',
         };
 
         await axios.request(options)
             .then(response => {
-                console.log(response.data);
                 setFeedPost(pre => response.data)
             })
             .catch(error => { });
@@ -258,7 +257,7 @@ export const CreateFeedPost = async (media, setUploading, isAccessToken, accessT
                     headers: {
                         Authorization: `JWT ${accessToken}`,
                     },
-                    url: `${process.env.BACKEND_DOMAIN_NAME}/feed/createpost/`,
+                    url: `${process.env.BASE_API_URL}/feed/createpost/`,
                     method: 'POST',
                     data: {
                         caption: caption,
@@ -310,7 +309,7 @@ export const FetchProfileData = async (params, userData, isProfileData, setProfi
                 headers: {
                     Authorization: `JWT ${accessToken}`
                 },
-                url: `${process.env.BACKEND_DOMAIN_NAME}/auth/profile/${params.username}/`,
+                url: `${process.env.BASE_API_URL}/auth/profile/${params.username}/`,
                 method: 'GET',
             }
 
@@ -338,7 +337,7 @@ export const ConnectPeople = async (accessToken, username, profile, setProfile) 
         headers: {
             Authorization: `JWT ${accessToken}`
         },
-        url: `${process.env.BACKEND_DOMAIN_NAME}/auth/connect/${username}/`,
+        url: `${process.env.BASE_API_URL}/auth/connect/${username}/`,
         method: 'POST',
     }
 
@@ -351,7 +350,7 @@ export const DisconnectPeople = async (accessToken, username, profile, setProfil
         headers: {
             Authorization: `JWT ${accessToken}`
         },
-        url: `${process.env.BACKEND_DOMAIN_NAME}/auth/connect/${username}/`,
+        url: `${process.env.BASE_API_URL}/auth/connect/${username}/`,
         method: 'DELETE',
     }
 
@@ -375,7 +374,7 @@ export const UpdateProfile = async (isAccessToken, accessToken, isUserImageChang
                 headers: {
                     Authorization: `JWT ${accessToken}`,
                 },
-                url: `${process.env.BACKEND_DOMAIN_NAME}/auth/profile/${username}/`,
+                url: `${process.env.BASE_API_URL}/auth/profile/${username}/`,
                 method: 'PATCH',
                 data: {
                     ...formData,
@@ -430,7 +429,7 @@ export const CheckUsername = async (e, profileData, setIsUsernameValid, formData
                 headers: {
                     Authorization: `JWT ${accessToken}`,
                 },
-                url: `${process.env.BACKEND_DOMAIN_NAME}/auth/find/username/`,
+                url: `${process.env.BASE_API_URL}/auth/find/username/`,
                 method: 'POST',
                 data: { "username": e.target.value },
             }
@@ -457,7 +456,7 @@ export const CheckUsername = async (e, profileData, setIsUsernameValid, formData
 export const Login = async (values, router, setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken) => {
     const HandleTostify = new Promise((resolve, rejected) => {
         const options = {
-            url: `${process.env.BACKEND_DOMAIN_NAME}/auth/token/jwt/create/`,
+            url: `${process.env.BASE_API_URL}/auth/token/jwt/create/`,
             method: 'POST',
             data: values,
         }
@@ -485,7 +484,7 @@ export const Login = async (values, router, setIsAuthenticated, setIsAccessToken
 export const Register = async (values) => {
     const HandleTostify = new Promise((resolve, rejected) => {
         const options = {
-            url: `${process.env.BACKEND_DOMAIN_NAME}/auth/dj/users/`,
+            url: `${process.env.BASE_API_URL}/auth/dj/users/`,
             method: 'POST',
             data: values,
         }
@@ -515,7 +514,7 @@ export const CreateComment = async (isAccessToken, accessToken, comment, post, s
         setLoading(pre => true)
         const options = {
             method: 'POST',
-            url: `${process.env.BACKEND_DOMAIN_NAME}/feed/createcomment/${post.id}/`,
+            url: `${process.env.BASE_API_URL}/feed/createcomment/${post.id}/`,
             headers: {
                 Authorization: `JWT ${accessToken}`,
             },
@@ -541,7 +540,7 @@ export const FetchComments = async (isAccessToken, accessToken, postid, setComme
     if (isAccessToken) {
         const options = {
             method: 'GET',
-            url: `${process.env.BACKEND_DOMAIN_NAME}/feed/viewcomment/${postid}/`,
+            url: `${process.env.BASE_API_URL}/feed/viewcomment/${postid}/`,
             headers: {
                 Authorization: `JWT ${accessToken}`
             }
@@ -562,7 +561,7 @@ export const ReactOnPost = async (isAccessToken, accessToken, post, setPost, rea
     if (isAccessToken) {
         const options = {
             method: 'POST',
-            url: `${process.env.BACKEND_DOMAIN_NAME}/feed/postreaction/${post.id}/${reaction.toLowerCase()}/`,
+            url: `${process.env.BASE_API_URL}/feed/postreaction/${post.id}/${reaction.toLowerCase()}/`,
             headers: {
                 Authorization: `JWT ${accessToken}`
             }
@@ -584,7 +583,7 @@ export const RemoveReactOnPost = async (isAccessToken, accessToken, post, setPos
     if (isAccessToken) {
         const options = {
             method: 'DELETE',
-            url: `${process.env.BACKEND_DOMAIN_NAME}/feed/postreaction/${post.id}/${reaction.toLowerCase()}/`,
+            url: `${process.env.BASE_API_URL}/feed/postreaction/${post.id}/${reaction.toLowerCase()}/`,
             headers: {
                 Authorization: `JWT ${accessToken}`
             }
@@ -601,3 +600,25 @@ export const RemoveReactOnPost = async (isAccessToken, accessToken, post, setPos
         toast.warn("Access token is not valid.")
     }
 }
+
+export const onGoogleLoginSuccess = () => {
+    const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+    const REDIRECT_URI = 'auth/google/';
+
+    const scope = [
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/userinfo.profile'
+    ].join(' ');
+
+    const params = {
+        response_type: 'code',
+        client_id: process.env.GOOGLE_OAUTH2_CLIENT_ID,
+        redirect_uri: `${process.env.BASE_API_URL}/${REDIRECT_URI}`,
+        prompt: 'select_account',
+        access_type: 'offline',
+        scope
+    };
+
+    const urlParams = new URLSearchParams(params).toString();
+    window.location = `${GOOGLE_AUTH_URL}?${urlParams}`;
+};

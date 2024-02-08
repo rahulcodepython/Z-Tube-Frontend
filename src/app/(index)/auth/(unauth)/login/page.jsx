@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Formik, Form } from 'formik';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Login } from '@/utils';
+import { Login, onGoogleLoginSuccess } from '@/utils';
 import { Context } from '@/context/Context';
 import React from 'react';
 import {
@@ -17,6 +17,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import GoogleButton from "react-google-button";
 
 const Page = () => {
     const { setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken } = React.useContext(Context)
@@ -80,12 +81,7 @@ const Page = () => {
                         <p className="text-center text-sm">OR</p>
                         <hr className="border-gray-500" />
                     </div>
-                    <Button className="w-full">
-                        <FcGoogle className='text-2xl' />
-                        <span>
-                            Login with Google
-                        </span>
-                    </Button>
+                    <GoogleButton onClick={() => onGoogleLoginSuccess()} label="Sign in with Google" />
                     <div className="text-sm flex justify-between items-center w-full">
                         <p>If you {`don't`} have an account...</p>
                         <Link href={'/auth/register'}>

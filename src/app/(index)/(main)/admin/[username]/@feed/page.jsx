@@ -12,7 +12,7 @@ const Page = ({ params }) => {
 
     React.useEffect(() => {
         const handler = async () => {
-            await FetchFeedPost(isAccessToken, accessToken, setFeedPost, decodeURIComponent(params.username))
+            await FetchFeedPost(isAccessToken, accessToken, setFeedPost, (params.username))
             setLoading(pre => false)
         }
         handler();

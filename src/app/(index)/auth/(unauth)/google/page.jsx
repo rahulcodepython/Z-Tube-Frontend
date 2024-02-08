@@ -1,90 +1,42 @@
 "use client"
-import React from 'react'
-import { useSearchParams } from 'next/navigation'
-import Image from 'next/image'
-import axios from 'axios'
-import Link from 'next/link'
 import { Context } from '@/context/Context'
+import { Encrypt, ValidateUser, } from '@/utils'
+import { useRouter, useSearchParams } from 'next/navigation'
+import React from 'react'
 
-
-const Page = () => {
+const Google = () => {
     const [loading, setLoading] = React.useState(true)
-    const [isAuth, setIsAuth] = React.useState(false)
 
+    const { setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken } = React.useContext(Context)
+
+    const router = useRouter()
     const searchParams = useSearchParams()
 
-    const { setIsAuthenticated } = React.useContext(Context)
+    React.useEffect(async () => {
+        const access = searchParams.get('access')
+        const refresh = searchParams.get('refresh')
 
-    const state = searchParams.get('state')
-    const code = searchParams.get('code')
-    const scope = searchParams.get('scope')
-    const authuser = searchParams.get('authuser')
-    const prompt = searchParams.get('prompt')
-
-    React.useEffect(() => {
-
-        const AuthenticateUser = async () => {
-            // const config = {
-            //     headers: {
-            //         'Content-Type': 'application/x-www-form-urlencoded'
-            //     }
-            // }
-
-            // const url = `${process.env.BACKEND_DOMAIN_NAME}/user/auth/o/google-oauth2/?state=${encodeURIComponent(state)}&code=${encodeURIComponent(code)}`
-
-            // await axios.post(url, config)
-            //     .then(response => {
-            //         console.log(response);
-            //         // sessionStorage.setItem('access', response.data.access)
-            //         // localStorage.setItem('refresh', response.data.refresh)
-            //         // setIsAuthenticated(pre => true)
-            //         // setIsAuth(pre => true)
-            //         setLoading(pre => false)
-            //     })
-            //     .catch(error => {
-            //         console.log(error);
-            //         // setIsAuthenticated(pre => false)
-            //     })
-            setLoading(pre => false)
+        if (!access || !refresh) {
+            router.push('/auth/login/')
         }
+        else {
+            await ValidateUser(access, refresh, setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken)
 
-        AuthenticateUser();
+            router.push('/')
+            setLoading(pre => false);
+        }
     }, [])
 
-
-    return loading ? <div className="md:w-1/2 px-5 flex flex-col items-center justify-center gap-6">
-        <Image src={'/gif/loading.gif'} width={200} height={200} alt='success' className='mix-blend-multiply' />
-        <div className='text-background text-3xl font-extrabold'>
-            Proccessing
+    return loading && <div className="flex items-center justify-center w-screen h-screen absolute top-0 left-0">
+        <div className="flex justify-center items-center space-x-1 text-sm text-gray-700 w-full h-full">
+            <svg fill='none' className="w-6 h-6 animate-spin" viewBox="0 0 32 32" xmlns='http://www.w3.org/2000/svg'>
+                <path clipRule='evenodd'
+                    d='M15.165 8.53a.5.5 0 01-.404.58A7 7 0 1023 16a.5.5 0 011 0 8 8 0 11-9.416-7.874.5.5 0 01.58.404z'
+                    fill='currentColor' fillRule='evenodd' />
+            </svg>
+            <div>Loading...</div>
         </div>
-        <div>
-            Wait for a second
-        </div>
-    </div> :
-        isAuth ? <div className="md:w-1/2 px-5 flex flex-col items-center justify-center gap-6">
-            <Image src={'/gif/success.gif'} width={200} height={200} alt='success' className='mix-blend-multiply' />
-            <div className='text-green-600 text-3xl font-extrabold'>
-                Success
-            </div>
-            <div>
-                You are now verified
-            </div>
-            <Link href={'/'} className='px-4 py-2 rounded-lg bg-green-600 text-white'>
-                Enjoy your feed
-            </Link>
-        </div> :
-            <div className="md:w-1/2 px-5 flex flex-col items-center justify-center gap-6">
-                <Image src={'/gif/failed.gif'} width={200} height={200} alt='failed' className='mix-blend-multiply' />
-                <div className='text-red-600 text-3xl font-extrabold'>
-                    Failed
-                </div>
-                <div>
-                    Sorry! There is some issue. Please try again.
-                </div>
-                <Link href={'/auth/login'} className='px-4 py-2 rounded-lg bg-red-600 text-white'>
-                    Go to Login
-                </Link>
-            </div>
+    </div>
 }
 
-export default Page
+export default Google

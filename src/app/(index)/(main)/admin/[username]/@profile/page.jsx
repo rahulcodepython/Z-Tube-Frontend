@@ -32,7 +32,7 @@ const Page = ({ params }) => {
     return (
         loading ? <Loading /> : profile === null ? "There is so such user." : <Card className="h-[457.66px] rounded-lg shadow-none divide-y">
             <CardHeader className='h-[297.66px] p-0'>
-                <Image src={profile?.banner ? profile?.banner : '/image/profile-banner.png'} width={1334} height={297.66} priority={true} className='rounded-t-lg w-[1334px] h-[297.66px]' alt='...' placeholder='blur' blurDataURL="/image/profile-banner.png" style={{ "width": "auto", "height": "auto" }} />
+                <Image src={profile?.banner ? profile?.banner : '/image/profile-banner.png'} width={1334} height={297.66} priority={true} className='rounded-t-lg w-[1334px] h-[297.66px]' alt='...' placeholder='blur' blurDataURL="/image/profile-banner.png" style={{ width: "auto", height: "auto" }} />
             </CardHeader>
             <CardContent className="h-[160px] relative px-4 py-5 flex items-center justify-start gap-8">
                 <Image src={profile?.image ? profile?.image : '/image/user.png'} width={120} height={120} className='rounded-lg w-[120px] h-[120px]' alt='...' />

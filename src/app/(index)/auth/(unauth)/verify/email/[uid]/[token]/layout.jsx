@@ -3,7 +3,7 @@ import React from 'react'
 
 const Layout = async ({ success, failure, params }) => {
     try {
-        const response = await axios.post(`${process.env.BACKEND_DOMAIN_NAME}/auth/dj/users/activation/`, {
+        const response = await axios.post(`${process.env.BASE_API_URL}/auth/dj/users/activation/`, {
             uid: params.uid, token: params.token
         })
 
