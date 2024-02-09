@@ -7,7 +7,6 @@ const nextConfig = {
     env: {
         BASE_API_URL: process.env.BASE_API_URL,
         ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
-        GOOGLE_OAUTH_REDIRECT_URI: process.env.GOOGLE_OAUTH_REDIRECT_URI,
         APIKEY: process.env.APIKEY,
         AUTHDOMAIN: process.env.AUTHDOMAIN,
         PROJECTID: process.env.PROJECTID,
