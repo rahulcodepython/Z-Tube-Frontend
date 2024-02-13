@@ -1,7 +1,7 @@
 "use client"
 import Link from 'next/link';
 import { BiSend, FcGoogle, GoArrowLeft } from '@/data/icons/icons';
-import { Register } from '@/utils/index';
+import { Register, onGoogleLoginSuccess } from '@/utils/index';
 import { Formik, Form } from 'formik';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -15,6 +15,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import GoogleButton from 'react-google-button';
 
 const Page = () => {
     return (
@@ -85,12 +86,7 @@ const Page = () => {
                         <p className="text-center text-sm">OR</p>
                         <hr className="border-gray-500" />
                     </div>
-                    <Button className="w-full">
-                        <FcGoogle className='text-2xl' />
-                        <span>
-                            Register with Google
-                        </span>
-                    </Button>
+                    <GoogleButton onClick={() => onGoogleLoginSuccess()} label="Sign in with Google" />
                     <div className="text-sm flex justify-between items-center w-full">
                         <p>If you have an account...</p>
                         <Link href={'/auth/login'}>
