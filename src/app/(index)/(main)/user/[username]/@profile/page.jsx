@@ -86,12 +86,12 @@ const Page = ({ params }) => {
                     {
                         profile.self ? <EditProfile setProfile={setProfile} username={params.username} /> :
                             profile?.isFriend ?
-                                <Button className='flex items-center gap-2' onClick={async () => await DisconnectPeople(accessToken, params.username, profile, setProfile)}>
+                                <Button className='gap-[0.5rem]' onClick={async () => await DisconnectPeople(accessToken, params.username, profile, setProfile)}>
                                     <BsLink />
                                     <span>
                                         Disconnect
                                     </span>
-                                </Button> : <Button className='flex items-center gap-2' onClick={async () => await ConnectPeople(accessToken, params.username, profile, setProfile)}>
+                                </Button> : <Button className='gap-[0.5rem]' onClick={async () => await ConnectPeople(accessToken, params.username, profile, setProfile)}>
                                     <MdAddLink />
                                     <span>
                                         Connect
@@ -100,13 +100,13 @@ const Page = ({ params }) => {
                     }
                     {
                         profile?.isLocked ?
-                            <Button>
+                            <Button className={'gap-[0.5rem]'}>
                                 <BiSolidLock />
                                 <span>
                                     Locked
                                 </span>
                             </Button>
-                            : <Button>
+                            : <Button className={'gap-[0.5rem]'}>
                                 <BiSolidLockOpen />
                                 <span>
                                     Unlocked

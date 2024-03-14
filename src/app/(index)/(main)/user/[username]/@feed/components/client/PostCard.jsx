@@ -12,9 +12,15 @@ import {
     MenubarContent,
     MenubarItem,
     MenubarMenu,
-    MenubarSeparator,
     MenubarTrigger,
 } from "@/components/ui/menubar"
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel"
 import {BsThreeDots, IoChatbubbleOutline} from '@/data/icons/icons'
 import {AspectRatio} from "@/components/ui/aspect-ratio"
 import {Separator} from "@/components/ui/separator"
@@ -49,12 +55,6 @@ const PostCard = ({feed}) => {
                                 <MenubarContent>
                                     <MenubarItem>Save Post</MenubarItem>
                                     {post.self ? <MenubarItem>Edit Post</MenubarItem> : null}
-                                    <MenubarSeparator/>
-                                    <MenubarItem>Hide Post</MenubarItem>
-                                    <MenubarItem>Hide From Someone</MenubarItem>
-                                    <MenubarSeparator/>
-                                    <MenubarItem>Block Someone</MenubarItem>
-                                    <MenubarItem>Report Post</MenubarItem>
                                 </MenubarContent>
                             </MenubarMenu>
                         </Menubar>
@@ -71,15 +71,33 @@ const PostCard = ({feed}) => {
                     </div>
                 </CardTitle>
             </CardHeader>
-            <CardContent className="p-0">
-                <AspectRatio ratio={16 / 9} className='flex items-center justify-center'>
-                    {
-                        post.media.map((item, index) => {
-                            return <Image src={item} width={250} height={250} alt="Image" className='object-cover'
-                                          key={index}/>
-                        })
-                    }
-                </AspectRatio>
+            <CardContent className={`px-20`}>
+                {
+                    post.media.length > 1 ? <Carousel>
+                            <CarouselContent>
+                                {
+                                    post.media.map((item, index) => {
+                                        return <CarouselItem key={index}>
+                                            <AspectRatio ratio={16 / 9} className={'flex items-center justify-center'}>
+                                                <Image src={item} width={250} height={250} alt="Image"
+                                                       className='object-cover'/>
+                                            </AspectRatio>
+                                        </CarouselItem>
+                                    })
+                                }
+                            </CarouselContent>
+                            <CarouselPrevious/>
+                            <CarouselNext/>
+                        </Carousel>
+                        : <AspectRatio ratio={16 / 9} className={'flex items-center justify-center'}>
+                            {
+                                post.media.map((item, index) => {
+                                    return <Image src={item} width={250} height={250} alt="Image" className='object-cover'
+                                                  key={index}/>
+                                })
+                            }
+                        </AspectRatio>
+                }
             </CardContent>
             <CardFooter className="px-2 pt-1 pb-0 flex flex-col">
                 <div className='flex items-center justify-between w-full'>

@@ -18,6 +18,8 @@ import { ReloadIcon } from '@radix-ui/react-icons';
 import { Form, Formik } from 'formik';
 import ImageUploader from '../server/ImageUploader';
 import { Encrypt, UploadMediaFiles } from '@/utils';
+import axios from "axios";
+import {toast} from "react-toastify";
 
 const EditProfile = ({ setProfile, username }) => {
     const { accessToken, profileData, setProfileData, setUserData } = React.useContext(AuthContext)
@@ -47,7 +49,7 @@ const EditProfile = ({ setProfile, username }) => {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button>
+                <Button className={'gap-[0.5rem]'}>
                     <FiEdit />
                     <span>
                         Edit Profile
@@ -63,8 +65,8 @@ const EditProfile = ({ setProfile, username }) => {
                     last_name: profileData.last_name || '',
                     username: profileData.username || '',
                     bio: profileData.bio || '',
-                }}>
-                    {({ values, handleChange }) => {
+                }} onSubmit={async () => await UpdateProfile(accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, formData, setProfileData, setUserData, setProfile, onModalClose, setIsUpdating, username, router)}>
+                    {({ values, handleChange, handleSubmit }) => {
                         return <Form onSubmit={(e) => { e.preventDefault() }} onKeyDown={(e) => {
                             e.key === 'Enter' ? e.preventDefault() : null;
                         }} className="flex flex-col divide-y-2 gap-4 first:divide-y-0 px-4 lg:px-10 py-10">
@@ -139,7 +141,7 @@ const EditProfile = ({ setProfile, username }) => {
                                             </label>
                                             <div className='flex gap-4 justify-center items-center text-sm'>
                                                 <Checkbox id="isLocked" name="isLocked" checked={isLocked} onCheckedChange={(e) => {
-                                                    setIsLocked(pre => e)
+                                                    setIsLocked(() => e)
                                                     e === profileData?.isLocked ? delete formData?.isLocked
                                                         : setFormData({
                                                             ...formData,
@@ -175,15 +177,15 @@ const EditProfile = ({ setProfile, username }) => {
                                             </label>
                                             <Input type="text" className="focus:outline-none focus:ring-0 focus-visible:ring-0"
                                                 value={userTagsInput}
-                                                onChange={e => setUserTagsInput(pre => e.target.value)}
+                                                onChange={e => setUserTagsInput(() => e.target.value)}
                                                 onKeyUp={e => e.key === 'Enter' ? AddTags(userTagsInput, userTags, profileData, formData, setFormData, setUserTags, setUserTagsInput) : null}
-                                                disabled={userTags.length >= 5 ? true : false} />
+                                                disabled={userTags.length >= 5} />
                                             <div className='flex items-center gap-2 my-2'>
                                                 {
                                                     userTags.map((tag, index) => (
                                                         <div key={index} className='flex items-center justify-center gap-2 bg-gray-200 rounded-full pl-4 pr-2 py-2 text-xs font-semibold text-black'>
                                                             #{tag}
-                                                            <span className='cursor-pointer rounded-full p-1 bg-gray-300' onClick={() => RemoveTags(userTags, setUserTags, formData, setFormData)}>
+                                                            <span className='cursor-pointer rounded-full p-1 bg-gray-300' onClick={() => RemoveTags(tag, userTags, setUserTags, formData, setFormData)}>
                                                                 <AiOutlineClose />
                                                             </span>
                                                         </div>
@@ -199,7 +201,7 @@ const EditProfile = ({ setProfile, username }) => {
                                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                                     Please wait
                                 </Button> :
-                                    <Button type='submit' onClick={async () => await UpdateProfile(accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, formData, setProfileData, setUserData, setProfile, onModalClose, setIsUpdating, username, router)}>
+                                    <Button type='submit' onClick={handleSubmit}>
                                         <BiSend className='text-base' />
                                         <span>
                                             Update
@@ -226,10 +228,10 @@ const AddTags = (userTagsInput, userTags, profileData, formData, setFormData, se
             setUserTags(pre => [...pre, userTagsInput])
         }
     }
-    setUserTagsInput(pre => '')
+    setUserTagsInput(() => '')
 }
 
-const RemoveTags = (userTags, setUserTags, formData, setFormData) => {
+const RemoveTags = (tag, userTags, setUserTags, formData, setFormData) => {
     if (userTags.filter(t => t !== tag).length > 0) {
         setFormData({
             ...formData,
@@ -244,7 +246,7 @@ const RemoveTags = (userTags, setUserTags, formData, setFormData) => {
 
 const CheckUsername = async (e, profileData, setIsUsernameValid, formData, accessToken, setFormData) => {
     if (e.target.value === profileData?.username) {
-        setIsUsernameValid(pre => true)
+        setIsUsernameValid(() => true)
         delete formData?.username
     }
     else {
@@ -258,22 +260,22 @@ const CheckUsername = async (e, profileData, setIsUsernameValid, formData, acces
         }
 
         await axios.request(options)
-            .then(response => {
-                setIsUsernameValid(pre => true)
+            .then(() => {
+                setIsUsernameValid(() => true)
                 setFormData({
                     ...formData,
                     username: e.target.value
                 })
             })
-            .catch(error => {
-                setIsUsernameValid(pre => false)
+            .catch(() => {
+                setIsUsernameValid(() => false)
                 delete formData?.username
             })
     }
 }
 
 const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, formData, setProfileData, setUserData, setProfile, onModalClose, setIsUpdating, username, router) => {
-    setIsUpdating(pre => true)
+    setIsUpdating(() => true)
 
     const HandleTostify = new Promise(async (resolve, rejected) => {
         const userImageData = isUserImageChange ? {
@@ -298,20 +300,20 @@ const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange
 
         await axios.request(options)
             .then(async response => {
-                setProfileData(pre => response.data.profile)
-                setUserData(pre => response.data.user)
-                setProfile(pre => response.data.profile)
+                setProfileData(() => response.data.profile)
+                setUserData(() => response.data.user)
+                setProfile(() => response.data.profile)
                 sessionStorage.removeItem("user")
                 sessionStorage.setItem("user", Encrypt(JSON.stringify(response.data.user), process.env.ENCRYPTION_KEY));
                 resolve();
                 router.push(`/user/${encodeURIComponent(response.data.user.username)}`)
             })
-            .catch((error) => {
+            .catch(() => {
                 rejected();
             })
             .finally(() => {
                 onModalClose()
-                setIsUpdating(pre => false)
+                setIsUpdating(() => false)
             });
     });
 
@@ -326,12 +328,12 @@ const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange
 }
 
 const CloseModal = (setIsOpen, setFormData, setUserImage, profileData, setbannerImage, setUserTagsInput, setUserTags) => {
-    setIsOpen(pre => false)
+    setIsOpen(() => false)
     setFormData({})
-    setUserImage(pre => profileData.image ? [{ data_url: profileData.image }] : [])
-    setbannerImage(pre => profileData.banner ? [{ data_url: profileData.banner }] : [])
-    setUserTagsInput(pre => '')
-    setUserTags(pre => profileData.tags)
+    setUserImage(() => profileData.image ? [{ data_url: profileData.image }] : [])
+    setbannerImage(() => profileData.banner ? [{ data_url: profileData.banner }] : [])
+    setUserTagsInput(() => '')
+    setUserTags(() => profileData.tags)
 }
 
 export default EditProfile

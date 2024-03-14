@@ -110,9 +110,8 @@ export const Login = async (values, LoggedInUser, router) => {
                 router.push("/")
                 resolve();
             })
-            .catch(error => {
+            .catch(() => {
                 router.push("/auth/login")
-                console.log(error);
                 rejected();
             });
     });

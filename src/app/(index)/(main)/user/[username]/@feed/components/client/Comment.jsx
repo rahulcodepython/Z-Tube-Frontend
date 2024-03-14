@@ -21,8 +21,6 @@ const Comment = ({post, setPost}) => {
         handler();
     }, [])
 
-    console.log(comments)
-
     return loading ? "Loading..." : <DialogDescription>
             <ScrollArea className="h-[300px] pt-4 pb-2 pr-4">
                 {
