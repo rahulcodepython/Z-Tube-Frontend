@@ -1,42 +1,39 @@
+// noinspection JSIgnoredPromiseFromCall
+
 "use client"
-import { Context } from '@/context/Context'
-import { Encrypt, ValidateUser, } from '@/utils'
+import { FetchUserData } from '@/app/(index)/layout'
+import Loading from '@/components/loading'
+import { AuthContext } from '@/context/AuthContext'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
 const Google = () => {
     const [loading, setLoading] = React.useState(true)
 
-    const { setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken } = React.useContext(Context)
+    const { LoggedInUser, setUserData } = React.useContext(AuthContext)
 
     const router = useRouter()
     const searchParams = useSearchParams()
 
-    React.useEffect(async () => {
-        const access = searchParams.get('access')
-        const refresh = searchParams.get('refresh')
+    React.useEffect(() => {
+        const handler = async () => {
+            const access = searchParams.get('access')
+            const refresh = searchParams.get('refresh')
 
-        if (!access || !refresh) {
-            router.push('/auth/login/')
-        }
-        else {
-            await ValidateUser(access, refresh, setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken)
+            if (!access || !refresh) {
+                router.push('/auth/login/')
+            }
+            else {
+                await LoggedInUser(access, refresh)
+                await FetchUserData(access, setUserData);
 
-            router.push('/')
-            setLoading(pre => false);
+                router.push('/');
+            }
         }
+        handler().finally(() => setLoading(() => false))
     }, [])
 
-    return loading && <div className="flex items-center justify-center w-screen h-screen absolute top-0 left-0">
-        <div className="flex justify-center items-center space-x-1 text-sm text-gray-700 w-full h-full">
-            <svg fill='none' className="w-6 h-6 animate-spin" viewBox="0 0 32 32" xmlns='http://www.w3.org/2000/svg'>
-                <path clipRule='evenodd'
-                    d='M15.165 8.53a.5.5 0 01-.404.58A7 7 0 1023 16a.5.5 0 011 0 8 8 0 11-9.416-7.874.5.5 0 01.58.404z'
-                    fill='currentColor' fillRule='evenodd' />
-            </svg>
-            <div>Loading...</div>
-        </div>
-    </div>
+    return loading && <Loading />
 }
 
 export default Google

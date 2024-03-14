@@ -13,14 +13,14 @@ const MediaUploader = ({ media }) => {
             {({ getRootProps, getInputProps }) => {
                 return media.length > 0 ? <div className={`w-full h-[200px] grid grid-cols-${media.length === 1 ? '1' : '2'}`}>
                     <div className='w-full h-full overflow-y-scroll'>
-                        <Image src={URL.createObjectURL(media[0])} width={100} height={100} className='w-fit h-fit' />
+                        <Image src={URL.createObjectURL(media[0])} width={100} height={100} className='w-fit h-fit' alt={'Empty'} />
                     </div>
                     {
                         media.length > 1 ? <div className={`grid grid-cols-${media.slice(1, media.length).length < 2 ? 1 : 2} grid-rows-${media.slice(1, media.length).length <= 2 ? 1 : 2} w-full h-[200px]`}>
                             {
                                 media.slice(1, media.length <= 5 ? 5 : 4).map((item, index) => {
                                     return <div className={`overflow-y-scroll ${media.slice(1, media.length).length === 3 ? 'last:col-span-2 ' : null}`} key={index}>
-                                        <Image src={URL.createObjectURL(item)} width={100} height={100} className='w-fit h-fit' />
+                                        <Image src={URL.createObjectURL(item)} width={100} height={100} className='w-fit h-fit' alt={'Empty'} />
                                     </div>
                                 })
                             }

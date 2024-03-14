@@ -1,13 +1,11 @@
 "use client"
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { BiSend, FcGoogle, GoArrowLeft } from '@/data/icons/icons';
-import { useRouter } from 'next/navigation';
+import { BiSend, GoArrowLeft } from '@/data/icons/icons';
 import { Formik, Form } from 'formik';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Login, onGoogleLoginSuccess } from '@/utils';
-import { Context } from '@/context/Context';
+import { GoogleLogin } from '@/utils';
 import React from 'react';
 import {
     Card,
@@ -18,11 +16,14 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import GoogleButton from "react-google-button";
+import { AuthContext } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Page = () => {
-    const { setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken } = React.useContext(Context)
-
-    const router = useRouter();
+    const { LoggedInUser } = React.useContext(AuthContext)
+    const router = useRouter()
 
     return (
         <div className='flex items-center justify-center w-screen h-screen'>
@@ -37,7 +38,7 @@ const Page = () => {
                         </Link>
                     </CardTitle>
                     <CardDescription>
-                        <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Sign in to your account
                         </h1>
                     </CardDescription>
@@ -47,7 +48,7 @@ const Page = () => {
                         email: '',
                         password: ''
                     }}
-                        onSubmit={async values => await Login(values, router, setIsAuthenticated, setIsAccessToken, setIsRefreshToken, setAccessToken, setRefreshToken)}>
+                        onSubmit={async values => await Login(values, LoggedInUser, router)}>
                         {({ values, handleChange, handleSubmit }) => (
                             <Form className="flex flex-col gap-6">
                                 <div className='flex flex-col gap-4'>
@@ -81,7 +82,7 @@ const Page = () => {
                         <p className="text-center text-sm">OR</p>
                         <hr className="border-gray-500" />
                     </div>
-                    <GoogleButton onClick={() => onGoogleLoginSuccess()} label="Sign in with Google" />
+                    <GoogleButton onClick={() => GoogleLogin()} label="Sign in with Google" />
                     <div className="text-sm flex justify-between items-center w-full">
                         <p>If you {`don't`} have an account...</p>
                         <Link href={'/auth/register'}>
@@ -94,6 +95,35 @@ const Page = () => {
             </Card>
         </div>
     );
+}
+
+export const Login = async (values, LoggedInUser, router) => {
+    const HandleTostify = new Promise((resolve, rejected) => {
+        const options = {
+            url: `${process.env.BASE_API_URL}/auth/token/jwt/create/`,
+            method: 'POST',
+            data: values,
+        }
+        axios.request(options)
+            .then(async response => {
+                await LoggedInUser(response.data.access, response.data.refresh)
+                router.push("/")
+                resolve();
+            })
+            .catch(error => {
+                router.push("/auth/login")
+                console.log(error);
+                rejected();
+            });
+    });
+    toast.promise(
+        HandleTostify,
+        {
+            pending: 'Your request is on process.',
+            success: 'Your are logged in.',
+            error: 'There is some issue, Try again.'
+        }
+    )
 }
 
 export default Page;

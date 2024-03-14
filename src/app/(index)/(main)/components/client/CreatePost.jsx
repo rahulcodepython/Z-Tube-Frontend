@@ -15,12 +15,7 @@ import {
 import { HiOutlineViewGridAdd } from "@/data/icons/icons"
 import CreateFeed from "./CreateFeed"
 import React from "react"
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
+import CustomTooltip from "@/components/Tooltip"
 
 const CreatePost = () => {
     const [isOpen, setIsOpen] = React.useState(false)
@@ -29,18 +24,7 @@ const CreatePost = () => {
         <Dialog open={isOpen} onOpenChange={setIsOpen} modal={false}>
             <DialogTrigger asChild>
                 <p>
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <span className="text-xl cursor-pointer">
-                                    <HiOutlineViewGridAdd />
-                                </span>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                Create Post
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+                    <CustomTooltip icon={<HiOutlineViewGridAdd />} text={'Create Post'} />
                 </p>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">

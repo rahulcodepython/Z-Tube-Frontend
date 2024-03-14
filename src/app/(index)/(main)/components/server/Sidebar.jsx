@@ -11,7 +11,7 @@ import { Data } from '@/data/data/data'
 import Link from 'next/link'
 import { AiFillPieChart } from '@/data/icons/icons'
 
-const Sidebar = ({ isUserData, userData, showTopicAll, setShowTopicAll }) => {
+const Sidebar = ({ userData, showTopicAll, setShowTopicAll }) => {
     return (
         <Sheet>
             <SheetTrigger asChild>
@@ -24,9 +24,10 @@ const Sidebar = ({ isUserData, userData, showTopicAll, setShowTopicAll }) => {
                 <div className="flex flex-col divide-y-2 divide-slate-500 scroll-smooth h-[93vh] overflow-y-scroll">
                     {
                         Object.entries(Data.sidebar).map(([key, value]) => {
-                            return <ul className="space-y-1 py-2 first:pt-0 last:pb-0">
+                            // eslint-disable-next-line react/jsx-key
+                            const ul = <ul className={"space-y-1 py-2 first:pt-0 last:pb-0"} key={key}>
                                 {
-                                    key === 'recources' ? <Link href={isUserData ? `/admin/${userData?.username}` : '/'} className="flex items-center p-2 rounded-lg hover:bg-gray-300 group hover:text-gray-700">
+                                    key === 'recources' ? <Link href={`/user/${userData?.username}`} className="flex items-center p-2 rounded-lg hover:bg-gray-300 group hover:text-gray-700">
                                         <AiFillPieChart />
                                         <span className="ml-3">
                                             Dashboard
@@ -44,11 +45,12 @@ const Sidebar = ({ isUserData, userData, showTopicAll, setShowTopicAll }) => {
                                     })
                                 }
                                 {
-                                    key === 'topic' ? <Link href="#" onClick={() => setShowTopicAll(pre => !showTopicAll)} className="flex items-center p-2 rounded-lg hover:bg-gray-300 group hover:text-gray-700">
+                                    key === 'topic' ? <Link href="#" onClick={() => setShowTopicAll(() => !showTopicAll)} className="flex items-center p-2 rounded-lg hover:bg-gray-300 group hover:text-gray-700">
                                         {showTopicAll ? 'Show Less' : 'Show More'}
                                     </Link> : null
                                 }
-                            </ul>
+                            </ul>;
+                            return ul
                         })
                     }
                 </div>

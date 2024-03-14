@@ -1,10 +1,10 @@
 "use client"
-import { Context } from '@/context/Context'
+import { AuthContext } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
-const Layout = ({ children }) => {
-    const { isAuthenticated } = React.useContext(Context)
+const AuthLayout = ({ children }) => {
+    const { isAuthenticated } = React.useContext(AuthContext)
     const router = useRouter()
 
     if (!isAuthenticated) {
@@ -15,4 +15,4 @@ const Layout = ({ children }) => {
     }
 }
 
-export default Layout
+export default AuthLayout

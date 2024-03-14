@@ -1,7 +1,7 @@
 import './globals.css'
 import { ToastContainer, Flip } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { ContextProvider } from '@/context/Context';
+import { AuthContextProvider } from '@/context/AuthContext';
 import { ThemeProvider } from "@/components/theme-provider"
 
 export const metadata = {
@@ -15,9 +15,9 @@ export default function RootLayout({ children }) {
             <body className='scroll-smooth'>
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                     <ToastContainer draggableDirection="x" pauseOnFocusLoss={false} transition={Flip} />
-                    <ContextProvider>
+                    <AuthContextProvider>
                         {children}
-                    </ContextProvider>
+                    </AuthContextProvider>
                 </ThemeProvider>
             </body>
         </html>

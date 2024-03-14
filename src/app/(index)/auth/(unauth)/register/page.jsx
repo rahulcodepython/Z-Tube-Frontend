@@ -1,7 +1,7 @@
 "use client"
 import Link from 'next/link';
-import { BiSend, FcGoogle, GoArrowLeft } from '@/data/icons/icons';
-import { Register, onGoogleLoginSuccess } from '@/utils/index';
+import { BiSend, GoArrowLeft } from '@/data/icons/icons';
+import { Encrypt, GoogleLogin } from '@/utils';
 import { Formik, Form } from 'formik';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -16,6 +16,8 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import GoogleButton from 'react-google-button';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Page = () => {
     return (
@@ -31,7 +33,7 @@ const Page = () => {
                         </Link>
                     </CardTitle>
                     <CardDescription>
-                        <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Sign in to your account
                         </h1>
                     </CardDescription>
@@ -86,7 +88,7 @@ const Page = () => {
                         <p className="text-center text-sm">OR</p>
                         <hr className="border-gray-500" />
                     </div>
-                    <GoogleButton onClick={() => onGoogleLoginSuccess()} label="Sign in with Google" />
+                    <GoogleButton onClick={() => GoogleLogin()} label="Sign in with Google" />
                     <div className="text-sm flex justify-between items-center w-full">
                         <p>If you have an account...</p>
                         <Link href={'/auth/login'}>
@@ -99,6 +101,30 @@ const Page = () => {
             </Card>
         </div>
     );
+}
+
+const Register = async (values) => {
+    const HandleTostify = new Promise((resolve, rejected) => {
+        const options = {
+            url: `${process.env.BASE_API_URL}/auth/dj/users/`,
+            method: 'POST',
+            data: values,
+        }
+        axios.request(options).then((() => {
+            localStorage.setItem("email", values.email)
+            localStorage.setItem("password", Encrypt(values.password, process.env.ENCRYPTION_KEY))
+            resolve();
+        })).catch(() => rejected())
+    });
+
+    toast.promise(
+        HandleTostify,
+        {
+            pending: 'Your request is on process.',
+            success: 'Your request is accepted.',
+            error: 'Your request is denied.'
+        }
+    )
 }
 
 export default Page;

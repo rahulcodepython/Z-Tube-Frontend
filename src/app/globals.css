@@ -73,10 +73,10 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'cascadia code';
+    font-family: 'cascadia code', serif;
   }
 }
 
 ::-webkit-scrollbar {
-  width: 0px;
+  width: 0;
 }
