@@ -1,17 +1,10 @@
 "use client"
 import React from 'react'
-import {
-    Menubar,
-    MenubarContent,
-    MenubarItem,
-    MenubarMenu,
-    MenubarTrigger,
-} from "@/components/ui/menubar"
-import {BsThreeDots} from '@/data/icons/icons'
 import {Avatar} from '@/components/ui/avatar';
 import Image from 'next/image';
 import Link from 'next/link';
-import ReplyModal from "@/app/(index)/(main)/user/[username]/@feed/components/server/ReplyModal";
+import ReplyModal from "@/app/(index)/(main)/user/[username]/@feed/components/client/ReplyModal";
+import EditCommentModal from "@/app/(index)/(main)/user/[username]/@feed/components/client/EditCommentModal";
 
 const CommentItem = ({commentItem, setComments, post, setPost, reply}) => {
     const [comment, setComment] = React.useState(commentItem)
@@ -32,21 +25,10 @@ const CommentItem = ({commentItem, setComments, post, setPost, reply}) => {
                         <div className="flex items-center text-xs text-muted-foreground gap-4">
                             <div>{comment.createdAt}</div>
                             {reply && <ReplyModal post={post} comment={comment} setPost={setPost}/>}
+                            <EditCommentModal comment={comment} setComment={setComment}/>
                         </div>
                     </div>
                 </div>
-                <Menubar className="border-none p-0 shadow-none">
-                    <MenubarMenu>
-                        <MenubarTrigger className="p-1 rounded-full">
-                            <BsThreeDots className='cursor-pointer'/>
-                        </MenubarTrigger>
-                        <MenubarContent>
-                            <MenubarItem>
-                                Edit
-                            </MenubarItem>
-                        </MenubarContent>
-                    </MenubarMenu>
-                </Menubar>
             </div>
             {
                 comment.children ? <div className={'ml-20 w-full'}>
