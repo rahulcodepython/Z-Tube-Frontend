@@ -2,7 +2,7 @@
 
 "use client"
 import { FetchUserData } from '@/app/(index)/layout'
-import Loading from '@/components/loading'
+import Loading from '@/components/Loading'
 import { AuthContext } from '@/context/AuthContext'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'

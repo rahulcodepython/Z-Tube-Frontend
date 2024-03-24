@@ -1,5 +1,5 @@
 "use client"
-import Loading from '@/components/loading'
+import Loading from '@/components/Loading'
 import { AuthContext } from '@/context/AuthContext'
 import { Decrypt, Encrypt } from '@/utils'
 import React from 'react'
