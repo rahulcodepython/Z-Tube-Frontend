@@ -1,51 +1,106 @@
 "use client"
 import Image from 'next/image'
 import React from 'react'
-import Dropzone from 'react-dropzone'
+import {AiOutlineClose, BiCamera, FiTrash, FiEdit} from "@/data/icons/icons";
+import ImageUploading from 'react-images-uploading';
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel"
+import {AspectRatio} from "@/components/ui/aspect-ratio"
+import {Button} from "@/components/ui/button";
 
-const MediaUploader = ({ media }) => {
+const MediaUploader = ({media, setMedia, setIsMediaUpdate}) => {
+    const maxNumber = 10;
     return (
-        <Dropzone onDrop={acceptedFiles => {
-            acceptedFiles.map(f => {
-                media.push(f)
-            })
-        }}>
-            {({ getRootProps, getInputProps }) => {
-                return media.length > 0 ? <div className={`w-full h-[200px] grid grid-cols-${media.length === 1 ? '1' : '2'}`}>
-                    <div className='w-full h-full overflow-y-scroll'>
-                        <Image src={URL.createObjectURL(media[0])} width={100} height={100} className='w-fit h-fit' alt={'Empty'} />
-                    </div>
+        <ImageUploading
+            multiple
+            value={media}
+            onChange={(imageList, addUpdateIndex) => {
+                setIsMediaUpdate(() => true)
+            }}
+            maxNumber={maxNumber}
+            dataURLKey="data_url"
+        >
+            {({
+                  imageList,
+                  onImageUpload,
+                  onImageRemoveAll,
+                  onImageUpdate,
+                  onImageRemove,
+                  isDragging,
+                  dragProps,
+              }) => (
+                <div className={'space-y-2'}>
                     {
-                        media.length > 1 ? <div className={`grid grid-cols-${media.slice(1, media.length).length < 2 ? 1 : 2} grid-rows-${media.slice(1, media.length).length <= 2 ? 1 : 2} w-full h-[200px]`}>
-                            {
-                                media.slice(1, media.length <= 5 ? 5 : 4).map((item, index) => {
-                                    return <div className={`overflow-y-scroll ${media.slice(1, media.length).length === 3 ? 'last:col-span-2 ' : null}`} key={index}>
-                                        <Image src={URL.createObjectURL(item)} width={100} height={100} className='w-fit h-fit' alt={'Empty'} />
-                                    </div>
-                                })
-                            }
-                            {
-                                media.length > 5 ? <div className="w-full h-full flex items-center justify-center text-5xl">
-                                    +{media.length - 4}
-                                </div> : null
-                            }
+                        imageList.length > 0 ? <div className={'flex justify-center items-center gap-2'} {...dragProps}>
+                            <Button className={'gap-2'}>
+                                <FiEdit onClick={onImageUpload}/>
+                                Edit
+                            </Button>
+                            <Button className={'gap-2'}>
+                                <FiTrash onClick={onImageRemoveAll}/>
+                                Trash
+                            </Button>
                         </div> : null
                     }
+                    {
+                        imageList.length > 0 ? null :
+                            <section className='border-dashed border-2 p-8 flex justify-center items-center w-full h-60'
+                                     style={isDragging ? {color: 'red'} : undefined}
+                                     onClick={onImageUpload} {...dragProps}>
+                                <div className='flex flex-col items-center justify-center'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-600"
+                                         fill="none"
+                                         viewBox="0 0 24 24"
+                                         stroke="currentColor" strokeWidth="2">
+                                        <path strokeLinecap="round" strokeLinejoin="round"
+                                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                    </svg>
+                                    <p className='text-gray-600'>Drag {`'n'`} drop some files here, or click to select
+                                        files</p>
+                                </div>
+                            </section>
+                    }
+                    {
+                        imageList.length > 0 ? imageList.length > 1 ? <Carousel>
+                            <CarouselContent>
+                                {
+                                    imageList.map((image, index) => (
+                                        <CarouselItem key={index}>
+                                            <AspectRatio ratio={16 / 9}
+                                                         className={'flex items-center justify-center relative group'}>
+                                                <Image src={image.data_url} width={250} height={250} alt="Image"
+                                                       className='object-cover'/>
+                                                <div
+                                                    className={'absolute text-2xl hidden group-hover:flex gap-4 items-center justify-center transition-all duration-300 ease-in-out'}>
+                                                    <Button variant="outline" size="icon" className={'rounded-full'}
+                                                            onClick={() => onImageUpdate(index)}>
+                                                        <BiCamera className="h-4 w-4"/>
+                                                    </Button>
+                                                    <Button variant="outline" size="icon" className={'rounded-full'}
+                                                            onClick={() => onImageRemove(index)}>
+                                                        <AiOutlineClose className="h-4 w-4"/>
+                                                    </Button>
+                                                </div>
+                                            </AspectRatio>
+                                        </CarouselItem>
+                                    ))
+                                }
+                            </CarouselContent>
+                            <CarouselPrevious className={'ml-20'}/>
+                            <CarouselNext className={'mr-20'}/>
+                        </Carousel> : <AspectRatio ratio={16 / 9} className={'flex items-center justify-center'}>
+                            <Image src={imageList[0].data_url} width={250} height={250} alt="Image"
+                                   className='object-cover'/>
+                        </AspectRatio> : null
+                    }
                 </div>
-                    : <section className='border-dashed border-2 p-8 flex justify-center items-center w-full h-60' {...getRootProps()}>
-                        <div className='flex flex-col items-center justify-center'>
-                            <input type="file" id="files" name="files" accept='.jpg, .jpeg, .pjpeg, .pjp, .png' multiple className='hidden' {...getInputProps()} />
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" strokeWidth="2">
-                                <path strokeLinecap="round" strokeLinejoin="round"
-                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                            </svg>
-                            <p className='text-gray-600'>Drag {`'n'`} drop some files here, or click to select files</p>
-                        </div>
-                    </section>
-            }
-            }
-        </Dropzone>
+            )}
+        </ImageUploading>
     )
 }
 

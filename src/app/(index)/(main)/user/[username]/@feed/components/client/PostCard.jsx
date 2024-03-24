@@ -21,6 +21,13 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel"
+import {
+    Dialog,
+    DialogContent, DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import {BsThreeDots, IoChatbubbleOutline} from '@/data/icons/icons'
 import {AspectRatio} from "@/components/ui/aspect-ratio"
 import {Separator} from "@/components/ui/separator"
@@ -29,10 +36,11 @@ import PostReactionModal from './PostReactionModal'
 import Comment from './Comment'
 import Share from '../server/Share'
 import PostReactionDetails from '../server/PostReactionDetails'
-import {Dialog, DialogTitle, DialogTrigger, DialogContent, DialogHeader} from "@/components/ui/dialog";
+import EditFeed from "@/app/(index)/(main)/user/[username]/@feed/components/client/EditFeed";
 
 const PostCard = ({feed}) => {
     const [post, setPost] = React.useState(feed)
+    const [isOpen, setIsOpen] = React.useState(false)
 
     return (
         <Card className="space-y-3 py-3">
@@ -47,17 +55,33 @@ const PostCard = ({feed}) => {
                                 <div className='text-xs'>{(post.createdAt)}</div>
                             </div>
                         </div>
-                        <Menubar className="border-none p-0">
-                            <MenubarMenu>
-                                <MenubarTrigger className="p-2 rounded-full">
-                                    <BsThreeDots className='cursor-pointer'/>
-                                </MenubarTrigger>
-                                <MenubarContent>
-                                    <MenubarItem>Save Post</MenubarItem>
-                                    {post.self ? <MenubarItem>Edit Post</MenubarItem> : null}
-                                </MenubarContent>
-                            </MenubarMenu>
-                        </Menubar>
+                        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                            <Menubar className="border-none p-0 shadow-none">
+                                <MenubarMenu>
+                                    <MenubarTrigger className="p-2 rounded-full">
+                                        <BsThreeDots className='cursor-pointer'/>
+                                    </MenubarTrigger>
+                                    <MenubarContent>
+                                        <MenubarItem>Save Post</MenubarItem>
+                                        {post.self ? <MenubarItem className={'cursor-pointer'}>
+                                            <DialogTrigger className={'w-full flex'}>
+                                                Edit Post
+                                            </DialogTrigger>
+                                        </MenubarItem> : null}
+                                    </MenubarContent>
+                                </MenubarMenu>
+                            </Menubar>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>
+                                        <p>Edit Feed</p>
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                        <EditFeed setIsOpen={setIsOpen} post={post} setPost={setPost} />
+                                    </DialogDescription>
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                     <div className='text-sm'>
                         {post.caption}

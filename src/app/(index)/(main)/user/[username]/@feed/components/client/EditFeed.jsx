@@ -1,7 +1,6 @@
 "use client"
 import React from 'react';
 import {AiOutlineClose, BiSend} from '@/data/icons/icons';
-import MediaUploader from './MediaUploader';
 import {Button} from '@/components/ui/button';
 import {Textarea} from "@/components/ui/textarea"
 import {Label} from '@/components/ui/label';
@@ -17,28 +16,35 @@ import {
 } from "@/components/ui/select"
 import {AuthContext} from '@/context/AuthContext';
 import {ReloadIcon} from "@radix-ui/react-icons"
-import {DateTimeParser, UploadMediaFiles} from '@/utils';
+import {UploadMediaFiles} from '@/utils';
 import axios from 'axios';
 import {toast} from 'react-toastify';
 import {Form, Formik} from "formik";
-import {Checkbox} from "@/components/ui/checkbox";
+import MediaUploader from "@/app/(index)/(main)/components/client/MediaUploader";
+import { Checkbox } from "@/components/ui/checkbox"
 
-const CreateFeed = ({setIsOpen}) => {
+const EditFeed = ({setIsOpen, post, setPost}) => {
     const {accessToken} = React.useContext(AuthContext)
 
     const [uploading, setUploading] = React.useState(false)
     const [tagsInput, setTagsInput] = React.useState('')
-    const [tags, setTags] = React.useState([])
-    const [media, setMedia] = React.useState([])
-    const [isAllowComments, setIsAllowComments] = React.useState(true)
+    const [tags, setTags] = React.useState(post.tags)
     const [isMediaUpdate, setIsMediaUpdate] = React.useState(false)
+    const [isAllowComments, setIsAllowComments] = React.useState(post.allowComments)
+    const [media, setMedia] = React.useState(
+        post.media.map(item => {
+            return {
+                data_url: item
+            }
+        })
+    )
 
     return (
         <Formik initialValues={{
-            caption: '',
-            visibility: 'public'
+            caption: post.caption,
+            visibility: post.isPublic ? 'public' : post.isProtected ? 'protected' : post.isPrivate ? 'private' : null,
         }} onSubmit={
-            async values => await CreateFeedPost(setUploading, accessToken, media, values, isAllowComments, tags, setIsOpen)
+            async values => await CreateFeedPost(setUploading, accessToken, media, values, isAllowComments, tags, setIsOpen, post, setPost, isMediaUpdate)
         }>
             {({values, handleChange, handleSubmit}) => (
                 <Form onKeyDown={e => {
@@ -75,10 +81,8 @@ const CreateFeed = ({setIsOpen}) => {
                             </Select>
                         </div>
                         <div className="col-span-2 w-full flex justify-center gap-1 px-1 space-x-2">
-                            <Checkbox id="terms2" checked={isAllowComments} name={'allowComments'}
-                                      onCheckedChange={e => setIsAllowComments(e)}/>
-                            <label htmlFor="terms2"
-                                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            <Checkbox id="terms2" checked={isAllowComments} name={'allowComments'} onCheckedChange={e => setIsAllowComments(e)} />
+                            <label htmlFor="terms2" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                                 Allow Comments
                             </label>
                         </div>
@@ -94,7 +98,7 @@ const CreateFeed = ({setIsOpen}) => {
                                     {
                                         tags.map((tag, index) => {
                                             return <div key={index}
-                                                        className='flex items-center justify-center gap-2 bg-gray-200 rounded-full pl-4 pr-2 py-2 text-xs font-semibold text-black'>
+                                                        className='flex items-center justify-center gap-2 bg-gray-200 rounded-full pl-4 pr-2 py-1 text-xs font-semibold text-black'>
                                                 #{tag}
                                                 <span className='cursor-pointer rounded-full bg-gray-300 p-1'
                                                       onClick={() => RemoveTags(tag, setTags)}>
@@ -130,40 +134,40 @@ const CreateFeed = ({setIsOpen}) => {
     );
 };
 
-const CreateFeedPost = async (setUploading, accessToken, media, values, isAllowComments, tags, setIsOpen) => {
+const CreateFeedPost = async (setUploading, accessToken, media, values, isAllowComments, tags, setIsOpen, post, setPost, isMediaUpdate) => {
     if (media.length > 0) {
         setUploading(() => true)
 
         const HandleTostify = new Promise(async (resolve, rejected) => {
-            let mediaURL = [];
+            let mediaURL = isMediaUpdate ? [] : post.media;
 
-            await Promise.all(media.map(async (item) => {
+            isMediaUpdate ? await Promise.all(media.map(async (item) => {
                 if (item.type.includes('image/')) {
                     const url = await UploadMediaFiles(item, `Feed/${item.name}`);
                     mediaURL.push(url);
                 }
-            }));
+            })) : null;
 
 
             const options = {
                 headers: {
                     Authorization: `JWT ${accessToken}`,
                 },
-                url: `${process.env.BASE_API_URL}/feed/createpost/`,
-                method: 'POST',
+                url: `${process.env.BASE_API_URL}/feed/editpost/${post.id}/`,
+                method: 'PATCH',
                 data: {
                     ...values,
                     ...{
                         media: mediaURL,
                         tags: tags,
-                        allowComments: isAllowComments,
-                        createdAt: DateTimeParser(Date.now())
+                        allowComments: isAllowComments
                     }
                 }
             }
 
             await axios.request(options)
-                .then(() => {
+                .then((response) => {
+                    setPost(() => response.data)
                     resolve();
                 })
                 .catch(() => {
@@ -201,4 +205,4 @@ const RemoveTags = (tag, setTags) => {
     setTags(pre => pre.filter(t => t !== tag))
 }
 
-export default CreateFeed
+export default EditFeed
