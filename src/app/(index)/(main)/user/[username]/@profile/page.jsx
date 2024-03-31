@@ -9,11 +9,11 @@ import {
     CardContent,
     CardHeader
 } from "@/components/ui/card"
-import EditProfile from './components/client/EditProfile'
-import Loading from './loading'
+import EditProfile from "@/app/(index)/(main)/user/[username]/@profile/components/client/EditProfile";
+import Loading from "@/app/(index)/(main)/user/[username]/@profile/components/server/loading";
 import axios from "axios";
 
-const Page = ({ params }) => {
+const Profile = ({ params }) => {
     const [loading, setLoading] = React.useState(true)
     const [profile, setProfile] = React.useState(null)
 
@@ -173,4 +173,4 @@ const DisconnectPeople = async (accessToken, username, profile, setProfile) => {
         .then(response => setProfile({ ...profile, isFriend: false }))
 }
 
-export default Page
+export default Profile

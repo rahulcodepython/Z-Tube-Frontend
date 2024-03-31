@@ -21,7 +21,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const Page = () => {
+const LoginPage = () => {
     const { LoggedInUser } = React.useContext(AuthContext)
     const router = useRouter()
 
@@ -31,7 +31,7 @@ const Page = () => {
                 <CardHeader>
                     <CardTitle>
                         <Link href={'/'}>
-                            <Button variant="outline" className='border-none p-0 hover:bg-transparent'>
+                            <Button variant="outline" className='border-none gap-2 p-0 hover:bg-transparent'>
                                 <GoArrowLeft className='text-lg' />
                                 <span>Back</span>
                             </Button>
@@ -61,9 +61,9 @@ const Page = () => {
                                         <Input type="password" name="password" value={values.password} onChange={handleChange} placeholder="Enter your password" id="password" className="w-full focus-visible:ring-0" autoFocus autoComplete="password" required />
                                     </div>
                                     <div className="text-right">
-                                        <a href="#" className="text-sm font-semibold text-gray-700 hover:text-gray-500 focus:text-gray-500">
+                                        <span className="text-sm font-semibold text-gray-700 hover:text-gray-500 focus:text-gray-500 hover:underline">
                                             Forgot Password?
-                                        </a>
+                                        </span>
                                     </div>
                                 </div>
                                 <Button type='submit' onClick={handleSubmit}>
@@ -125,4 +125,4 @@ export const Login = async (values, LoggedInUser, router) => {
     )
 }
 
-export default Page;
+export default LoginPage;

@@ -24,8 +24,7 @@ const Sidebar = ({ userData, showTopicAll, setShowTopicAll }) => {
                 <div className="flex flex-col divide-y-2 divide-slate-500 scroll-smooth h-[93vh] overflow-y-scroll">
                     {
                         Object.entries(Data.sidebar).map(([key, value]) => {
-                            // eslint-disable-next-line react/jsx-key
-                            const ul = <ul className={"space-y-1 py-2 first:pt-0 last:pb-0"} key={key}>
+                            return <ul className={"space-y-1 py-2 first:pt-0 last:pb-0"} key={key}>
                                 {
                                     key === 'recources' ? <Link href={`/user/${userData?.username}`} className="flex items-center p-2 rounded-lg hover:bg-gray-300 group hover:text-gray-700">
                                         <AiFillPieChart />
@@ -49,8 +48,7 @@ const Sidebar = ({ userData, showTopicAll, setShowTopicAll }) => {
                                         {showTopicAll ? 'Show Less' : 'Show More'}
                                     </Link> : null
                                 }
-                            </ul>;
-                            return ul
+                            </ul>
                         })
                     }
                 </div>

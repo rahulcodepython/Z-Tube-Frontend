@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Page = () => {
+const PasswordVerify = () => {
     return (
         <div>password</div>
     )
 }
 
-export default Page
+export default PasswordVerify

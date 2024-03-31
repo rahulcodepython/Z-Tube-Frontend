@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import { Login } from '@/app/(index)/auth/(unauth)/login/page'
 import { Decrypt } from '@/utils'
 
-const Page = () => {
+const EmailVerifySuccess = () => {
     const [loading, setLoading] = React.useState(true)
 
     const { AuthenticateUser } = React.useContext(AuthContext)
@@ -59,4 +59,4 @@ const AutoLoginUser = async (AuthenticateUser, router) => {
     localStorage.removeItem('password')
 }
 
-export default Page
+export default EmailVerifySuccess

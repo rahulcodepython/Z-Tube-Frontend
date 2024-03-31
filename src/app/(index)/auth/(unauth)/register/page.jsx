@@ -19,14 +19,14 @@ import GoogleButton from 'react-google-button';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const Page = () => {
+const RegisterPage = () => {
     return (
         <div className='flex items-center justify-center w-screen h-screen'>
             <Card className="max-w-xl w-full">
                 <CardHeader>
                     <CardTitle>
                         <Link href={'/'}>
-                            <Button variant="outline" className='border-none p-0 hover:bg-transparent'>
+                            <Button variant="outline" className='border-none gap-2 p-0 hover:bg-transparent'>
                                 <GoArrowLeft className='text-lg' />
                                 <span>Back</span>
                             </Button>
@@ -67,16 +67,14 @@ const Page = () => {
                                         <Input type="password" name="password" value={values.password} onChange={handleChange} placeholder="Choose a password" id="password" className="w-full focus-visible:ring-0" autoFocus autoComplete="password" required />
                                     </div>
                                     <div className="text-right">
-                                        <a href="#" className="text-sm font-semibold text-gray-700 hover:text-gray-500 focus:text-gray-500">
+                                        <span className="text-sm font-semibold text-gray-700 hover:text-gray-500 focus:text-gray-500 hover:underline">
                                             Forgot Password?
-                                        </a>
+                                        </span>
                                     </div>
                                 </div>
-                                <Button type="submit" onClick={handleSubmit}>
+                                <Button type="submit" onClick={handleSubmit} className={'gap-2'}>
                                     <BiSend className='text-base' />
-                                    <span>
-                                        Register
-                                    </span>
+                                    Register
                                 </Button>
                             </Form>
                         )}
@@ -127,4 +125,4 @@ const Register = async (values) => {
     )
 }
 
-export default Page;
+export default RegisterPage;

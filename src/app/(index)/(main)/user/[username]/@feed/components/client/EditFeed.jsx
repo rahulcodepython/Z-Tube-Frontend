@@ -1,10 +1,9 @@
 "use client"
 import React from 'react';
-import { AiOutlineClose, BiSend } from '@/data/icons/icons';
-import { Button } from '@/components/ui/button';
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from '@/components/ui/label';
-import { Input } from "@/components/ui/input"
+import {BiSend} from '@/data/icons/icons';
+import {Button} from '@/components/ui/button';
+import {Textarea} from "@/components/ui/textarea"
+import {Label} from '@/components/ui/label';
 import {
     Select,
     SelectContent,
@@ -14,23 +13,21 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { AuthContext } from '@/context/AuthContext';
-import { ReloadIcon } from "@radix-ui/react-icons"
-import { UploadMediaFiles } from '@/utils';
+import {AuthContext} from '@/context/AuthContext';
+import {ReloadIcon} from "@radix-ui/react-icons"
+import {UploadMediaFiles} from '@/utils';
 import axios from 'axios';
-import { toast } from 'react-toastify';
-import { Form, Formik } from "formik";
-import MediaUploader from "@/app/(index)/(main)/components/client/MediaUploader";
-import { Checkbox } from "@/components/ui/checkbox"
+import {toast} from 'react-toastify';
+import {Form, Formik, FieldArray} from "formik";
+import {MediaUploader} from "@/app/(index)/(main)/components/client/CreateFeed";
+import {Checkbox} from "@/components/ui/checkbox"
+import TagsInput from "@/components/TagsInput";
 
-const EditFeed = ({ setIsOpen, post, setPost }) => {
-    const { accessToken } = React.useContext(AuthContext)
+const EditFeed = ({setIsOpen, post, setPost}) => {
+    const {accessToken} = React.useContext(AuthContext)
 
     const [uploading, setUploading] = React.useState(false)
-    const [tagsInput, setTagsInput] = React.useState('')
-    const [tags, setTags] = React.useState(post.tags)
     const [isMediaUpdate, setIsMediaUpdate] = React.useState(false)
-    const [isAllowComments, setIsAllowComments] = React.useState(post.allowComments)
     const [media, setMedia] = React.useState(
         post.media.map(item => {
             return {
@@ -43,15 +40,17 @@ const EditFeed = ({ setIsOpen, post, setPost }) => {
         <Formik initialValues={{
             caption: post.caption,
             visibility: post.isPublic ? 'public' : post.isProtected ? 'protected' : post.isPrivate ? 'private' : null,
+            tags: post.tags,
+            allowComments: post.allowComments
         }} onSubmit={
-            async values => await CreateFeedPost(setUploading, accessToken, media, values, isAllowComments, tags, setIsOpen, post, setPost, isMediaUpdate)
+            async values => await CreateFeedPost(setUploading, accessToken, media, values, setIsOpen, post, setPost, isMediaUpdate)
         }>
-            {({ values, handleChange, handleSubmit }) => (
+            {({values, handleChange, handleSubmit}) => (
                 <Form onKeyDown={e => {
                     e.key === 'Enter' ? e.preventDefault() : null;
                 }}
-                    onSubmit={e => e.preventDefault()}
-                    className='pt-8 flex flex-col gap-4'>
+                      onSubmit={e => e.preventDefault()}
+                      className='pt-8 flex flex-col gap-4'>
 
                     <h6 className="text-gray-400 text-lg font-bold uppercase">
                         Post Details
@@ -60,15 +59,15 @@ const EditFeed = ({ setIsOpen, post, setPost }) => {
                         <div className="col-span-2 grid w-full gap-2 px-1">
                             <Label htmlFor="caption" className="uppercase text-gray-600 text-xs">Caption</Label>
                             <Textarea placeholder="Type your caption." rows="7" name="caption" value={values.caption}
-                                onChange={handleChange} className="focus:ring-0 focus-visible:ring-0" autoFocus
-                                autoComplete="email" required />
+                                      onChange={handleChange} className="focus:ring-0 focus-visible:ring-0" autoFocus
+                                      autoComplete="email" required/>
                         </div>
                         <div className="col-span-2 grid w-full gap-2 px-1">
                             <Label htmlFor="visibility" className="uppercase text-gray-600 text-xs">Visibility</Label>
                             <Select onValueChange={(e) => handleChange(e)}
-                                defaultValue={values.visibility}>
+                                    defaultValue={values.visibility}>
                                 <SelectTrigger className="focus:ring-0 focus-visible:ring-0">
-                                    <SelectValue placeholder="Select a visibility" />
+                                    <SelectValue placeholder="Select a visibility"/>
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
@@ -81,48 +80,43 @@ const EditFeed = ({ setIsOpen, post, setPost }) => {
                             </Select>
                         </div>
                         <div className="col-span-2 w-full flex justify-center gap-1 px-1 space-x-2">
-                            <Checkbox id="terms2" checked={isAllowComments} name={'allowComments'} onCheckedChange={e => setIsAllowComments(e)} />
-                            <label htmlFor="terms2" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            <Checkbox id="allowComments" checked={values.allowComments} name={'allowComments'}
+                                      onCheckedChange={e => handleChange({
+                                          target: {
+                                              type: "checkbox",
+                                              checked: e,
+                                              name: 'allowComments'
+                                          }
+                                      })}/>
+                            <label htmlFor="allowComments"
+                                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                                 Allow Comments
                             </label>
                         </div>
                         <div className="col-span-2 w-full flex flex-col gap-2 px-1">
                             <Label htmlFor="tags" className="uppercase text-gray-600 text-xs">Tags</Label>
-                            <Input type="text" placeholder="Enter a tags"
-                                className="focus:ring-0 focus-visible:ring-0"
-                                disabled={tags.length >= 3} value={tagsInput}
-                                onChange={e => setTagsInput(() => e.target.value)}
-                                onKeyUp={e => e.key === 'Enter' ? AddTags(tagsInput, setTagsInput, tags, setTags) : null} />
-                            {
-                                tags.length > 0 ? <div className='flex items-center gap-2 my-2'>
-                                    {
-                                        tags.map((tag, index) => {
-                                            return <div key={index}
-                                                className='flex items-center justify-center gap-2 bg-gray-200 rounded-full pl-4 pr-2 py-1 text-xs font-semibold text-black'>
-                                                #{tag}
-                                                <span className='cursor-pointer rounded-full bg-gray-300 p-1'
-                                                    onClick={() => RemoveTags(tag, setTags)}>
-                                                    <AiOutlineClose />
-                                                </span>
-                                            </div>
-                                        })
+                            <FieldArray name={'tags'}>
+                                {
+                                    ({remove, push}) => {
+                                        return <TagsInput max={3} remove={remove} push={push} tags={values.tags}/>
                                     }
-                                </div> : null
-                            }
+                                }
+
+                            </FieldArray>
                         </div>
                         <div className="col-span-2 grid w-full gap-2 px-1">
                             <Label htmlFor="Media" className="uppercase text-gray-600 text-xs">Media</Label>
-                            <MediaUploader media={media} setMedia={setMedia} setIsMediaUpdate={setIsMediaUpdate} />
+                            <MediaUploader media={media} setMedia={setMedia} setIsMediaUpdate={setIsMediaUpdate}/>
                         </div>
                     </div>
                     {
                         uploading ? <Button disabled>
-                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                            Please wait
-                        </Button>
+                                <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
+                                Please wait
+                            </Button>
                             : <Button type='submit' className={'gap-2'}
-                                onClick={handleSubmit}>
-                                <BiSend className='text-base' />
+                                      onClick={handleSubmit}>
+                                <BiSend className='text-base'/>
                                 <span>
                                     Upload
                                 </span>
@@ -134,7 +128,7 @@ const EditFeed = ({ setIsOpen, post, setPost }) => {
     );
 };
 
-const CreateFeedPost = async (setUploading, accessToken, media, values, isAllowComments, tags, setIsOpen, post, setPost, isMediaUpdate) => {
+const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpen, post, setPost, isMediaUpdate) => {
     if (media.length > 0) {
         setUploading(() => true)
 
@@ -142,10 +136,8 @@ const CreateFeedPost = async (setUploading, accessToken, media, values, isAllowC
             let mediaURL = isMediaUpdate ? [] : post.media;
 
             isMediaUpdate ? await Promise.all(media.map(async (item) => {
-                if (item.type.includes('image/')) {
-                    const url = await UploadMediaFiles(item, `Feed/${item.name}`);
-                    mediaURL.push(url);
-                }
+                const url = await UploadMediaFiles(item.file, `Feed/${item.file.name}`);
+                mediaURL.push(url);
             })) : null;
 
 
@@ -159,8 +151,6 @@ const CreateFeedPost = async (setUploading, accessToken, media, values, isAllowC
                     ...values,
                     ...{
                         media: mediaURL,
-                        tags: tags,
-                        allowComments: isAllowComments
                     }
                 }
             }
@@ -190,19 +180,6 @@ const CreateFeedPost = async (setUploading, accessToken, media, values, isAllowC
     } else {
         toast.warn("You can not upload without any media file.")
     }
-}
-
-const AddTags = (tagsInput, setTagsInput, tags, setTags) => {
-    if (tagsInput.trim().length > 0) {
-        if (!tags.includes(tagsInput)) {
-            setTags(pre => [...pre, tagsInput])
-        }
-    }
-    setTagsInput(() => '')
-}
-
-const RemoveTags = (tag, setTags) => {
-    setTags(pre => pre.filter(t => t !== tag))
 }
 
 export default EditFeed

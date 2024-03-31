@@ -1,10 +1,8 @@
-// noinspection Eslint
-
 "use client"
 import { AuthContext } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
-import React from 'react'
-import Navbar from './components/server/Navbar'
+import React from 'react';
+import Navbar from "@/app/(index)/(main)/components/server/Navbar";
 
 const MainLayout = ({ children }) => {
     const [showTopicAll, setShowTopicAll] = React.useState(false)
@@ -15,14 +13,14 @@ const MainLayout = ({ children }) => {
 
     const router = useRouter()
 
+    React.useEffect(() => {
+        window.addEventListener("scroll", () => {
+            document.documentElement.scrollTop !== 0 ? setToggleNavbar(() => true) : setToggleNavbar(() => false);
+        });
+        setLoading(() => false)
+    }, [])
+
     if (isAuthenticated) {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        React.useEffect(() => {
-            window.addEventListener("scroll", () => {
-                document.documentElement.scrollTop !== 0 ? setToggleNavbar(() => true) : setToggleNavbar(() => false);
-            });
-            setLoading(() => false)
-        }, [])
         return !loading && <React.Fragment>
             <Navbar userData={userData} toggleNavbar={toggleNavbar} showTopicAll={showTopicAll} setShowTopicAll={setShowTopicAll} />
             <main className='mt-16'>

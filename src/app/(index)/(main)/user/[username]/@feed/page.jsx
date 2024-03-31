@@ -1,11 +1,11 @@
 "use client"
 import React from 'react'
-import PostCard from './components/client/PostCard'
+import PostCard from "@/app/(index)/(main)/user/[username]/@feed/components/client/PostCard";
 import { AuthContext } from '@/context/AuthContext'
-import Loading from './loading'
+import Loading from "@/app/(index)/(main)/user/[username]/@feed/components/server/loading";
 import axios from "axios";
 
-const Page = ({ params }) => {
+const Feed = ({ params }) => {
     const [loading, setLoading] = React.useState(true)
     const [feedPost, setFeedPost] = React.useState([])
 
@@ -19,13 +19,13 @@ const Page = ({ params }) => {
         handler();
     }, [])
 
-    return (loading ? <Loading /> : <div className='grid grid-cols-3 gap-4 mt-8'>
-        {feedPost.length === 0 ? <div>No Post There</div> : feedPost.map((item, index) => {
+    return loading ? <Loading /> : <div className='grid grid-cols-3 gap-4 mt-8'>
+        {
+            feedPost.length === 0 ? <div>No Post There</div> : feedPost.map((item, index) => {
             return <PostCard key={index} feed={item} />
-        })}
+        })
+        }
     </div>
-
-    )
 }
 
 const FetchFeedPost = async (accessToken, setFeedPost, username) => {
@@ -41,4 +41,4 @@ const FetchFeedPost = async (accessToken, setFeedPost, username) => {
         })
 }
 
-export default Page
+export default Feed

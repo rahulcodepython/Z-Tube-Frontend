@@ -47,6 +47,11 @@ export const Data = {
                 title: "Discord",
                 link: '/'
             },
+            {
+                icon: <PiHandbagSimpleFill />,
+                title: "eCommerce",
+                link: '/ecom'
+            }
         ],
         explore: [
             {
@@ -81,7 +86,7 @@ export const Data = {
             },
             {
                 icon: <FaIndianRupeeSign />,
-                title: "Monitization",
+                title: "Monetization",
                 link: '#'
             },
             {

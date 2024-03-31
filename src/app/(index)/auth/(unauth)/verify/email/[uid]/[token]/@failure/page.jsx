@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-const Page = () => {
+const EmailVerifyFailure = () => {
     return (
         <Card className="px-5 flex flex-col items-center justify-center gap-6 max-w-lg p-8">
             <Image src={'/gif/failed.gif'} width={200} height={200} alt='failed' className='mix-blend-multiply' />
@@ -23,4 +23,4 @@ const Page = () => {
     )
 }
 
-export default Page
+export default EmailVerifyFailure

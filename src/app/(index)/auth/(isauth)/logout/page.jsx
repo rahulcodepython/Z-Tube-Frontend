@@ -2,11 +2,9 @@
 import React from 'react'
 import { AuthContext } from '@/context/AuthContext'
 
-const page = () => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+const Logout = () => {
     const { LogoutUser: LogoutUser } = React.useContext(AuthContext)
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
         const handler = async () => {
             await LogoutUser();
@@ -16,4 +14,4 @@ const page = () => {
     }, [])
 }
 
-export default page
+export default Logout

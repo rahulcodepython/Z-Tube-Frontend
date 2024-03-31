@@ -1,5 +1,3 @@
-// noinspection JSIgnoredPromiseFromCall
-
 "use client"
 import { FetchUserData } from '@/app/(index)/layout'
 import Loading from '@/components/Loading'

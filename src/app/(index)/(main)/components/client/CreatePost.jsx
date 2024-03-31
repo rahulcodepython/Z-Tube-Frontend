@@ -39,7 +39,7 @@ const CreatePost = () => {
                         <TabsTrigger value="bg">Blog</TabsTrigger>
                         <TabsTrigger value="tw">Tweet</TabsTrigger>
                     </TabsList>
-                    <TabsContent value="fd">
+                    <TabsContent value="fd" className={'focus-visible:ring-0 focus-visible:ring-offset-0'}>
                         <CreateFeed setIsOpen={setIsOpen} />
                     </TabsContent>
                     <TabsContent value="ct">

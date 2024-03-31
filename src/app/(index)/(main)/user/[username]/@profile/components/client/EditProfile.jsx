@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { AiOutlineClose, BiSend, FaCircleCheck, FiEdit } from '@/data/icons/icons'
+import { AiOutlineClose, BiSend, FaCircleCheck, FiEdit, BiCamera } from '@/data/icons/icons'
 import { AuthContext } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,11 +15,14 @@ import { useRouter } from 'next/navigation';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ReloadIcon } from '@radix-ui/react-icons';
-import { Form, Formik } from 'formik';
-import ImageUploader from '../server/ImageUploader';
+import { Form, Formik, FieldArray } from 'formik';
 import { Encrypt, UploadMediaFiles } from '@/utils';
 import axios from "axios";
 import {toast} from "react-toastify";
+import ImageUploading from 'react-images-uploading';
+import Image from 'next/image';
+import TagsInput from "@/components/TagsInput";
+import {Label} from "@/components/ui/label";
 
 const EditProfile = ({ setProfile, username }) => {
     const { accessToken, profileData, setProfileData, setUserData } = React.useContext(AuthContext)
@@ -28,23 +31,13 @@ const EditProfile = ({ setProfile, username }) => {
 
     const [isOpen, setIsOpen] = React.useState(false);
     const [isUpdating, setIsUpdating] = React.useState(false)
-    const [userTagsInput, setUserTagsInput] = React.useState('')
-    const [userTags, setUserTags] = React.useState(profileData.tags)
-    const [formData, setFormData] = React.useState({})
-    const [isLocked, setIsLocked] = React.useState(profileData?.isLocked)
-    const [bannerImage, setbannerImage] = React.useState(
+    const [bannerImage, setBannerImage] = React.useState(
         profileData.banner.length > 0 ? [{ data_url: profileData.banner }] : [])
     const [isBannerImageChange, setIsBannerImageChange] = React.useState(false)
     const [userImage, setUserImage] = React.useState(
         profileData.image.length > 0 ? [{ data_url: profileData.image }] : [])
     const [isUserImageChange, setIsUserImageChange] = React.useState(false)
     const [isUsernameValid, setIsUsernameValid] = React.useState(true)
-
-    const onModalClose = () => CloseModal(setIsOpen, setFormData, setUserImage, profileData, setbannerImage, setUserTagsInput, setUserTags)
-
-    React.useEffect(() => {
-        !isOpen ? onModalClose() : null
-    }, [isOpen])
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -65,7 +58,9 @@ const EditProfile = ({ setProfile, username }) => {
                     last_name: profileData.last_name || '',
                     username: profileData.username || '',
                     bio: profileData.bio || '',
-                }} onSubmit={async () => await UpdateProfile(accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, formData, setProfileData, setUserData, setProfile, onModalClose, setIsUpdating, username, router)}>
+                    isLocked: profileData?.isLocked,
+                    tags: profileData?.tags,
+                }} onSubmit={async values => await UpdateProfile(accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, setProfileData, setUserData, setProfile, setIsUpdating, setIsOpen, username, router, values)}>
                     {({ values, handleChange, handleSubmit }) => {
                         return <Form onSubmit={(e) => { e.preventDefault() }} onKeyDown={(e) => {
                             e.key === 'Enter' ? e.preventDefault() : null;
@@ -76,122 +71,88 @@ const EditProfile = ({ setProfile, username }) => {
                                 </h6>
                                 <div className="grid grid-cols-2 gap-4 overflow-y-scroll h-[50vh]">
                                     <div className='col-span-2 flex flex-col justify-center gap-2'>
-                                        <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                        <Label className="block uppercase text-xs font-bold" htmlFor="banner">
                                             Banner Image
-                                        </label>
-                                        <ImageUploader image={bannerImage} setImage={setbannerImage} setIsImageChange={setIsBannerImageChange} mode="banner" />
+                                        </Label>
+                                        <ImageUploader image={bannerImage} setImage={setBannerImage} setIsImageChange={setIsBannerImageChange} mode="banner" />
                                     </div>
                                     <div className='col-span-2 flex flex-col justify-center gap-2'>
-                                        <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                        <Label className="block uppercase text-xs font-bold" htmlFor="user">
                                             User Image
-                                        </label>
+                                        </Label>
                                         <ImageUploader image={userImage} setImage={setUserImage} setIsImageChange={setIsUserImageChange} mode="dp" />
                                     </div>
                                     <div className="col-span-1">
                                         <div className="w-full flex flex-col gap-2">
-                                            <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                            <Label className="block uppercase text-xs font-bold" htmlFor="first_name">
                                                 First Name
-                                            </label>
-                                            <Input type="text" name="first_name" id='first_name' value={values.first_name} onChange={(e) => {
-                                                handleChange(e)
-                                                e.target.value === profileData?.first_name ? delete formData?.first_name
-                                                    : setFormData({
-                                                        ...formData,
-                                                        first_name: e.target.value
-                                                    })
-                                            }}
-                                                className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                            </Label>
+                                            <Input type="text" name="first_name" id='first_name' value={values.first_name} onChange={handleChange} className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
                                         </div>
                                     </div>
                                     <div className="col-span-1">
                                         <div className="w-full flex flex-col gap-2">
-                                            <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                            <Label className="block uppercase text-xs font-bold" htmlFor="last_name">
                                                 Last Name
-                                            </label>
-                                            <Input type="text" name="last_name" id="last_name" value={values.last_name} onChange={(e) => {
-                                                handleChange(e)
-                                                e.target.value === profileData?.last_name ? delete formData?.last_name
-                                                    : setFormData({
-                                                        ...formData,
-                                                        last_name: e.target.value
-                                                    })
-                                            }}
-                                                className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                            </Label>
+                                            <Input type="text" name="last_name" id="last_name" value={values.last_name} onChange={handleChange} className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
                                         </div>
                                     </div>
                                     <div className="col-span-1">
                                         <div className="w-full flex flex-col gap-2">
-                                            <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                            <Label className="block uppercase text-xs font-bold" htmlFor="username">
                                                 Username
-                                            </label>
+                                            </Label>
                                             <div className='w-full flex gap-2 justify-center items-center'>
                                                 <Input type="text" name="username" id="username" value={values.username} onChange={async (e) => {
                                                     handleChange(e)
-                                                    await CheckUsername(e, profileData, setIsUsernameValid, formData, accessToken, setFormData)
-                                                }}
-                                                    className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                                    await CheckUsername(e, profileData, setIsUsernameValid, accessToken)
+                                                }} className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
                                                 <FaCircleCheck className={isUsernameValid ? 'text-green-500' : 'text-red-500'} />
                                             </div>
                                         </div>
                                     </div>
                                     <div className="col-span-1">
                                         <div className="w-full flex flex-col gap-2">
-                                            <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                            <Label className="block uppercase text-xs font-bold" htmlFor="isLocked">
                                                 Lock Profile
-                                            </label>
+                                            </Label>
                                             <div className='flex gap-4 justify-center items-center text-sm'>
-                                                <Checkbox id="isLocked" name="isLocked" checked={isLocked} onCheckedChange={(e) => {
-                                                    setIsLocked(() => e)
-                                                    e === profileData?.isLocked ? delete formData?.isLocked
-                                                        : setFormData({
-                                                            ...formData,
-                                                            isLocked: e
-                                                        })
-                                                }} />
-                                                <span>
-                                                    {`${isLocked ? 'Locked' : 'Lock'}`}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-span-2">
-                                        <div className="w-full flex flex-col gap-2">
-                                            <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
-                                                About me
-                                            </label>
-                                            <Textarea placeholder="Type your bio here." rows="5" name="bio" id="bio" value={values.bio} onChange={(e) => {
-                                                handleChange(e)
-                                                e.target.value === profileData?.bio ? delete formData?.bio
-                                                    : setFormData({
-                                                        ...formData,
-                                                        bio: e.target.value
+                                                <Checkbox id="isLocked" name="isLocked" checked={values.isLocked} onCheckedChange={(e) => {
+                                                    handleChange({
+                                                        target: {
+                                                            type: "checkbox",
+                                                            checked: e,
+                                                            name: 'isLocked'
+                                                        }
                                                     })
-                                            }}
-                                                className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                                }} />
+                                                <Label htmlFor="isLocked" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                                    {`${values.isLocked ? 'Locked' : 'Lock'}`}
+                                                </Label>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="col-span-2">
                                         <div className="w-full flex flex-col gap-2">
-                                            <label className="block uppercase text-xs font-bold" htmlFor="grid-password">
+                                            <Label className="block uppercase text-xs font-bold" htmlFor="bio">
+                                                About me
+                                            </Label>
+                                            <Textarea placeholder="Type your bio here." rows="5" name="bio" id="bio" value={values.bio} onChange={handleChange} className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                        </div>
+                                    </div>
+                                    <div className="col-span-2">
+                                        <div className="w-full flex flex-col gap-2">
+                                            <Label className="block uppercase text-xs font-bold" htmlFor="tags">
                                                 Tags
-                                            </label>
-                                            <Input type="text" className="focus:outline-none focus:ring-0 focus-visible:ring-0"
-                                                value={userTagsInput}
-                                                onChange={e => setUserTagsInput(() => e.target.value)}
-                                                onKeyUp={e => e.key === 'Enter' ? AddTags(userTagsInput, userTags, profileData, formData, setFormData, setUserTags, setUserTagsInput) : null}
-                                                disabled={userTags.length >= 5} />
-                                            <div className='flex items-center gap-2 my-2'>
+                                            </Label>
+                                            <FieldArray name={'tags'}>
                                                 {
-                                                    userTags.map((tag, index) => (
-                                                        <div key={index} className='flex items-center justify-center gap-2 bg-gray-200 rounded-full pl-4 pr-2 py-2 text-xs font-semibold text-black'>
-                                                            #{tag}
-                                                            <span className='cursor-pointer rounded-full p-1 bg-gray-300' onClick={() => RemoveTags(tag, userTags, setUserTags, formData, setFormData)}>
-                                                                <AiOutlineClose />
-                                                            </span>
-                                                        </div>
-                                                    ))
+                                                    ({remove, push}) => {
+                                                        return <TagsInput max={5} remove={remove} push={push} tags={values.tags} />
+                                                    }
                                                 }
-                                            </div>
+                                            </FieldArray>
                                         </div>
                                     </div>
                                 </div>
@@ -216,38 +177,9 @@ const EditProfile = ({ setProfile, username }) => {
     )
 }
 
-const AddTags = (userTagsInput, userTags, profileData, formData, setFormData, setUserTags, setUserTagsInput) => {
-    if (userTagsInput.trim().length > 0) {
-        if (!userTags.includes(userTagsInput)) {
-            JSON.stringify(profileData?.tags) === JSON.stringify([...userTags, userTagsInput]) ?
-                delete formData.tags
-                : setFormData({
-                    ...formData,
-                    tags: [...userTags, userTagsInput],
-                })
-            setUserTags(pre => [...pre, userTagsInput])
-        }
-    }
-    setUserTagsInput(() => '')
-}
-
-const RemoveTags = (tag, userTags, setUserTags, formData, setFormData) => {
-    if (userTags.filter(t => t !== tag).length > 0) {
-        setFormData({
-            ...formData,
-            tags: JSON.stringify(userTags.filter(t => t !== tag)),
-        })
-    }
-    else {
-        delete formData.tags
-    }
-    setUserTags(pre => pre.filter(t => t !== tag))
-}
-
-const CheckUsername = async (e, profileData, setIsUsernameValid, formData, accessToken, setFormData) => {
+const CheckUsername = async (e, profileData, setIsUsernameValid, accessToken) => {
     if (e.target.value === profileData?.username) {
         setIsUsernameValid(() => true)
-        delete formData?.username
     }
     else {
         const options = {
@@ -260,21 +192,12 @@ const CheckUsername = async (e, profileData, setIsUsernameValid, formData, acces
         }
 
         await axios.request(options)
-            .then(() => {
-                setIsUsernameValid(() => true)
-                setFormData({
-                    ...formData,
-                    username: e.target.value
-                })
-            })
-            .catch(() => {
-                setIsUsernameValid(() => false)
-                delete formData?.username
-            })
+            .then(() => setIsUsernameValid(() => true))
+            .catch(() => setIsUsernameValid(() => false))
     }
 }
 
-const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, formData, setProfileData, setUserData, setProfile, onModalClose, setIsUpdating, username, router) => {
+const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, setProfileData, setUserData, setProfile, setIsUpdating, setIsOpen, username, router, values) => {
     setIsUpdating(() => true)
 
     const HandleTostify = new Promise(async (resolve, rejected) => {
@@ -292,7 +215,7 @@ const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange
             url: `${process.env.BASE_API_URL}/auth/profile/${username}/`,
             method: 'PATCH',
             data: {
-                ...formData,
+                ...values,
                 ...userImageData,
                 ...bannerImageData
             },
@@ -312,7 +235,7 @@ const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange
                 rejected();
             })
             .finally(() => {
-                onModalClose()
+                setIsOpen(() => false)
                 setIsUpdating(() => false)
             });
     });
@@ -327,13 +250,44 @@ const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange
     )
 }
 
-const CloseModal = (setIsOpen, setFormData, setUserImage, profileData, setbannerImage, setUserTagsInput, setUserTags) => {
-    setIsOpen(() => false)
-    setFormData({})
-    setUserImage(() => profileData.image ? [{ data_url: profileData.image }] : [])
-    setbannerImage(() => profileData.banner ? [{ data_url: profileData.banner }] : [])
-    setUserTagsInput(() => '')
-    setUserTags(() => profileData.tags)
+const ImageUploader = ({ image, setImage, setIsImageChange, mode }) => {
+    return (
+        <ImageUploading value={image} onChange={imageList => {
+            setIsImageChange(() => true)
+            setImage(pre => imageList)
+        }} dataURLKey="data_url">
+            {({
+                  onImageUpload,
+                  onImageUpdate,
+                  onImageRemove,
+                  dragProps,
+              }) => {
+                return image.length > 0 ?
+                    image.map((image, index) => {
+                        return <div className='relative flex justify-center items-center group' key={index}>
+                            <Image src={image.data_url} width={300} height={300} priority={false} alt='user image' className={`${mode === 'full' ? 'w-full h-full rounded-lg' : mode === 'dp' ? 'w-60 h-60 rounded-full' : mode === 'banner' ? 'w-full h-64 rounded-lg' : ''}`} />
+                            <div className={`bg-whitebg-opacity-0 absolute ${mode === 'full' ? 'w-full h-full rounded-lg' : mode === 'dp' ? 'w-60 h-60 rounded-full' : mode === 'banner' ? 'w-full h-64 rounded-lg' : ''} text-2xl flex gap-4 items-center justify-center group-hover:bg-opacity-50 group-hover:bg-white/20 transition-all duration-300 ease-in-out`}>
+                                <BiCamera onClick={() => onImageUpdate(index)} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-background p-2 rounded-full text-4xl' />
+                                <AiOutlineClose onClick={() => {
+                                    setIsImageChange(pre => false)
+                                    onImageRemove(index)
+                                }} className='cursor-pointer opacity-0 group-hover:opacity-100 bg-background p-2 rounded-full text-4xl' />
+                            </div>
+                        </div>
+                    }) : <section onClick={onImageUpload} {...dragProps} className='border-dashed border-2 p-8 flex justify-center items-center w-full h-60'>
+                        <div className='flex flex-col items-center justify-center'>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round"
+                                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            <p className='text-gray-600'>Drag {`'n'`} drop some files here, or click to select files</p>
+                        </div>
+                    </section>
+            }
+            }
+        </ImageUploading>
+    )
 }
 
 export default EditProfile

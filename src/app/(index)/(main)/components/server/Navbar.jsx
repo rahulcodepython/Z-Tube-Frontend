@@ -2,12 +2,12 @@ import { BiSearch, BiBell } from "@/data/icons/icons";
 import React from 'react'
 import Link from 'next/link'
 import { Avatar } from "@/components/ui/avatar"
-import Sidebar from "./Sidebar";
+import Sidebar from "@/app/(index)/(main)/components/server/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import CustomTooltip from "@/components/Tooltip";
-import { ThemeToggle } from "./ThemeToggle";
+import {ThemeToggle} from "@/app/(index)/(main)/components/server/ThemeToggle";
 import CreatePost from "@/app/(index)/(main)/components/client/CreatePost";
 
 const Navbar = ({ userData, toggleNavbar, showTopicAll, setShowTopicAll }) => {
