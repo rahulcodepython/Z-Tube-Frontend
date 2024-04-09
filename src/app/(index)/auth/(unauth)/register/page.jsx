@@ -15,23 +15,15 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import GoogleButton from 'react-google-button';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import GoogleButton from '@/components/GoogleButton';
 
 const RegisterPage = () => {
     return (
         <div className='flex items-center justify-center w-screen h-screen'>
             <Card className="max-w-xl w-full">
                 <CardHeader>
-                    <CardTitle>
-                        <Link href={'/'}>
-                            <Button variant="outline" className='border-none gap-2 p-0 hover:bg-transparent'>
-                                <GoArrowLeft className='text-lg' />
-                                <span>Back</span>
-                            </Button>
-                        </Link>
-                    </CardTitle>
                     <CardDescription>
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Sign in to your account
@@ -86,7 +78,7 @@ const RegisterPage = () => {
                         <p className="text-center text-sm">OR</p>
                         <hr className="border-gray-500" />
                     </div>
-                    <GoogleButton onClick={() => GoogleLogin()} label="Sign in with Google" />
+                    <GoogleButton label="Sign in with Google" Signin={GoogleLogin} />
                     <div className="text-sm flex justify-between items-center w-full">
                         <p>If you have an account...</p>
                         <Link href={'/auth/login'}>
