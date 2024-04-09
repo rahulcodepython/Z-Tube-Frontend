@@ -7,18 +7,20 @@ import { Card } from '@/components/ui/card'
 import { AuthContext } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import { Login } from '@/app/(index)/auth/(unauth)/login/page'
-import { Decrypt } from '@/utils'
+import { DataContext } from '@/context/DataContext'
 
 const EmailVerifySuccess = () => {
     const [loading, setLoading] = React.useState(true)
 
     const { AuthenticateUser } = React.useContext(AuthContext)
 
+    const { data } = React.useContext(DataContext)
+
     const router = useRouter()
 
     React.useEffect(() => {
         const handler = async () => {
-            await AutoLoginUser(AuthenticateUser, router)
+            await AutoLoginUser(AuthenticateUser, router, data)
         }
         handler().finally(() => setLoading(() => false));
     }, [])
@@ -50,13 +52,11 @@ const EmailVerifySuccess = () => {
     )
 }
 
-const AutoLoginUser = async (AuthenticateUser, router) => {
+const AutoLoginUser = async (AuthenticateUser, router, data) => {
     await Login({
-        email: localStorage.getItem('email'),
-        password: Decrypt(localStorage.getItem('password'), process.env.ENCRYPTION_KEY)
+        email: data.registration_data.email || '',
+        password: data.registration_data.password || '',
     }, AuthenticateUser, router)
-    localStorage.removeItem('email')
-    localStorage.removeItem('password')
 }
 
 export default EmailVerifySuccess

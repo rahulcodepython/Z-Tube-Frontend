@@ -4,16 +4,18 @@ import PostCard from "@/app/(index)/(main)/user/[username]/@feed/components/clie
 import { AuthContext } from '@/context/AuthContext'
 import Loading from "@/app/(index)/(main)/user/[username]/@feed/components/server/loading";
 import axios from "axios";
+import { DataContext } from '@/context/DataContext';
 
 const Feed = ({ params }) => {
-    const [loading, setLoading] = React.useState(true)
-    const [feedPost, setFeedPost] = React.useState([])
-
     const { accessToken } = React.useContext(AuthContext)
+
+    const { data, setData } = React.useContext(DataContext)
+
+    const [loading, setLoading] = React.useState('feedPost' in data ? false : true)
 
     React.useEffect(() => {
         const handler = async () => {
-            await FetchFeedPost(accessToken, setFeedPost, params.username)
+            await FetchFeedPost(accessToken, params.username, data, setData)
             setLoading(() => false)
         }
         handler();
@@ -21,14 +23,14 @@ const Feed = ({ params }) => {
 
     return loading ? <Loading /> : <div className='grid grid-cols-3 gap-4 mt-8'>
         {
-            feedPost.length === 0 ? <div>No Post There</div> : feedPost.map((item, index) => {
-            return <PostCard key={index} feed={item} />
-        })
+            data.feedPost.length === 0 ? <div>No Post There</div> : data.feedPost.map((item, index) => {
+                return <PostCard key={index} feed={item} feedIndex={index} />
+            })
         }
     </div>
 }
 
-const FetchFeedPost = async (accessToken, setFeedPost, username) => {
+const FetchFeedPost = async (accessToken, username, data, setData) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -37,7 +39,7 @@ const FetchFeedPost = async (accessToken, setFeedPost, username) => {
 
     await axios.request(options)
         .then(response => {
-            setFeedPost(() => response.data)
+            setData({ ...data, feedPost: response.data })
         })
 }
 

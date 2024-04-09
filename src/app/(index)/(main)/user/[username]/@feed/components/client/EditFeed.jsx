@@ -1,9 +1,9 @@
 "use client"
 import React from 'react';
-import {BiSend} from '@/data/icons/icons';
-import {Button} from '@/components/ui/button';
-import {Textarea} from "@/components/ui/textarea"
-import {Label} from '@/components/ui/label';
+import { BiSend } from '@/data/icons/icons';
+import { Button } from '@/components/ui/button';
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
@@ -13,23 +13,25 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import {AuthContext} from '@/context/AuthContext';
-import {ReloadIcon} from "@radix-ui/react-icons"
-import {UploadMediaFiles} from '@/utils';
+import { AuthContext } from '@/context/AuthContext';
+import { ReloadIcon } from "@radix-ui/react-icons"
+import { UploadMediaFiles } from '@/utils';
 import axios from 'axios';
-import {toast} from 'react-toastify';
-import {Form, Formik, FieldArray} from "formik";
-import {MediaUploader} from "@/app/(index)/(main)/components/client/CreateFeed";
-import {Checkbox} from "@/components/ui/checkbox"
+import { toast } from 'react-toastify';
+import { Form, Formik, FieldArray } from "formik";
+import { MediaUploader } from "@/app/(index)/(main)/components/client/CreateFeed";
+import { Checkbox } from "@/components/ui/checkbox"
 import TagsInput from "@/components/TagsInput";
+import { DataContext } from '@/context/DataContext';
 
-const EditFeed = ({setIsOpen, post, setPost}) => {
-    const {accessToken} = React.useContext(AuthContext)
+const EditFeed = ({ setIsOpen, feed, feedIndex }) => {
+    const { accessToken } = React.useContext(AuthContext)
+    const { setData } = React.useContext(DataContext)
 
     const [uploading, setUploading] = React.useState(false)
     const [isMediaUpdate, setIsMediaUpdate] = React.useState(false)
     const [media, setMedia] = React.useState(
-        post.media.map(item => {
+        feed.media.map(item => {
             return {
                 data_url: item
             }
@@ -38,19 +40,19 @@ const EditFeed = ({setIsOpen, post, setPost}) => {
 
     return (
         <Formik initialValues={{
-            caption: post.caption,
-            visibility: post.isPublic ? 'public' : post.isProtected ? 'protected' : post.isPrivate ? 'private' : null,
-            tags: post.tags,
-            allowComments: post.allowComments
+            caption: feed.caption,
+            visibility: feed.isPublic ? 'public' : feed.isProtected ? 'protected' : feed.isPrivate ? 'private' : null,
+            tags: feed.tags,
+            allowComments: feed.allowComments
         }} onSubmit={
-            async values => await CreateFeedPost(setUploading, accessToken, media, values, setIsOpen, post, setPost, isMediaUpdate)
+            async values => await CreateFeedPost(setUploading, accessToken, media, values, setIsOpen, setData, feed, feedIndex, isMediaUpdate)
         }>
-            {({values, handleChange, handleSubmit}) => (
+            {({ values, handleChange, handleSubmit }) => (
                 <Form onKeyDown={e => {
                     e.key === 'Enter' ? e.preventDefault() : null;
                 }}
-                      onSubmit={e => e.preventDefault()}
-                      className='pt-8 flex flex-col gap-4'>
+                    onSubmit={e => e.preventDefault()}
+                    className='pt-8 flex flex-col gap-4'>
 
                     <h6 className="text-gray-400 text-lg font-bold uppercase">
                         Post Details
@@ -59,15 +61,15 @@ const EditFeed = ({setIsOpen, post, setPost}) => {
                         <div className="col-span-2 grid w-full gap-2 px-1">
                             <Label htmlFor="caption" className="uppercase text-gray-600 text-xs">Caption</Label>
                             <Textarea placeholder="Type your caption." rows="7" name="caption" value={values.caption}
-                                      onChange={handleChange} className="focus:ring-0 focus-visible:ring-0" autoFocus
-                                      autoComplete="email" required/>
+                                onChange={handleChange} className="focus:ring-0 focus-visible:ring-0" autoFocus
+                                autoComplete="email" required />
                         </div>
                         <div className="col-span-2 grid w-full gap-2 px-1">
                             <Label htmlFor="visibility" className="uppercase text-gray-600 text-xs">Visibility</Label>
                             <Select onValueChange={(e) => handleChange(e)}
-                                    defaultValue={values.visibility}>
+                                defaultValue={values.visibility}>
                                 <SelectTrigger className="focus:ring-0 focus-visible:ring-0">
-                                    <SelectValue placeholder="Select a visibility"/>
+                                    <SelectValue placeholder="Select a visibility" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
@@ -81,15 +83,15 @@ const EditFeed = ({setIsOpen, post, setPost}) => {
                         </div>
                         <div className="col-span-2 w-full flex justify-center gap-1 px-1 space-x-2">
                             <Checkbox id="allowComments" checked={values.allowComments} name={'allowComments'}
-                                      onCheckedChange={e => handleChange({
-                                          target: {
-                                              type: "checkbox",
-                                              checked: e,
-                                              name: 'allowComments'
-                                          }
-                                      })}/>
+                                onCheckedChange={e => handleChange({
+                                    target: {
+                                        type: "checkbox",
+                                        checked: e,
+                                        name: 'allowComments'
+                                    }
+                                })} />
                             <label htmlFor="allowComments"
-                                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                                 Allow Comments
                             </label>
                         </div>
@@ -97,8 +99,8 @@ const EditFeed = ({setIsOpen, post, setPost}) => {
                             <Label htmlFor="tags" className="uppercase text-gray-600 text-xs">Tags</Label>
                             <FieldArray name={'tags'}>
                                 {
-                                    ({remove, push}) => {
-                                        return <TagsInput max={3} remove={remove} push={push} tags={values.tags}/>
+                                    ({ remove, push }) => {
+                                        return <TagsInput max={3} remove={remove} push={push} tags={values.tags} />
                                     }
                                 }
 
@@ -106,17 +108,17 @@ const EditFeed = ({setIsOpen, post, setPost}) => {
                         </div>
                         <div className="col-span-2 grid w-full gap-2 px-1">
                             <Label htmlFor="Media" className="uppercase text-gray-600 text-xs">Media</Label>
-                            <MediaUploader media={media} setMedia={setMedia} setIsMediaUpdate={setIsMediaUpdate}/>
+                            <MediaUploader media={media} setMedia={setMedia} setIsMediaUpdate={setIsMediaUpdate} />
                         </div>
                     </div>
                     {
                         uploading ? <Button disabled>
-                                <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
-                                Please wait
-                            </Button>
+                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                            Please wait
+                        </Button>
                             : <Button type='submit' className={'gap-2'}
-                                      onClick={handleSubmit}>
-                                <BiSend className='text-base'/>
+                                onClick={handleSubmit}>
+                                <BiSend className='text-base' />
                                 <span>
                                     Upload
                                 </span>
@@ -128,12 +130,12 @@ const EditFeed = ({setIsOpen, post, setPost}) => {
     );
 };
 
-const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpen, post, setPost, isMediaUpdate) => {
+const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpen, setData, feed, feedIndex, isMediaUpdate) => {
     if (media.length > 0) {
         setUploading(() => true)
 
         const HandleTostify = new Promise(async (resolve, rejected) => {
-            let mediaURL = isMediaUpdate ? [] : post.media;
+            let mediaURL = isMediaUpdate ? [] : feed.media;
 
             isMediaUpdate ? await Promise.all(media.map(async (item) => {
                 const url = await UploadMediaFiles(item.file, `Feed/${item.file.name}`);
@@ -145,7 +147,7 @@ const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpe
                 headers: {
                     Authorization: `JWT ${accessToken}`,
                 },
-                url: `${process.env.BASE_API_URL}/feed/editpost/${post.id}/`,
+                url: `${process.env.BASE_API_URL}/feed/editpost/${feed.id}/`,
                 method: 'PATCH',
                 data: {
                     ...values,
@@ -156,8 +158,12 @@ const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpe
             }
 
             await axios.request(options)
-                .then((response) => {
-                    setPost(() => response.data)
+                .then(response => {
+                    setData(prevData => {
+                        let newData = { ...prevData };
+                        newData.feedPost[feedIndex] = response.data;
+                        return newData;
+                    });
                     resolve();
                 })
                 .catch(() => {

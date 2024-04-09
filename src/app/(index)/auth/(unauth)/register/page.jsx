@@ -1,7 +1,7 @@
 "use client"
 import Link from 'next/link';
-import { BiSend, GoArrowLeft } from '@/data/icons/icons';
-import { Encrypt, GoogleLogin } from '@/utils';
+import { BiSend } from '@/data/icons/icons';
+import { GoogleLogin } from '@/utils';
 import { Formik, Form } from 'formik';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -12,14 +12,16 @@ import {
     CardContent,
     CardDescription,
     CardFooter,
-    CardHeader,
-    CardTitle,
+    CardHeader
 } from "@/components/ui/card"
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import GoogleButton from '@/components/GoogleButton';
+import { DataContext } from '@/context/DataContext';
 
 const RegisterPage = () => {
+    const { data, setData } = React.useContext(DataContext);
+
     return (
         <div className='flex items-center justify-center w-screen h-screen'>
             <Card className="max-w-xl w-full">
@@ -38,7 +40,7 @@ const RegisterPage = () => {
                             email: '',
                             password: '',
                         }}
-                        onSubmit={async values => await Register(values)}>
+                        onSubmit={async values => await Register(values, data, setData)}>
                         {({ values, handleChange, handleSubmit }) => (
                             <Form className="flex flex-col gap-6">
                                 <div className='flex flex-col gap-4'>
@@ -93,7 +95,7 @@ const RegisterPage = () => {
     );
 }
 
-const Register = async (values) => {
+const Register = async (values, data, setData) => {
     const HandleTostify = new Promise((resolve, rejected) => {
         const options = {
             url: `${process.env.BASE_API_URL}/auth/dj/users/`,
@@ -101,8 +103,13 @@ const Register = async (values) => {
             data: values,
         }
         axios.request(options).then((() => {
-            localStorage.setItem("email", values.email)
-            localStorage.setItem("password", Encrypt(values.password, process.env.ENCRYPTION_KEY))
+            setData(() => ({
+                ...data,
+                registration_data: {
+                    email: values.email,
+                    password: values.password
+                }
+            }))
             resolve();
         })).catch(() => rejected())
     });

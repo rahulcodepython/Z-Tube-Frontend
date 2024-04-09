@@ -3,6 +3,7 @@ import { ToastContainer, Flip } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthContextProvider } from '@/context/AuthContext';
 import { ThemeProvider } from "@/components/theme-provider"
+import { DataProvider } from '@/context/DataContext';
 
 export const metadata = {
     title: 'Z-Tube | Social Media Platform',
@@ -16,7 +17,9 @@ export default function RootLayout({ children }) {
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                     <ToastContainer draggableDirection="x" pauseOnFocusLoss={false} transition={Flip} />
                     <AuthContextProvider>
-                        {children}
+                        <DataProvider>
+                            {children}
+                        </DataProvider>
                     </AuthContextProvider>
                 </ThemeProvider>
             </body>

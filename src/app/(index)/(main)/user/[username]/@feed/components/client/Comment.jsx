@@ -1,17 +1,17 @@
 "use client"
 import React from 'react'
-import {ScrollArea} from '@/components/ui/scroll-area'
-import {AuthContext} from "@/context/AuthContext";
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { AuthContext } from "@/context/AuthContext";
 import axios from "axios";
-import {Avatar} from '@/components/ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 import Image from 'next/image';
 import Link from 'next/link';
-import {BiSend, IoChatbubbleOutline, FiEdit} from '@/data/icons/icons'
-import {Textarea} from '@/components/ui/textarea'
-import {Button} from '@/components/ui/button'
-import {ReloadIcon} from '@radix-ui/react-icons'
-import {DateTimeParser} from '@/utils'
-import {Form, Formik} from "formik";
+import { BiSend, IoChatbubbleOutline, FiEdit } from '@/data/icons/icons'
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+import { ReloadIcon } from '@radix-ui/react-icons'
+import { DateTimeParser } from '@/utils'
+import { Form, Formik } from "formik";
 import {
     Dialog,
     DialogContent,
@@ -20,63 +20,64 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { DataContext } from '@/context/DataContext';
 
-const Comment = ({post, setPost}) => {
-    const {accessToken} = React.useContext(AuthContext)
+const Comment = ({ feed, feedIndex }) => {
+    const { accessToken } = React.useContext(AuthContext)
 
-    const [comments, setComments] = React.useState([])
-    const [loading, setLoading] = React.useState(true)
+    const { data, setData } = React.useContext(DataContext)
+
+    const [loading, setLoading] = React.useState(data.comments?.feedpost?.[`${feed.id}`] !== undefined ? false : true)
 
     React.useEffect(() => {
         const handler = async () => {
-            await FetchComments(accessToken, post.id, setComments)
-            setLoading(pre => false)
+            await FetchComments(accessToken, feed.id, setData)
+            setLoading(false)
         }
         handler();
     }, [])
 
     return loading ? "Loading..." : <DialogDescription>
-            <ScrollArea className="h-[300px] pt-4 pb-2 pr-4">
-                {
-                    comments.map((item, index) => {
-                        return <CommentItem key={index} post={post} setPost={setPost} commentItem={item} setComments={setComments} reply={true} />
-                    })
-                }
-            </ScrollArea>
-            <CommentForm post={post} setComments={setComments} setPost={setPost}/>
-        </DialogDescription>
+        <ScrollArea className="h-[300px] pt-4 pb-2 pr-4">
+            {
+                data.comments.feedPost[`${feed.id}`].map((item, index) => {
+                    return <CommentItem key={index} commentItem={item} commentIndex={index} reply={false} feedIndex={feedIndex} feed={feed} replyIndex={null} />
+                })
+            }
+        </ScrollArea>
+        <CommentForm feed={feed} feedIndex={feedIndex} />
+    </DialogDescription>
 }
 
-const CommentItem = ({commentItem, setComments, post, setPost, reply}) => {
-    const [comment, setComment] = React.useState(commentItem)
-
+const CommentItem = ({ commentItem, commentIndex, reply, feedIndex, replyIndex, feed }) => {
     return (
         <div className={'flex flex-col items-center justify-between gap-4 mb-4 last:mb-0'}>
-            <div className={`flex items-center justify-between w-full relative ${!reply && 'pr-[2.4rem]'}`}>
+            <div className={`flex items-center justify-between w-full relative ${reply && 'pr-[2.4rem]'}`}>
                 <div className='flex items-start gap-2'>
                     <Avatar className="w-8 h-8">
-                        <Image src={comment.uploader.image || '/image/user.png'} width={32} height={32} alt={''}/>
+                        <Image src={commentItem.uploader.image || '/image/user.png'} width={32} height={32} alt={''} />
                     </Avatar>
                     <div className="space-y-1">
-                        <Link href={`/user/${comment.uploader.username}`}
-                              className="text-sm font-semibold">{comment.uploader.name}</Link>
+                        <Link href={`/user/${commentItem.uploader.username}`}
+                            className="text-sm font-semibold">{commentItem.uploader.name}</Link>
                         <p className="text-xs">
-                            {comment.comment}
+                            {commentItem.comment}
                         </p>
                         <div className="flex items-center text-xs text-muted-foreground gap-4">
-                            <div>{comment.createdAt}</div>
-                            {reply && <ReplyModal post={post} comment={comment} setPost={setPost}/>}
-                            <EditCommentModal comment={comment} setComment={setComment}/>
+                            <div>{commentItem.createdAt}</div>
+                            {
+                                !reply && <ReplyModal comment={commentItem} feedIndex={feedIndex} commentIndex={commentIndex} feed={feed} />
+                            }
+                            <EditCommentModal comment={commentItem} commentIndex={commentIndex} replyIndex={replyIndex} reply={reply} feed={feed} />
                         </div>
                     </div>
                 </div>
             </div>
             {
-                comment.children ? <div className={'ml-20 w-full'}>
+                commentItem.children ? <div className={'ml-20 w-full'}>
                     {
-                        comment.children.map((item, index) => {
-                            return <CommentItem post={post} setPost={setPost} commentItem={item}
-                                                setComments={setComments} key={index} reply={false} />
+                        commentItem.children.map((item, index) => {
+                            return <CommentItem commentItem={item} key={index} commentIndex={commentIndex} replyIndex={index} feed={feed} feedIndex={feedIndex} reply={true} />
                         })
                     }
                 </div> : null
@@ -85,30 +86,32 @@ const CommentItem = ({commentItem, setComments, post, setPost, reply}) => {
     )
 }
 
-const CommentForm = ({post, setComments, setPost}) => {
+const CommentForm = ({ feed, feedIndex }) => {
     const [loading, setLoading] = React.useState(false)
 
-    const {accessToken} = React.useContext(AuthContext)
+    const { accessToken } = React.useContext(AuthContext)
+
+    const { setData } = React.useContext(DataContext)
 
     return (
         <Formik initialValues={{
             comment: ''
         }} onSubmit={async values => {
-            await CreateComment(accessToken, values.comment, post, setComments, setLoading, setPost)
+            await CreateComment(accessToken, values.comment, feed.id, setData, setLoading, feedIndex)
             values.comment = ''
         }}>
-            {({values, handleChange, handleSubmit}) => (
+            {({ values, handleChange, handleSubmit }) => (
                 <Form className='flex flex-col gap-2 pt-4'>
                     <Textarea placeholder="Add a comment..." rows="3" value={values.comment} name={'comment'}
-                              onChange={e => handleChange(e)}
-                              class="w-full border rounded-md p-2 bg-transparent focus:outline-none focus:ring-0 focus-visible:ring-0"/>
+                        onChange={e => handleChange(e)}
+                        class="w-full border rounded-md p-2 bg-transparent focus:outline-none focus:ring-0 focus-visible:ring-0" />
                     {
-                        loading ? <Button disabled>
-                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
+                        loading ? <Button disabled className="gap-2">
+                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                             Please wait
-                        </Button> : <Button
+                        </Button> : <Button className="gap-2"
                             onClick={handleSubmit}>
-                            <BiSend className='text-base'/>
+                            <BiSend className='text-base' />
                             <span>Submit</span>
                         </Button>
                     }
@@ -118,16 +121,18 @@ const CommentForm = ({post, setComments, setPost}) => {
     )
 }
 
-const ReplyModal = ({post, setPost, comment}) => {
+const ReplyModal = ({ comment, feedIndex, commentIndex, feed }) => {
     const [isOpen, setIsOpen] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
 
-    const {accessToken} = React.useContext(AuthContext)
+    const { accessToken } = React.useContext(AuthContext)
+    const { setData } = React.useContext(DataContext)
+
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger>
                 <div className='flex justify-center items-center gap-1'>
-                    <IoChatbubbleOutline className='text-sm'/>
+                    <IoChatbubbleOutline className='text-sm' />
                     <span className='text-xs'>Reply</span>
                 </div>
             </DialogTrigger>
@@ -137,22 +142,22 @@ const ReplyModal = ({post, setPost, comment}) => {
                     <DialogDescription>
                         <Formik initialValues={{
                             comment: ''
-                        }} onSubmit={async (values) => await CreateReply(accessToken, values.comment, post, comment, setLoading, setPost, setIsOpen)}>
-                            {({values, handleChange, handleSubmit}) => (
+                        }} onSubmit={async (values) => await CreateReply(accessToken, values.comment, comment, setData, setLoading, setIsOpen, feedIndex, commentIndex, feed)}>
+                            {({ values, handleChange, handleSubmit }) => (
                                 <Form className='flex flex-col gap-2 pt-4'>
                                     <Textarea placeholder="Add a comment..." rows="3" name={'comment'}
-                                              value={values.comment}
-                                              onChange={e => handleChange(e)}
-                                              class="w-full border rounded-md p-2 bg-transparent focus:outline-none focus:ring-0 focus-visible:ring-0"/>
+                                        value={values.comment}
+                                        onChange={e => handleChange(e)}
+                                        class="w-full border rounded-md p-2 bg-transparent focus:outline-none focus:ring-0 focus-visible:ring-0" />
                                     {
-                                        loading ? <Button disabled>
-                                                <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
-                                                Please wait
-                                            </Button> :
-                                            <Button
+                                        loading ? <Button disabled className="gap-2">
+                                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                                            Please wait
+                                        </Button> :
+                                            <Button className="gap-2"
                                                 type={"submit"}
                                                 onClick={handleSubmit}>
-                                                <BiSend className='text-base'/>
+                                                <BiSend className='text-base' />
                                                 <span>Submit</span>
                                             </Button>
                                     }
@@ -166,17 +171,19 @@ const ReplyModal = ({post, setPost, comment}) => {
     )
 }
 
-const EditCommentModal = ({comment, setComment}) => {
+const EditCommentModal = ({ comment, commentIndex, replyIndex, reply, feed }) => {
     const [isOpen, setIsOpen] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
 
-    const {accessToken} = React.useContext(AuthContext)
+    const { accessToken } = React.useContext(AuthContext)
+
+    const { setData } = React.useContext(DataContext)
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger>
                 <div className='flex justify-center items-center gap-1'>
-                    <FiEdit className='text-sm'/>
+                    <FiEdit className='text-sm' />
                     <span className='text-xs'>Edit</span>
                 </div>
             </DialogTrigger>
@@ -187,23 +194,23 @@ const EditCommentModal = ({comment, setComment}) => {
                         <Formik initialValues={{
                             comment: comment.comment
                         }}
-                                onSubmit={async values => await EditComment(accessToken, values.comment, comment, setComment, setLoading, setIsOpen)}>
+                            onSubmit={async values => await EditComment(accessToken, values.comment, comment, setLoading, setIsOpen, setData, commentIndex, replyIndex, reply, feed)}>
                             {
-                                ({values, handleChange, handleSubmit}) => (
+                                ({ values, handleChange, handleSubmit }) => (
                                     <Form className='flex flex-col gap-2 pt-4'>
                                         <Textarea placeholder="Add a comment..." rows="3" name={'comment'}
-                                                  value={values.comment}
-                                                  onChange={e => handleChange(e)}
-                                                  class="w-full border rounded-md p-2 bg-transparent focus:outline-none focus:ring-0 focus-visible:ring-0"/>
+                                            value={values.comment}
+                                            onChange={e => handleChange(e)}
+                                            class="w-full border rounded-md p-2 bg-transparent focus:outline-none focus:ring-0 focus-visible:ring-0" />
                                         {
-                                            loading ? <Button disabled>
-                                                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
-                                                    Please wait
-                                                </Button> :
-                                                <Button
+                                            loading ? <Button disabled className="gap-2">
+                                                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                                                Please wait
+                                            </Button> :
+                                                <Button className="gap-2"
                                                     type={"submit"}
                                                     onClick={handleSubmit}>
-                                                    <BiSend className='text-base'/>
+                                                    <BiSend className='text-base' />
                                                     <span>Submit</span>
                                                 </Button>
                                         }
@@ -218,7 +225,7 @@ const EditCommentModal = ({comment, setComment}) => {
     )
 }
 
-const EditComment = async (accessToken, value, comment, setComment, setLoading, setIsOpen) => {
+const EditComment = async (accessToken, value, comment, setLoading, setIsOpen, setData, commentIndex, replyIndex, reply, feed) => {
     setLoading(() => true)
     const options = {
         method: 'POST',
@@ -232,7 +239,15 @@ const EditComment = async (accessToken, value, comment, setComment, setLoading, 
     };
     await axios.request(options)
         .then(response => {
-            setComment(() => response.data)
+            setData(prevData => {
+                let newData = { ...prevData };
+                if (reply) {
+                    newData.comments.feedPost[`${feed.id}`][commentIndex].children[replyIndex].comment = response.data.comment;
+                } else {
+                    newData.comments.feedPost[`${feed.id}`][commentIndex].comment = response.data.comment;
+                }
+                return newData;
+            })
         })
         .finally(() => {
             setLoading(() => false)
@@ -240,11 +255,11 @@ const EditComment = async (accessToken, value, comment, setComment, setLoading, 
         })
 }
 
-const CreateReply = async (accessToken, value, post, comment, setLoading, setPost, setIsOpen) => {
+const CreateReply = async (accessToken, value, comment, setData, setLoading, setIsOpen, feedIndex, commentIndex, feed) => {
     setLoading(() => true)
     const options = {
         method: 'POST',
-        url: `${process.env.BASE_API_URL}/feed/createcomment/${post.id}/`,
+        url: `${process.env.BASE_API_URL}/feed/createcomment/${feed.id}/`,
         headers: {
             Authorization: `JWT ${accessToken}`,
         },
@@ -256,8 +271,12 @@ const CreateReply = async (accessToken, value, post, comment, setLoading, setPos
     };
     await axios.request(options)
         .then(response => {
-            comment.children.push(response.data.comment)
-            setPost({...post, commentNo: response.data.commentNo})
+            setData(prevData => {
+                let newData = { ...prevData };
+                newData.comments.feedPost[`${feed.id}`][commentIndex].children.push(response.data.comment);
+                newData.feedPost[feedIndex].commentNo = response.data.commentNo;
+                return newData;
+            })
         })
         .finally(() => {
             setLoading(() => false)
@@ -265,11 +284,11 @@ const CreateReply = async (accessToken, value, post, comment, setLoading, setPos
         })
 }
 
-const CreateComment = async (accessToken, comment, post, setComments, setLoading, setPost) => {
+const CreateComment = async (accessToken, comment, postId, setData, setLoading, feedIndex) => {
     setLoading(pre => true)
     const options = {
         method: 'POST',
-        url: `${process.env.BASE_API_URL}/feed/createcomment/${post.id}/`,
+        url: `${process.env.BASE_API_URL}/feed/createcomment/${postId}/`,
         headers: {
             Authorization: `JWT ${accessToken}`,
         },
@@ -280,15 +299,19 @@ const CreateComment = async (accessToken, comment, post, setComments, setLoading
     };
     await axios.request(options)
         .then(response => {
-            setComments(pre => [...pre, response.data.comment]);
-            setPost({...post, commentNo: response.data.commentNo})
+            setData(prevData => {
+                let newData = { ...prevData };
+                newData.comments.feedPost[`${postId}`] = [response.data.comment, ...newData.comments.feedPost[`${postId}`]];
+                newData.feedPost[feedIndex].commentNo = response.data.commentNo;
+                return newData;
+            })
         })
         .catch(error => {
         });
     setLoading(pre => false)
 }
 
-const FetchComments = async (accessToken, postId, setComments) => {
+const FetchComments = async (accessToken, postId, setData) => {
     const options = {
         method: 'GET',
         url: `${process.env.BASE_API_URL}/feed/viewcomment/${postId}/`,
@@ -299,10 +322,18 @@ const FetchComments = async (accessToken, postId, setComments) => {
 
     await axios.request(options)
         .then(response => {
-            setComments(pre => response.data);
+            setData(prevData => {
+                return {
+                    ...prevData,
+                    comments: {
+                        feedPost: {
+                            [`${postId}`]: response.data
+                        }
+                    }
+                };
+            })
         })
-        .catch(error => {
-        });
+        .catch(error => { });
 }
 
 export default Comment
