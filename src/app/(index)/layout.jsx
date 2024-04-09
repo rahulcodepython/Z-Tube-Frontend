@@ -1,7 +1,7 @@
 "use client"
 import Loading from '@/components/Loading'
 import { AuthContext } from '@/context/AuthContext'
-import { Decrypt, Encrypt } from '@/utils'
+import { Decrypt } from '@/utils'
 import React from 'react'
 import axios from 'axios'
 
@@ -65,7 +65,6 @@ export const FetchUserData = async (token, setUserData) => {
     await axios.request(options)
         .then(response => {
             setUserData(() => response.data);
-            sessionStorage.setItem("user", Encrypt(JSON.stringify(response.data), process.env.ENCRYPTION_KEY));
         })
 }
 
@@ -90,14 +89,7 @@ const CheckUser = async (setUserData, LoggedInUser, LogoutUser) => {
             await LoggedInUser(access_token, refresh_token)
         }
 
-        const user_data = Decrypt(sessionStorage.getItem("user"), process.env.ENCRYPTION_KEY) || null;
-
-        if (!user_data) {
-            await FetchUserData(Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY), setUserData);
-        }
-        else {
-            await setUserData(JSON.parse(user_data));
-        }
+        await FetchUserData(Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY), setUserData);
     }
 }
 
