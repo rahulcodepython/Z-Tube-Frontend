@@ -44,6 +44,9 @@ import { DataContext } from '@/context/DataContext'
 const PostCard = ({ feed, feedIndex }) => {
     const [isOpen, setIsOpen] = React.useState(false)
 
+    const { accessToken } = React.useContext(AuthContext)
+    const { setData } = React.useContext(DataContext)
+    console.log(feed);
     return (
         <Card className="space-y-3 pt-3 rounded-md">
             <CardHeader className="px-2 mt-0 py-0">
@@ -64,12 +67,18 @@ const PostCard = ({ feed, feedIndex }) => {
                                         <BsThreeDots className='cursor-pointer' />
                                     </MenubarTrigger>
                                     <MenubarContent>
-                                        <MenubarItem>Save Post</MenubarItem>
-                                        {feed.self ? <MenubarItem className={'cursor-pointer'}>
-                                            <DialogTrigger className={'w-full flex'}>
-                                                Edit Post
-                                            </DialogTrigger>
-                                        </MenubarItem> : null}
+                                        {
+                                            feed.self && <MenubarItem className={'cursor-pointer'}>
+                                                <DialogTrigger className={'w-full flex'}>
+                                                    Edit Post
+                                                </DialogTrigger>
+                                            </MenubarItem>
+                                        }
+                                        {
+                                            feed.self && <MenubarItem className="cursor-pointer" onClick={() => DeleteFeed(accessToken, feed, feedIndex, setData)}>
+                                                Delete Post
+                                            </MenubarItem>
+                                        }
                                     </MenubarContent>
                                 </MenubarMenu>
                             </Menubar>
@@ -305,6 +314,24 @@ const RemoveReactOnPost = async (accessToken, feed, setData, feedIndex, reaction
                 return newData;
             });
             setReaction(() => null)
+        })
+}
+
+const DeleteFeed = async (accessToken, feed, feedIndex, setData) => {
+    const options = {
+        method: 'DELETE',
+        url: `${process.env.BASE_API_URL}/feed/editpost/${feed.id}/`,
+        headers: {
+            Authorization: `JWT ${accessToken}`
+        }
+    };
+    await axios.request(options)
+        .then(response => {
+            setData(prevData => {
+                let newData = { ...prevData };
+                delete newData.feedPost[feedIndex]
+                return newData;
+            });
         })
 }
 

@@ -147,7 +147,7 @@ const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpe
 
             await axios.request(options)
                 .then(response => {
-                    setData({ ...data, feedPost: [response.data, ...data.feedPost] })
+                    setData({ ...data, feedPost: [response.data.content, ...data.feedPost] })
                     resolve();
                 })
                 .catch(() => {

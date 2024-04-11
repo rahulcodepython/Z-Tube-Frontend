@@ -71,9 +71,11 @@ const CommentItem = ({ commentItem, commentIndex, reply, feedIndex, replyIndex, 
                             {
                                 !reply && <ReplyModal comment={commentItem} feedIndex={feedIndex} commentIndex={commentIndex} feed={feed} />
                             }
-                            <EditCommentModal comment={commentItem} commentIndex={commentIndex} replyIndex={replyIndex} reply={reply} feed={feed} />
                             {
-                                userData.username === commentItem.uploader.username && <div className='flex cursor-pointer' onClick={() => DeleteComment(accessToken, commentItem, setData, commentIndex, replyIndex, reply, feed)}>
+                                commentItem.self && <EditCommentModal comment={commentItem} commentIndex={commentIndex} replyIndex={replyIndex} reply={reply} feed={feed} />
+                            }
+                            {
+                                commentItem.self && <div className='flex cursor-pointer' onClick={() => DeleteComment(accessToken, commentItem, setData, commentIndex, replyIndex, reply, feed, feedIndex)}>
                                     <FiTrash className='text-sm' />
                                     <span>
                                         Delete
@@ -322,16 +324,16 @@ const CreateComment = async (accessToken, comment, postId, setData, setLoading, 
     setLoading(pre => false)
 }
 
-const DeleteComment = async (accessToken, comment, setData, commentIndex, replyIndex, reply, feed) => {
+const DeleteComment = async (accessToken, comment, setData, commentIndex, replyIndex, reply, feed, feedIndex) => {
     const options = {
         method: 'DELETE',
-        url: `${process.env.BASE_API_URL}/feed/deletecomment/${comment.id}/`,
+        url: `${process.env.BASE_API_URL}/feed/editcomment/${comment.id}/`,
         headers: {
             Authorization: `JWT ${accessToken}`,
         }
     };
     await axios.request(options)
-        .then(() => {
+        .then(response => {
             setData(prevData => {
                 let newData = { ...prevData };
                 if (reply) {
@@ -339,6 +341,7 @@ const DeleteComment = async (accessToken, comment, setData, commentIndex, replyI
                 } else {
                     delete newData.comments.feedPost[`${feed.id}`][commentIndex];
                 }
+                newData.feedPost[feedIndex].commentNo = response.data.commentNo;
                 return newData;
             })
         })
