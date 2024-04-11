@@ -6,7 +6,7 @@ import axios from "axios";
 import { Avatar } from '@/components/ui/avatar';
 import Image from 'next/image';
 import Link from 'next/link';
-import { BiSend, IoChatbubbleOutline, FiEdit } from '@/data/icons/icons'
+import { BiSend, IoChatbubbleOutline, FiEdit, FiTrash } from '@/data/icons/icons'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { ReloadIcon } from '@radix-ui/react-icons'
@@ -50,6 +50,9 @@ const Comment = ({ feed, feedIndex }) => {
 }
 
 const CommentItem = ({ commentItem, commentIndex, reply, feedIndex, replyIndex, feed }) => {
+    const { accessToken, userData } = React.useContext(AuthContext)
+    const { setData } = React.useContext(DataContext)
+
     return (
         <div className={'flex flex-col items-center justify-between gap-4 mb-4 last:mb-0'}>
             <div className={`flex items-center justify-between w-full relative ${reply && 'pr-[2.4rem]'}`}>
@@ -69,6 +72,14 @@ const CommentItem = ({ commentItem, commentIndex, reply, feedIndex, replyIndex, 
                                 !reply && <ReplyModal comment={commentItem} feedIndex={feedIndex} commentIndex={commentIndex} feed={feed} />
                             }
                             <EditCommentModal comment={commentItem} commentIndex={commentIndex} replyIndex={replyIndex} reply={reply} feed={feed} />
+                            {
+                                userData.username === commentItem.uploader.username && <div className='flex cursor-pointer' onClick={() => DeleteComment(accessToken, commentItem, setData, commentIndex, replyIndex, reply, feed)}>
+                                    <FiTrash className='text-sm' />
+                                    <span>
+                                        Delete
+                                    </span>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -309,6 +320,28 @@ const CreateComment = async (accessToken, comment, postId, setData, setLoading, 
         .catch(error => {
         });
     setLoading(pre => false)
+}
+
+const DeleteComment = async (accessToken, comment, setData, commentIndex, replyIndex, reply, feed) => {
+    const options = {
+        method: 'DELETE',
+        url: `${process.env.BASE_API_URL}/feed/deletecomment/${comment.id}/`,
+        headers: {
+            Authorization: `JWT ${accessToken}`,
+        }
+    };
+    await axios.request(options)
+        .then(() => {
+            setData(prevData => {
+                let newData = { ...prevData };
+                if (reply) {
+                    delete newData.comments.feedPost[`${feed.id}`][commentIndex].children[replyIndex];
+                } else {
+                    delete newData.comments.feedPost[`${feed.id}`][commentIndex];
+                }
+                return newData;
+            })
+        })
 }
 
 const FetchComments = async (accessToken, postId, setData) => {
