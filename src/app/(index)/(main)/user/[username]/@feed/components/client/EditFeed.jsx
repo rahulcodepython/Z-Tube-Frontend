@@ -25,7 +25,7 @@ import TagsInput from "@/components/TagsInput";
 import { DataContext } from '@/context/DataContext';
 
 const EditFeed = ({ setIsOpen, feed, feedIndex }) => {
-    const { accessToken } = React.useContext(AuthContext)
+    const { accessToken, userData } = React.useContext(AuthContext)
     const { setData } = React.useContext(DataContext)
 
     const [uploading, setUploading] = React.useState(false)
@@ -45,7 +45,7 @@ const EditFeed = ({ setIsOpen, feed, feedIndex }) => {
             tags: feed.tags,
             allowComments: feed.allowComments
         }} onSubmit={
-            async values => await CreateFeedPost(setUploading, accessToken, media, values, setIsOpen, setData, feed, feedIndex, isMediaUpdate)
+            async values => await CreateFeedPost(setUploading, accessToken, media, values, setIsOpen, setData, feed, feedIndex, isMediaUpdate, userData)
         }>
             {({ values, handleChange, handleSubmit }) => (
                 <Form onKeyDown={e => {
@@ -130,7 +130,7 @@ const EditFeed = ({ setIsOpen, feed, feedIndex }) => {
     );
 };
 
-const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpen, setData, feed, feedIndex, isMediaUpdate) => {
+const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpen, setData, feed, feedIndex, isMediaUpdate, userData) => {
     if (media.length > 0) {
         setUploading(() => true)
 
@@ -161,7 +161,7 @@ const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpe
                 .then(response => {
                     setData(prevData => {
                         let newData = { ...prevData };
-                        newData.feedPost[feedIndex] = response.data;
+                        newData.feedPost[decodeURIComponent(userData.username)][feedIndex] = response.data;
                         return newData;
                     });
                     resolve();

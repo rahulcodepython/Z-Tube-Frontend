@@ -7,7 +7,7 @@ import axios from "axios";
 import { DataContext } from '@/context/DataContext';
 
 const Feed = ({ params }) => {
-    const { accessToken } = React.useContext(AuthContext)
+    const { accessToken, userData } = React.useContext(AuthContext)
 
     const { data, setData } = React.useContext(DataContext)
 
@@ -15,7 +15,7 @@ const Feed = ({ params }) => {
 
     React.useEffect(() => {
         const handler = async () => {
-            await FetchFeedPost(accessToken, params.username, data, setData)
+            await FetchFeedPost(accessToken, params.username, data, setData, userData)
             setLoading(() => false)
         }
         handler();
@@ -23,14 +23,14 @@ const Feed = ({ params }) => {
 
     return loading ? <Loading /> : <div className='grid grid-cols-3 gap-4 mt-8'>
         {
-            data.feedPost.length === 0 && Array.isArray(data.feedPost) ? <div>No Post There</div> : data.feedPost.map((item, index) => {
+            data.feedPost.length === 0 && Array.isArray(data.feedPost) ? <div>No Post There</div> : data.feedPost[decodeURIComponent(userData.username)].map((item, index) => {
                 return <PostCard key={index} feed={item} feedIndex={index} username={params.username} />
             })
         }
     </div>
 }
 
-const FetchFeedPost = async (accessToken, username, data, setData) => {
+const FetchFeedPost = async (accessToken, username, data, setData, userData) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -39,7 +39,12 @@ const FetchFeedPost = async (accessToken, username, data, setData) => {
 
     await axios.request(options)
         .then(response => {
-            setData({ ...data, feedPost: response.data })
+            setData({
+                ...data,
+                feedPost: {
+                    [decodeURIComponent(userData.username)]: response.data
+                }
+            })
         })
 }
 

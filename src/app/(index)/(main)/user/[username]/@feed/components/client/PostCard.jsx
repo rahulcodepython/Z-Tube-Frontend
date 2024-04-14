@@ -44,18 +44,18 @@ import { DataContext } from '@/context/DataContext'
 const PostCard = ({ feed, feedIndex, username }) => {
     const [isOpen, setIsOpen] = React.useState(false)
 
-    const { accessToken } = React.useContext(AuthContext)
+    const { accessToken, userData } = React.useContext(AuthContext)
     const { setData } = React.useContext(DataContext)
-    console.log(feed);
+
     return (
-        <Card className="space-y-3 pt-3 rounded-md">
+        <Card className="pt-3 rounded-md">
             <CardHeader className="px-2 mt-0 py-0">
-                <CardTitle className="flex flex-col space-y-2">
-                    <div className='flex justify-between items-center'>
+                <CardTitle className="flex flex-col gap-3">
+                    <div className='flex justify-between items-center mx-2'>
                         <div className='flex items-center space-x-4'>
                             <Image src={feed.uploader.image ? feed.uploader.image : '/image/user.png'} width={36}
                                 height={36} className="h-9 w-9 rounded-full" alt={'default'} />
-                            <div className="leading-3">
+                            <div className="flex flex-col gap-1">
                                 <div className='text-sm leading-3'>{feed.uploader.name}</div>
                                 <div className='text-xs'>{feed.createdAt}</div>
                             </div>
@@ -75,7 +75,7 @@ const PostCard = ({ feed, feedIndex, username }) => {
                                             </MenubarItem>
                                         }
                                         {
-                                            feed.self && <MenubarItem className="cursor-pointer" onClick={() => DeleteFeed(accessToken, feed, feedIndex, username, setData)}>
+                                            feed.self && <MenubarItem className="cursor-pointer" onClick={() => DeleteFeed(accessToken, feed, feedIndex, username, setData, userData)}>
                                                 Delete Post
                                             </MenubarItem>
                                         }
@@ -94,10 +94,10 @@ const PostCard = ({ feed, feedIndex, username }) => {
                             </DialogContent>
                         </Dialog>
                     </div>
-                    <div className='text-sm'>
+                    <div className='text-sm mx-2'>
                         {feed.caption}
                     </div>
-                    <div className='text-xs flex items-center gap-2'>
+                    <div className='text-xs flex items-center gap-2 mx-2'>
                         {
                             feed.tags.map((item, index) => {
                                 return <span key={index}>#{item}</span>
@@ -106,7 +106,7 @@ const PostCard = ({ feed, feedIndex, username }) => {
                     </div>
                 </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 my-3">
                 {
                     feed.media.length > 1 ? <Carousel>
                         <CarouselContent>
@@ -234,7 +234,7 @@ const AllReactions = ({ like }) => {
 const Reaction = ({ feed, feedIndex }) => {
     const [reaction, setReaction] = React.useState(feed.user_reaction ? Data.emoji.find(item => item.name.toLowerCase() === feed.user_reaction.toLowerCase())?.id || null : null)
 
-    const { accessToken } = React.useContext(AuthContext)
+    const { accessToken, userData } = React.useContext(AuthContext)
     const { setData } = React.useContext(DataContext)
 
     return (
@@ -258,7 +258,7 @@ const Reaction = ({ feed, feedIndex }) => {
                             return <MenubarItem key={index}
                                 className='flex items-center cursor-pointer p-0 hover:-translate-y-2 transition-all duration-100 ease-in-out'
                                 onClick={() => {
-                                    ReactOnPost(accessToken, feed, setData, feedIndex, item.name, setReaction, index).then(() => null)
+                                    ReactOnPost(accessToken, feed, setData, feedIndex, item.name, setReaction, index, userData)
                                 }}>
                                 <Image src={item.icon} width={30} height={30} alt={''} />
                             </MenubarItem>
@@ -267,7 +267,7 @@ const Reaction = ({ feed, feedIndex }) => {
                     <MenubarItem
                         className='flex items-center cursor-pointer p-0 hover:-translate-y-2 transition-all duration-100 ease-in-out'
                         onClick={() => {
-                            RemoveReactOnPost(accessToken, feed, setData, feedIndex, Data.emoji[reaction].name, setReaction).then(() => null)
+                            RemoveReactOnPost(accessToken, feed, setData, feedIndex, Data.emoji[reaction].name, setReaction, userData)
                         }}>
                         <MdDoNotDisturb className='text-3xl' />
                     </MenubarItem>
@@ -277,7 +277,7 @@ const Reaction = ({ feed, feedIndex }) => {
     )
 }
 
-const ReactOnPost = async (accessToken, feed, setData, feedIndex, reaction, setReaction, index) => {
+const ReactOnPost = async (accessToken, feed, setData, feedIndex, reaction, setReaction, index, userData) => {
     const options = {
         method: 'POST',
         url: `${process.env.BASE_API_URL}/feed/postreaction/${feed.id}/${reaction.toLowerCase()}/`,
@@ -290,14 +290,14 @@ const ReactOnPost = async (accessToken, feed, setData, feedIndex, reaction, setR
         .then(response => {
             setData(prevData => {
                 let newData = { ...prevData };
-                newData.feedPost[feedIndex].likeNo = response.data.likeNo;
+                newData.feedPost[decodeURIComponent(userData.username)][feedIndex].likeNo = response.data.likeNo;
                 return newData;
             });
             setReaction(() => index)
         })
 }
 
-const RemoveReactOnPost = async (accessToken, feed, setData, feedIndex, reaction, setReaction) => {
+const RemoveReactOnPost = async (accessToken, feed, setData, feedIndex, reaction, setReaction, userData) => {
     const options = {
         method: 'DELETE',
         url: `${process.env.BASE_API_URL}/feed/postreaction/${feed.id}/${reaction.toLowerCase()}/`,
@@ -310,14 +310,14 @@ const RemoveReactOnPost = async (accessToken, feed, setData, feedIndex, reaction
         .then(response => {
             setData(prevData => {
                 let newData = { ...prevData };
-                newData.feedPost[feedIndex].likeNo = response.data.likeNo;
+                newData.feedPost[decodeURIComponent(userData.username)][feedIndex].likeNo = response.data.likeNo;
                 return newData;
             });
             setReaction(() => null)
         })
 }
 
-const DeleteFeed = async (accessToken, feed, feedIndex, username, setData) => {
+const DeleteFeed = async (accessToken, feed, feedIndex, username, setData, userData) => {
     const options = {
         method: 'DELETE',
         url: `${process.env.BASE_API_URL}/feed/editpost/${feed.id}/`,
@@ -329,7 +329,7 @@ const DeleteFeed = async (accessToken, feed, feedIndex, username, setData) => {
         .then(response => {
             setData(prevData => {
                 let newData = { ...prevData };
-                delete newData.feedPost[feedIndex]
+                delete newData.feedPost[decodeURIComponent(userData.username)][feedIndex]
                 newData.profile[decodeURIComponent(username)].posts = response.data.posts
                 return newData;
             });

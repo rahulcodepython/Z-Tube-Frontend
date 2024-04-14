@@ -75,7 +75,7 @@ const CommentItem = ({ commentItem, commentIndex, reply, feedIndex, replyIndex, 
                                 commentItem.self && <EditCommentModal comment={commentItem} commentIndex={commentIndex} replyIndex={replyIndex} reply={reply} feed={feed} />
                             }
                             {
-                                commentItem.self && <div className='flex cursor-pointer' onClick={() => DeleteComment(accessToken, commentItem, setData, commentIndex, replyIndex, reply, feed, feedIndex)}>
+                                commentItem.self && <div className='flex cursor-pointer' onClick={() => DeleteComment(accessToken, commentItem, setData, commentIndex, replyIndex, reply, feed, feedIndex, userData)}>
                                     <FiTrash className='text-sm' />
                                     <span>
                                         Delete
@@ -102,7 +102,7 @@ const CommentItem = ({ commentItem, commentIndex, reply, feedIndex, replyIndex, 
 const CommentForm = ({ feed, feedIndex }) => {
     const [loading, setLoading] = React.useState(false)
 
-    const { accessToken } = React.useContext(AuthContext)
+    const { accessToken, userData } = React.useContext(AuthContext)
 
     const { setData } = React.useContext(DataContext)
 
@@ -110,7 +110,7 @@ const CommentForm = ({ feed, feedIndex }) => {
         <Formik initialValues={{
             comment: ''
         }} onSubmit={async values => {
-            await CreateComment(accessToken, values.comment, feed.id, setData, setLoading, feedIndex)
+            await CreateComment(accessToken, values.comment, feed.id, setData, setLoading, feedIndex, userData)
             values.comment = ''
         }}>
             {({ values, handleChange, handleSubmit }) => (
@@ -138,7 +138,7 @@ const ReplyModal = ({ comment, feedIndex, commentIndex, feed }) => {
     const [isOpen, setIsOpen] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
 
-    const { accessToken } = React.useContext(AuthContext)
+    const { accessToken, userData } = React.useContext(AuthContext)
     const { setData } = React.useContext(DataContext)
 
     return (
@@ -155,7 +155,7 @@ const ReplyModal = ({ comment, feedIndex, commentIndex, feed }) => {
                     <DialogDescription>
                         <Formik initialValues={{
                             comment: ''
-                        }} onSubmit={async (values) => await CreateReply(accessToken, values.comment, comment, setData, setLoading, setIsOpen, feedIndex, commentIndex, feed)}>
+                        }} onSubmit={async (values) => await CreateReply(accessToken, values.comment, comment, setData, setLoading, setIsOpen, feedIndex, commentIndex, feed, userData)}>
                             {({ values, handleChange, handleSubmit }) => (
                                 <Form className='flex flex-col gap-2 pt-4'>
                                     <Textarea placeholder="Add a comment..." rows="3" name={'comment'}
@@ -268,7 +268,7 @@ const EditComment = async (accessToken, value, comment, setLoading, setIsOpen, s
         })
 }
 
-const CreateReply = async (accessToken, value, comment, setData, setLoading, setIsOpen, feedIndex, commentIndex, feed) => {
+const CreateReply = async (accessToken, value, comment, setData, setLoading, setIsOpen, feedIndex, commentIndex, feed, userData) => {
     setLoading(() => true)
     const options = {
         method: 'POST',
@@ -287,7 +287,7 @@ const CreateReply = async (accessToken, value, comment, setData, setLoading, set
             setData(prevData => {
                 let newData = { ...prevData };
                 newData.comments.feedPost[`${feed.id}`][commentIndex].children.push(response.data.comment);
-                newData.feedPost[feedIndex].commentNo = response.data.commentNo;
+                newData.feedPost[decodeURIComponent(userData.username)][feedIndex].commentNo = response.data.commentNo;
                 return newData;
             })
         })
@@ -297,7 +297,7 @@ const CreateReply = async (accessToken, value, comment, setData, setLoading, set
         })
 }
 
-const CreateComment = async (accessToken, comment, postId, setData, setLoading, feedIndex) => {
+const CreateComment = async (accessToken, comment, postId, setData, setLoading, feedIndex, userData) => {
     setLoading(pre => true)
     const options = {
         method: 'POST',
@@ -315,7 +315,7 @@ const CreateComment = async (accessToken, comment, postId, setData, setLoading, 
             setData(prevData => {
                 let newData = { ...prevData };
                 newData.comments.feedPost[`${postId}`] = [response.data.comment, ...newData.comments.feedPost[`${postId}`]];
-                newData.feedPost[feedIndex].commentNo = response.data.commentNo;
+                newData.feedPost[decodeURIComponent(userData.username)][feedIndex].commentNo = response.data.commentNo;
                 return newData;
             })
         })
@@ -324,7 +324,7 @@ const CreateComment = async (accessToken, comment, postId, setData, setLoading, 
     setLoading(pre => false)
 }
 
-const DeleteComment = async (accessToken, comment, setData, commentIndex, replyIndex, reply, feed, feedIndex) => {
+const DeleteComment = async (accessToken, comment, setData, commentIndex, replyIndex, reply, feed, feedIndex, userData) => {
     const options = {
         method: 'DELETE',
         url: `${process.env.BASE_API_URL}/feed/editcomment/${comment.id}/`,
@@ -341,7 +341,7 @@ const DeleteComment = async (accessToken, comment, setData, commentIndex, replyI
                 } else {
                     delete newData.comments.feedPost[`${feed.id}`][commentIndex];
                 }
-                newData.feedPost[feedIndex].commentNo = response.data.commentNo;
+                newData.feedPost[decodeURIComponent(userData.username)][feedIndex].commentNo = response.data.commentNo;
                 return newData;
             })
         })
