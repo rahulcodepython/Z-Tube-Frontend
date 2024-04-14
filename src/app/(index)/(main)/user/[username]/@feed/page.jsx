@@ -15,8 +15,14 @@ const Feed = ({ params }) => {
 
     React.useEffect(() => {
         const handler = async () => {
-            await FetchFeedPost(accessToken, params.username, data, setData, userData)
-            setLoading(() => false)
+            if ('feedPost' in data) {
+                if (decodeURIComponent(params.username) in data.feedPost) {
+                    setLoading(false)
+                    console.log('cached feedpost');
+                }
+            }
+            await FetchFeedPost(accessToken, params.username, data, setData, userData, setLoading);
+            console.log('fetching feedpost');
         }
         handler();
     }, [])
@@ -30,22 +36,21 @@ const Feed = ({ params }) => {
     </div>
 }
 
-const FetchFeedPost = async (accessToken, username, data, setData, userData) => {
+const FetchFeedPost = async (accessToken, username, data, setData, userData, setLoading) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
         }, url: `${process.env.BASE_API_URL}/feed/posts/${username}/`, method: 'GET',
     };
 
-    await axios.request(options)
-        .then(response => {
-            setData({
-                ...data,
-                feedPost: {
-                    [decodeURIComponent(userData.username)]: response.data
-                }
-            })
+    await axios.request(options).then(response => {
+        setData({
+            ...data,
+            feedPost: {
+                [decodeURIComponent(userData.username)]: response.data
+            }
         })
+    }).finally(() => setLoading(false))
 }
 
 export default Feed

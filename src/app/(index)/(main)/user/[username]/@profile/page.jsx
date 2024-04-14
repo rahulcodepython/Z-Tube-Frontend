@@ -20,15 +20,16 @@ const Profile = ({ params }) => {
     const { accessToken } = React.useContext(AuthContext)
     const { data, setData } = React.useContext(DataContext)
 
-
     React.useEffect(() => {
         const handler = async () => {
             if ('profile' in data) {
-                if (params.username in data.profile) {
+                if (decodeURIComponent(params.username) in data.profile) {
                     setLoading(false)
+                    console.log('cached profile');
                 }
             }
             await FetchProfileData(params, accessToken, setData, setLoading);
+            console.log('fetching profile');
         }
 
         handler();
@@ -165,7 +166,7 @@ const FetchProfileData = async (params, accessToken, setData, setLoading) => {
             }
         })
         toast.warn("There is some issue.")
-    }).finally(() => setLoading(pre => false))
+    }).finally(() => setLoading(() => false))
 }
 
 const ConnectPeople = async (accessToken, username, setData) => {

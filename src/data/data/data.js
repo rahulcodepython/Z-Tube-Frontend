@@ -20,7 +20,7 @@ export const Data = {
             {
                 icon: <AiFillYoutube />,
                 title: "YouTube",
-                link: '/youtube'
+                link: '/user/rahulcodepython?tabs=feed'
             },
             {
                 icon: <AiFillFacebook />,
