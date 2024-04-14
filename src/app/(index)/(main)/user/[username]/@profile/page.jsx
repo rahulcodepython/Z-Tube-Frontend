@@ -43,7 +43,9 @@ const ProfileCard = ({ profile, params }) => {
     const { setData } = React.useContext(DataContext)
     const { accessToken } = React.useContext(AuthContext)
 
-    return profile === null ? "There is so such user." : <Card className="h-[457.66px] rounded-lg shadow-none divide-y">
+    return profile === null ? <div className='pb-4'>
+        There is so such user.
+    </div> : <Card className="h-[457.66px] rounded-lg shadow-none divide-y">
         <CardHeader className='h-[297.66px] p-0 rounded-t-lg'>
             <Image src={profile?.banner ? profile?.banner : '/image/profile-banner.png'} width={1334} height={297.66} priority={true} alt='...' className='rounded-t-lg' placeholder='blur' blurDataURL="/image/profile-banner.png" style={{ width: "100%", height: "297.66px" }} />
         </CardHeader>
