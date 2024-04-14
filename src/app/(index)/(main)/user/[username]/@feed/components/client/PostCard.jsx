@@ -46,7 +46,7 @@ const PostCard = ({ feed, feedIndex, username }) => {
 
     const { accessToken } = React.useContext(AuthContext)
     const { setData } = React.useContext(DataContext)
-
+    console.log(feed);
     return (
         <Card className="space-y-3 pt-3 rounded-md">
             <CardHeader className="px-2 mt-0 py-0">
@@ -57,7 +57,7 @@ const PostCard = ({ feed, feedIndex, username }) => {
                                 height={36} className="h-9 w-9 rounded-full" alt={'default'} />
                             <div className="leading-3">
                                 <div className='text-sm leading-3'>{feed.uploader.name}</div>
-                                <div className='text-xs'>{(feed.createdAt)}</div>
+                                <div className='text-xs'>{feed.createdAt}</div>
                             </div>
                         </div>
                         <Dialog open={isOpen} onOpenChange={setIsOpen}>

@@ -35,7 +35,7 @@ const Profile = ({ params }) => {
     }, [])
 
     return (
-        loading ? <Loading /> : <ProfileCard profile={data.profile[decodeURIComponent(params.username)]} params={params} />
+        loading ? <Loading /> : <ProfileCard profile={data.profile?.[decodeURIComponent(params.username)] || null} params={params} />
     )
 }
 

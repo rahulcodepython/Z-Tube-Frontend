@@ -149,7 +149,13 @@ const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpe
                 .then(response => {
                     setData(data => {
                         let newData = { ...data };
-                        newData.feedPost = [response.data.content, ...data.feedPost];
+                        if ('feedPost' in newData) {
+                            newData.feedPost = [response.data.content, ...newData.feedPost];
+
+                        } else {
+                            newData.feedPost = [response.data.content];
+                        }
+
                         if ('profile' in newData) {
                             if (decodeURIComponent(userData.username) in newData.profile) {
                                 newData.profile[decodeURIComponent(userData.username)].posts = response.data.posts;
