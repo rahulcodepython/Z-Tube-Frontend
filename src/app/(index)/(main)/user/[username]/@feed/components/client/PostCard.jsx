@@ -41,12 +41,12 @@ import { AuthContext } from '@/context/AuthContext';
 import axios from "axios";
 import { DataContext } from '@/context/DataContext'
 
-const PostCard = ({ feed, feedIndex }) => {
+const PostCard = ({ feed, feedIndex, username }) => {
     const [isOpen, setIsOpen] = React.useState(false)
 
     const { accessToken } = React.useContext(AuthContext)
     const { setData } = React.useContext(DataContext)
-    console.log(feed);
+
     return (
         <Card className="space-y-3 pt-3 rounded-md">
             <CardHeader className="px-2 mt-0 py-0">
@@ -75,7 +75,7 @@ const PostCard = ({ feed, feedIndex }) => {
                                             </MenubarItem>
                                         }
                                         {
-                                            feed.self && <MenubarItem className="cursor-pointer" onClick={() => DeleteFeed(accessToken, feed, feedIndex, setData)}>
+                                            feed.self && <MenubarItem className="cursor-pointer" onClick={() => DeleteFeed(accessToken, feed, feedIndex, username, setData)}>
                                                 Delete Post
                                             </MenubarItem>
                                         }
@@ -317,7 +317,7 @@ const RemoveReactOnPost = async (accessToken, feed, setData, feedIndex, reaction
         })
 }
 
-const DeleteFeed = async (accessToken, feed, feedIndex, setData) => {
+const DeleteFeed = async (accessToken, feed, feedIndex, username, setData) => {
     const options = {
         method: 'DELETE',
         url: `${process.env.BASE_API_URL}/feed/editpost/${feed.id}/`,
@@ -330,6 +330,7 @@ const DeleteFeed = async (accessToken, feed, feedIndex, setData) => {
             setData(prevData => {
                 let newData = { ...prevData };
                 delete newData.feedPost[feedIndex]
+                newData.profile[decodeURIComponent(username)].posts = response.data.posts
                 return newData;
             });
         })

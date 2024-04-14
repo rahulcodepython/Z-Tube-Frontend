@@ -24,7 +24,7 @@ const Feed = ({ params }) => {
     return loading ? <Loading /> : <div className='grid grid-cols-3 gap-4 mt-8'>
         {
             data.feedPost.length === 0 ? <div>No Post There</div> : data.feedPost.map((item, index) => {
-                return <PostCard key={index} feed={item} feedIndex={index} />
+                return <PostCard key={index} feed={item} feedIndex={index} username={params.username} />
             })
         }
     </div>
