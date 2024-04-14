@@ -22,8 +22,8 @@ import TagsInput from "@/components/TagsInput";
 import { DataContext } from '@/context/DataContext';
 
 const CreateFeed = ({ setIsOpen }) => {
-    const { accessToken } = React.useContext(AuthContext)
-    const { data, setData } = React.useContext(DataContext)
+    const { accessToken, userData } = React.useContext(AuthContext)
+    const { setData } = React.useContext(DataContext)
 
     const [uploading, setUploading] = React.useState(false)
     const [media, setMedia] = React.useState([])
@@ -35,7 +35,7 @@ const CreateFeed = ({ setIsOpen }) => {
         tags: [],
         allowComments: false
     }}
-        onSubmit={async values => await CreateFeedPost(setUploading, accessToken, media, values, setIsOpen, data, setData)}>
+        onSubmit={async values => await CreateFeedPost(setUploading, accessToken, media, values, setIsOpen, setData, userData)}>
         {({ values, handleChange, handleSubmit }) => {
             return <Form onKeyDown={e => {
                 e.key === 'Enter' ? e.preventDefault() : null;
@@ -117,7 +117,7 @@ const CreateFeed = ({ setIsOpen }) => {
     </Formik>
 };
 
-const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpen, data, setData) => {
+const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpen, setData, userData) => {
     if (media.length > 0) {
         setUploading(() => true)
 
@@ -147,7 +147,22 @@ const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpe
 
             await axios.request(options)
                 .then(response => {
-                    setData({ ...data, feedPost: [response.data, ...data.feedPost] })
+                    setData(data => {
+                        let newData = { ...data };
+                        if ('feedPost' in newData) {
+                            newData.feedPost[decodeURIComponent(userData.username)] = [response.data.content, ...newData.feedPost[decodeURIComponent(userData.username)]];
+
+                        } else {
+                            newData.feedPost[decodeURIComponent(userData.username)] = [response.data.content];
+                        }
+
+                        if ('profile' in newData) {
+                            if (decodeURIComponent(userData.username) in newData.profile) {
+                                newData.profile[decodeURIComponent(userData.username)].posts = response.data.posts;
+                            }
+                        }
+                        return newData;
+                    })
                     resolve();
                 })
                 .catch(() => {

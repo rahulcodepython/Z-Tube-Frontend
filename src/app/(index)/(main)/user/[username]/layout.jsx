@@ -11,8 +11,8 @@ const Layout = ({ children, params, profile, feed }) => {
     const router = useRouter()
 
     React.useEffect(() => {
-        setDefaultTab(pre => search.get('tabs'))
-        setLoading(pre => false)
+        setDefaultTab(() => search.get('tabs'))
+        setLoading(() => false)
     }, [search.get('tabs')])
 
     return (

@@ -11,23 +11,26 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from '@/components/ui/input';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { Form, Formik, FieldArray } from 'formik';
-import { Encrypt, UploadMediaFiles } from '@/utils';
+import { UploadMediaFiles } from '@/utils';
 import axios from "axios";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import ImageUploading from 'react-images-uploading';
 import Image from 'next/image';
 import TagsInput from "@/components/TagsInput";
-import {Label} from "@/components/ui/label";
+import { Label } from "@/components/ui/label";
+import { DataContext } from '@/context/DataContext';
 
-const EditProfile = ({ setProfile, username }) => {
-    const { accessToken, profileData, setProfileData, setUserData } = React.useContext(AuthContext)
+const EditProfile = ({ profileData, username }) => {
+    const { accessToken, setUserData } = React.useContext(AuthContext)
+    const { setData } = React.useContext(DataContext)
 
     const router = useRouter();
+    const search = useSearchParams();
 
     const [isOpen, setIsOpen] = React.useState(false);
     const [isUpdating, setIsUpdating] = React.useState(false)
@@ -60,7 +63,7 @@ const EditProfile = ({ setProfile, username }) => {
                     bio: profileData.bio || '',
                     isLocked: profileData?.isLocked,
                     tags: profileData?.tags,
-                }} onSubmit={async values => await UpdateProfile(accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, setProfileData, setUserData, setProfile, setIsUpdating, setIsOpen, username, router, values)}>
+                }} onSubmit={async values => await UpdateProfile(accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, setData, setUserData, setIsUpdating, setIsOpen, username, router, search.get('tabs'), values)}>
                     {({ values, handleChange, handleSubmit }) => {
                         return <Form onSubmit={(e) => { e.preventDefault() }} onKeyDown={(e) => {
                             e.key === 'Enter' ? e.preventDefault() : null;
@@ -148,7 +151,7 @@ const EditProfile = ({ setProfile, username }) => {
                                             </Label>
                                             <FieldArray name={'tags'}>
                                                 {
-                                                    ({remove, push}) => {
+                                                    ({ remove, push }) => {
                                                         return <TagsInput max={5} remove={remove} push={push} tags={values.tags} />
                                                     }
                                                 }
@@ -158,11 +161,11 @@ const EditProfile = ({ setProfile, username }) => {
                                 </div>
                             </div>
                             {
-                                isUpdating ? <Button disabled>
+                                isUpdating ? <Button disabled className="gap-2">
                                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                                     Please wait
                                 </Button> :
-                                    <Button type='submit' onClick={handleSubmit}>
+                                    <Button type='submit' onClick={handleSubmit} className="gap-2">
                                         <BiSend className='text-base' />
                                         <span>
                                             Update
@@ -197,7 +200,7 @@ const CheckUsername = async (e, profileData, setIsUsernameValid, accessToken) =>
     }
 }
 
-const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, setProfileData, setUserData, setProfile, setIsUpdating, setIsOpen, username, router, values) => {
+const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, setData, setUserData, setIsUpdating, setIsOpen, username, router, search, values) => {
     setIsUpdating(() => true)
 
     const HandleTostify = new Promise(async (resolve, rejected) => {
@@ -223,13 +226,15 @@ const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange
 
         await axios.request(options)
             .then(async response => {
-                setProfileData(() => response.data.profile)
                 setUserData(() => response.data.user)
-                setProfile(() => response.data.profile)
-                sessionStorage.removeItem("user")
-                sessionStorage.setItem("user", Encrypt(JSON.stringify(response.data.user), process.env.ENCRYPTION_KEY));
+                setData(pre => {
+                    let newData = { ...pre };
+                    delete newData.profile[decodeURIComponent(username)];
+                    newData.profile[decodeURIComponent(response.data.user.username)] = response.data.profile;
+                    return newData;
+                })
                 resolve();
-                router.push(`/user/${encodeURIComponent(response.data.user.username)}`)
+                router.push(`/user/${encodeURIComponent(response.data.user.username)}${search === null ? '' : `?tabs=${search}`}`)
             })
             .catch(() => {
                 rejected();
@@ -257,11 +262,11 @@ const ImageUploader = ({ image, setImage, setIsImageChange, mode }) => {
             setImage(pre => imageList)
         }} dataURLKey="data_url">
             {({
-                  onImageUpload,
-                  onImageUpdate,
-                  onImageRemove,
-                  dragProps,
-              }) => {
+                onImageUpload,
+                onImageUpdate,
+                onImageRemove,
+                dragProps,
+            }) => {
                 return image.length > 0 ?
                     image.map((image, index) => {
                         return <div className='relative flex justify-center items-center group' key={index}>
@@ -277,9 +282,9 @@ const ImageUploader = ({ image, setImage, setIsImageChange, mode }) => {
                     }) : <section onClick={onImageUpload} {...dragProps} className='border-dashed border-2 p-8 flex justify-center items-center w-full h-60'>
                         <div className='flex flex-col items-center justify-center'>
                             <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24"
-                                 stroke="currentColor" strokeWidth="2">
+                                stroke="currentColor" strokeWidth="2">
                                 <path strokeLinecap="round" strokeLinejoin="round"
-                                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                             </svg>
                             <p className='text-gray-600'>Drag {`'n'`} drop some files here, or click to select files</p>
                         </div>

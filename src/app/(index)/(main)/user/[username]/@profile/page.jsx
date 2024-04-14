@@ -12,142 +12,162 @@ import {
 import EditProfile from "@/app/(index)/(main)/user/[username]/@profile/components/client/EditProfile";
 import Loading from "@/app/(index)/(main)/user/[username]/@profile/components/server/loading";
 import axios from "axios";
+import { DataContext } from '@/context/DataContext'
 
 const Profile = ({ params }) => {
     const [loading, setLoading] = React.useState(true)
-    const [profile, setProfile] = React.useState(null)
 
-    const { accessToken, profileData, setProfileData, userData } = React.useContext(AuthContext)
+    const { accessToken } = React.useContext(AuthContext)
+    const { data, setData } = React.useContext(DataContext)
 
     React.useEffect(() => {
         const handler = async () => {
-            await FetchProfileData(params, userData, setProfile, profileData, accessToken, setProfileData);
-            setLoading(pre => false)
+            if ('profile' in data) {
+                if (decodeURIComponent(params.username) in data.profile) {
+                    setLoading(false)
+                }
+            }
+            await FetchProfileData(params, accessToken, setData, setLoading);
         }
-
         handler();
     }, [])
 
     return (
-        loading ? <Loading /> : profile === null ? "There is so such user." : <Card className="h-[457.66px] rounded-lg shadow-none divide-y">
-            <CardHeader className='h-[297.66px] p-0 rounded-t-lg'>
-                <Image src={profile?.banner ? profile?.banner : '/image/profile-banner.png'} width={1334} height={297.66} priority={true} alt='...' className='rounded-t-lg' placeholder='blur' blurDataURL="/image/profile-banner.png" style={{ width: "100%", height: "297.66px" }} />
-            </CardHeader>
-            <CardContent className="h-[160px] relative px-4 py-5 flex items-center justify-start gap-8">
-                <Image src={profile?.image ? profile?.image : '/image/user.png'} width={120} height={120} className='rounded-lg w-[120px] h-[120px] overflow-hidden' alt='...' />
-                <div className='space-y-6'>
-                    <div className='space-y-1'>
-                        <div className='space-y-1'>
-                            <div className='font-extrabold text-xl'>
-                                <span>
-                                    {profile?.first_name} {profile?.last_name}
-                                </span>
-                                {
-                                    profile?.isVerified && <sup className='ml-1'>
-                                        <MdVerified className='inline-block text-sm' />
-                                    </sup>
-                                }
-                            </div>
-                            <span className='text-sm'>
-                                {profile?.username}
-                            </span>
-                        </div>
-                        <div className='text-sm'>
-                            {profile?.bio}
-                        </div>
-                        <div className='space-x-2 text-xs'>
-                            {
-                                profile?.tags.map((item, index) => {
-                                    return <span key={index}>
-                                        #{item}
-                                    </span>
-                                })
-                            }
-                        </div>
-                        <div className='flex items-center justify-center gap-4 text-sm'>
-                            <div className='flex items-center justify-center gap-1 cursor-pointer'>
-                                <span>{profile?.posts}</span>
-                                <span>Posts</span>
-                            </div>
-                            <div className='flex items-center justify-center gap-1 cursor-pointer'>
-                                <span>{profile?.followers}</span>
-                                <span>Followers</span>
-                            </div>
-                            <div className='flex items-center justify-center gap-1 cursor-pointer'>
-                                <span>{profile?.followings}</span>
-                                <span>Followings</span>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div className='absolute bottom-5 right-4 flex items-center justify-end gap-4'>
-                    {
-                        profile.self ? <EditProfile setProfile={setProfile} username={params.username} /> :
-                            profile?.isFriend ?
-                                <Button className='gap-[0.5rem]' onClick={async () => await DisconnectPeople(accessToken, params.username, profile, setProfile)}>
-                                    <BsLink />
-                                    <span>
-                                        Disconnect
-                                    </span>
-                                </Button> : <Button className='gap-[0.5rem]' onClick={async () => await ConnectPeople(accessToken, params.username, profile, setProfile)}>
-                                    <MdAddLink />
-                                    <span>
-                                        Connect
-                                    </span>
-                                </Button>
-                    }
-                    {
-                        profile?.isLocked ?
-                            <Button className={'gap-[0.5rem]'}>
-                                <BiSolidLock />
-                                <span>
-                                    Locked
-                                </span>
-                            </Button>
-                            : <Button className={'gap-[0.5rem]'}>
-                                <BiSolidLockOpen />
-                                <span>
-                                    Unlocked
-                                </span>
-                            </Button>
-                    }
-                </div>
-
-            </CardContent>
-        </Card>
+        loading ? <Loading /> : <ProfileCard profile={data.profile?.[decodeURIComponent(params.username)]} params={params} />
     )
 }
 
-const FetchProfileData = async (params, userData, setProfile, profileData, accessToken, setProfileData) => {
-    if (decodeURIComponent(params.username) === userData?.username && profileData !== null) {
-        setProfile(pre => profileData)
-    }
-    else {
-        const options = {
-            headers: {
-                Authorization: `JWT ${accessToken}`
-            },
-            url: `${process.env.BASE_API_URL}/auth/profile/${params.username}/`,
-            method: 'GET',
-        }
+const ProfileCard = ({ profile, params }) => {
+    const { setData } = React.useContext(DataContext)
+    const { accessToken } = React.useContext(AuthContext)
 
-        await axios.request(options)
-            .then(response => {
-                if (response.data.self) {
-                    setProfileData(pre => response.data)
+    return profile === null ? <div className='pb-4'>
+        There is so such user.
+    </div> : <Card className="h-[457.66px] rounded-lg shadow-none divide-y">
+        <CardHeader className='h-[297.66px] p-0 rounded-t-lg'>
+            <Image src={profile?.banner ? profile?.banner : '/image/profile-banner.png'} width={1334} height={297.66} priority={true} alt='...' className='rounded-t-lg' placeholder='blur' blurDataURL="/image/profile-banner.png" style={{ width: "100%", height: "297.66px" }} />
+        </CardHeader>
+        <CardContent className="h-[160px] relative px-4 py-5 flex items-center justify-start gap-8">
+            <Image src={profile?.image ? profile?.image : '/image/user.png'} width={120} height={120} className='rounded-lg w-[120px] h-[120px] overflow-hidden' alt='...' />
+            <div className='space-y-6'>
+                <div className='space-y-1'>
+                    <div className='space-y-1'>
+                        <div className='font-extrabold text-xl'>
+                            <span>
+                                {profile?.first_name} {profile?.last_name}
+                            </span>
+                            {
+                                profile?.isVerified && <sup className='ml-1'>
+                                    <MdVerified className='inline-block text-sm' />
+                                </sup>
+                            }
+                        </div>
+                        <span className='text-sm'>
+                            {profile?.username}
+                        </span>
+                    </div>
+                    <div className='text-sm'>
+                        {profile?.bio}
+                    </div>
+                    <div className='space-x-2 text-xs'>
+                        {
+                            profile?.tags.map((item, index) => {
+                                return <span key={index}>
+                                    #{item}
+                                </span>
+                            })
+                        }
+                    </div>
+                    <div className='flex items-center justify-center gap-4 text-sm'>
+                        <div className='flex items-center justify-center gap-1 cursor-pointer'>
+                            <span>{profile?.posts}</span>
+                            <span>Posts</span>
+                        </div>
+                        <div className='flex items-center justify-center gap-1 cursor-pointer'>
+                            <span>{profile?.followers}</span>
+                            <span>Followers</span>
+                        </div>
+                        <div className='flex items-center justify-center gap-1 cursor-pointer'>
+                            <span>{profile?.followings}</span>
+                            <span>Followings</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div className='absolute bottom-5 right-4 flex items-center justify-end gap-4'>
+                {
+                    profile?.self ? <EditProfile profileData={profile} username={params.username} /> :
+                        profile?.isFriend ?
+                            <Button className='gap-[0.5rem]' onClick={async () => await DisconnectPeople(accessToken, params.username, setData)}>
+                                <BsLink />
+                                <span>
+                                    Disconnect
+                                </span>
+                            </Button> : <Button className='gap-[0.5rem]' onClick={async () => await ConnectPeople(accessToken, params.username, setData)}>
+                                <MdAddLink />
+                                <span>
+                                    Connect
+                                </span>
+                            </Button>
                 }
-                setProfile(pre => response.data)
-            })
-            .catch(error => {
-                setProfile(pre => null)
-                toast.warn("There is some issue.")
-            })
-    }
+                {
+                    profile?.isLocked ?
+                        <Button className={'gap-[0.5rem]'}>
+                            <BiSolidLock />
+                            <span>
+                                Locked
+                            </span>
+                        </Button>
+                        : <Button className={'gap-[0.5rem]'}>
+                            <BiSolidLockOpen />
+                            <span>
+                                Unlocked
+                            </span>
+                        </Button>
+                }
+            </div>
+
+        </CardContent>
+    </Card>
 }
 
-const ConnectPeople = async (accessToken, username, profile, setProfile) => {
+const FetchProfileData = async (params, accessToken, setData, setLoading) => {
+    console.log("Fetching profile data");
+    const options = {
+        headers: {
+            Authorization: `JWT ${accessToken}`
+        },
+        url: `${process.env.BASE_API_URL}/auth/profile/${params.username}/`,
+        method: 'GET',
+    }
+
+    await axios.request(options).then(response => {
+        setData(pre => {
+            return {
+                ...pre,
+                profile: {
+                    ...pre?.profile,
+                    [decodeURIComponent(params.username)]: response.data
+                }
+            }
+        })
+    }).catch(() => {
+        setData(pre => {
+            return {
+                ...pre,
+                profile: {
+                    ...pre?.profile,
+                    [decodeURIComponent(params.username)]: null
+                }
+            }
+        })
+        toast.warn("There is some issue.")
+    }).finally(() => setLoading(() => false))
+}
+
+const ConnectPeople = async (accessToken, username, setData) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -156,11 +176,23 @@ const ConnectPeople = async (accessToken, username, profile, setProfile) => {
         method: 'POST',
     }
 
-    await axios.request(options)
-        .then(response => setProfile({ ...profile, isFriend: true }))
+    await axios.request(options).then(() => {
+        setData(pre => {
+            return {
+                ...pre,
+                profile: {
+                    ...pre.profile,
+                    [decodeURIComponent(username)]: {
+                        ...pre.profile[decodeURIComponent(username)],
+                        isFriend: true
+                    }
+                }
+            }
+        })
+    })
 }
 
-const DisconnectPeople = async (accessToken, username, profile, setProfile) => {
+const DisconnectPeople = async (accessToken, username, setData) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -169,8 +201,20 @@ const DisconnectPeople = async (accessToken, username, profile, setProfile) => {
         method: 'DELETE',
     }
 
-    await axios.request(options)
-        .then(response => setProfile({ ...profile, isFriend: false }))
+    await axios.request(options).then(() => {
+        setData(pre => {
+            return {
+                ...pre,
+                profile: {
+                    ...pre.profile,
+                    [decodeURIComponent(username)]: {
+                        ...pre.profile[decodeURIComponent(username)],
+                        isFriend: false
+                    }
+                }
+            }
+        })
+    })
 }
 
 export default Profile
