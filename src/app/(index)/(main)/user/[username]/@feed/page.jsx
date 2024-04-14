@@ -18,11 +18,9 @@ const Feed = ({ params }) => {
             if ('feedPost' in data) {
                 if (decodeURIComponent(params.username) in data.feedPost) {
                     setLoading(false)
-                    console.log('cached feedpost');
                 }
             }
-            await FetchFeedPost(accessToken, params.username, data, setData, userData, setLoading);
-            console.log('fetching feedpost');
+            await FetchFeedPost(accessToken, params.username, setData, userData, setLoading);
         }
         handler();
     }, [])
@@ -36,7 +34,7 @@ const Feed = ({ params }) => {
     </div>
 }
 
-const FetchFeedPost = async (accessToken, username, data, setData, userData, setLoading) => {
+const FetchFeedPost = async (accessToken, username, setData, userData, setLoading) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -44,11 +42,12 @@ const FetchFeedPost = async (accessToken, username, data, setData, userData, set
     };
 
     await axios.request(options).then(response => {
-        setData({
-            ...data,
-            feedPost: {
+        setData(pre => {
+            let newData = { ...pre };
+            newData.feedPost = {
                 [decodeURIComponent(userData.username)]: response.data
             }
+            return newData;
         })
     }).finally(() => setLoading(false))
 }

@@ -25,18 +25,15 @@ const Profile = ({ params }) => {
             if ('profile' in data) {
                 if (decodeURIComponent(params.username) in data.profile) {
                     setLoading(false)
-                    console.log('cached profile');
                 }
             }
             await FetchProfileData(params, accessToken, setData, setLoading);
-            console.log('fetching profile');
         }
-
         handler();
     }, [])
 
     return (
-        loading ? <Loading /> : <ProfileCard profile={data.profile?.[decodeURIComponent(params.username)] || null} params={params} />
+        loading ? <Loading /> : <ProfileCard profile={data.profile?.[decodeURIComponent(params.username)]} params={params} />
     )
 }
 
@@ -137,6 +134,7 @@ const ProfileCard = ({ profile, params }) => {
 }
 
 const FetchProfileData = async (params, accessToken, setData, setLoading) => {
+    console.log("Fetching profile data");
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`

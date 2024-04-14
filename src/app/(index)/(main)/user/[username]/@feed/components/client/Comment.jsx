@@ -286,7 +286,7 @@ const CreateReply = async (accessToken, value, comment, setData, setLoading, set
         .then(response => {
             setData(prevData => {
                 let newData = { ...prevData };
-                newData.comments.feedPost[`${feed.id}`][commentIndex].children.push(response.data.comment);
+                newData.comments.feedPost[`${feed.id}`][commentIndex].children = [response.data.comment, ...newData.comments.feedPost[`${feed.id}`][commentIndex].children];
                 newData.feedPost[decodeURIComponent(userData.username)][feedIndex].commentNo = response.data.commentNo;
                 return newData;
             })
