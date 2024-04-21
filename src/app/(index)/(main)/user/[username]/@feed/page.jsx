@@ -7,34 +7,29 @@ import axios from "axios";
 import { DataContext } from '@/context/DataContext';
 
 const Feed = ({ params }) => {
-    const { accessToken, userData } = React.useContext(AuthContext)
+    const { accessToken } = React.useContext(AuthContext)
 
     const { data, setData } = React.useContext(DataContext)
 
-    const [loading, setLoading] = React.useState('feedPost' in data ? false : true)
+    const [loading, setLoading] = React.useState('feedPost' in data ? decodeURIComponent(params.username) in data.feedPost ? false : true : true)
 
     React.useEffect(() => {
         const handler = async () => {
-            if ('feedPost' in data) {
-                if (decodeURIComponent(params.username) in data.feedPost) {
-                    setLoading(false)
-                }
-            }
-            await FetchFeedPost(accessToken, params.username, setData, userData, setLoading);
+            await FetchFeedPost(accessToken, params.username, setData, setLoading);
         }
         handler();
     }, [])
 
     return loading ? <Loading /> : <div className='grid grid-cols-3 gap-4 mt-8'>
         {
-            data.feedPost.length === 0 && Array.isArray(data.feedPost) ? <div>No Post There</div> : data.feedPost[decodeURIComponent(userData.username)].map((item, index) => {
+            data.feedPost[decodeURIComponent(params.username)].length === 0 ? <div>No Post There</div> : data.feedPost[decodeURIComponent(params.username)].map((item, index) => {
                 return <PostCard key={index} feed={item} feedIndex={index} username={params.username} />
             })
         }
     </div>
 }
 
-const FetchFeedPost = async (accessToken, username, setData, userData, setLoading) => {
+const FetchFeedPost = async (accessToken, username, setData, setLoading) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -45,7 +40,7 @@ const FetchFeedPost = async (accessToken, username, setData, userData, setLoadin
         setData(pre => {
             let newData = { ...pre };
             newData.feedPost = {
-                [decodeURIComponent(userData.username)]: response.data
+                [decodeURIComponent(username)]: response.data || []
             }
             return newData;
         })

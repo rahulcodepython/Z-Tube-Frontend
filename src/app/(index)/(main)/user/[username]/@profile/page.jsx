@@ -13,6 +13,7 @@ import EditProfile from "@/app/(index)/(main)/user/[username]/@profile/component
 import Loading from "@/app/(index)/(main)/user/[username]/@profile/components/server/loading";
 import axios from "axios";
 import { DataContext } from '@/context/DataContext'
+import { toast } from 'react-toastify'
 
 const Profile = ({ params }) => {
     const [loading, setLoading] = React.useState(true)
