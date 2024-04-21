@@ -10,7 +10,7 @@ export const metadata = {
     description: 'This is a social media platform made By Rahul Das',
 }
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">
             <link rel="icon" href="/favicon.ico" sizes="any" />

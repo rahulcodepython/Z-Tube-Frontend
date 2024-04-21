@@ -69,8 +69,9 @@ export const FetchUserData = async (token, setUserData) => {
 }
 
 const CheckUser = async (setUserData, LoggedInUser, LogoutUser) => {
+    const isRefreshTokenExists = localStorage.getItem("refresh") || null;
 
-    const refresh_token = Decrypt(localStorage.getItem("refresh"), process.env.ENCRYPTION_KEY) || null;
+    const refresh_token = isRefreshTokenExists ? Decrypt(localStorage.getItem("refresh"), process.env.ENCRYPTION_KEY) : null;
 
     const isValidateRefreshToken = refresh_token ? await VerifyToken(refresh_token) : null;
 
@@ -78,7 +79,9 @@ const CheckUser = async (setUserData, LoggedInUser, LogoutUser) => {
         await LogoutUser();
     }
     else {
-        const access_token = Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY) || null;
+        const isAccessTokenExists = sessionStorage.getItem("access") || null;
+
+        const access_token = isAccessTokenExists ? Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY) : null;
 
         const isValidateAccessToken = access_token ? await VerifyToken(access_token) : null;
 
