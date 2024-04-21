@@ -224,25 +224,22 @@ const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange
             },
         }
 
-        await axios.request(options)
-            .then(async response => {
-                setUserData(() => response.data.user)
-                setData(pre => {
-                    let newData = { ...pre };
-                    delete newData.profile[decodeURIComponent(username)];
-                    newData.profile[decodeURIComponent(response.data.user.username)] = response.data.profile;
-                    return newData;
-                })
-                resolve();
-                router.push(`/user/${encodeURIComponent(response.data.user.username)}${search === null ? '' : `?tabs=${search}`}`)
+        await axios.request(options).then(async response => {
+            setUserData(() => response.data.user)
+            setData(pre => {
+                let newData = { ...pre };
+                delete newData.profile[decodeURIComponent(username)];
+                newData.profile[decodeURIComponent(response.data.user.username)] = response.data.profile;
+                return newData;
             })
-            .catch(() => {
-                rejected();
-            })
-            .finally(() => {
-                setIsOpen(() => false)
-                setIsUpdating(() => false)
-            });
+            resolve();
+            router.push(`/user/${encodeURIComponent(response.data.user.username)}${search === null ? '' : `?tabs=${search}`}`)
+        }).catch(() => {
+            rejected();
+        }).finally(() => {
+            setIsOpen(() => false)
+            setIsUpdating(() => false)
+        });
     });
 
     toast.promise(

@@ -42,8 +42,8 @@ const ProfileCard = ({ profile, params }) => {
     const { setData } = React.useContext(DataContext)
     const { accessToken } = React.useContext(AuthContext)
 
-    return profile === null ? <div className='pb-4'>
-        There is so such user.
+    return profile.error ? <div className='py-4'>
+        {profile.msg || 'Something went wrong. Try again later.'}
     </div> : <Card className="h-[457.66px] rounded-lg shadow-none divide-y">
         <CardHeader className='h-[297.66px] p-0 rounded-t-lg'>
             <Image src={profile?.banner ? profile?.banner : '/image/profile-banner.png'} width={1334} height={297.66} priority={true} alt='...' className='rounded-t-lg' placeholder='blur' blurDataURL="/image/profile-banner.png" style={{ width: "100%", height: "297.66px" }} />
@@ -150,21 +150,24 @@ const FetchProfileData = async (params, accessToken, setData, setLoading) => {
                 ...pre,
                 profile: {
                     ...pre?.profile,
-                    [decodeURIComponent(params.username)]: response.data
+                    [decodeURIComponent(params.username)]: { ...response.data, error: false }
                 }
             }
         })
-    }).catch(() => {
+    }).catch(error => {
         setData(pre => {
             return {
                 ...pre,
                 profile: {
                     ...pre?.profile,
-                    [decodeURIComponent(params.username)]: null
+                    [decodeURIComponent(params.username)]: {
+                        msg: error.response.data?.msg || null,
+                        error: true
+                    }
                 }
             }
         })
-        toast.warn("There is some issue.")
+        error.response.data.error ? toast.error(error.response.data.error) : null
     }).finally(() => setLoading(() => false))
 }
 
@@ -177,7 +180,7 @@ const ConnectPeople = async (accessToken, username, setData) => {
         method: 'POST',
     }
 
-    await axios.request(options).then(() => {
+    await axios.request(options).then(response => {
         setData(pre => {
             return {
                 ...pre,
@@ -190,6 +193,7 @@ const ConnectPeople = async (accessToken, username, setData) => {
                 }
             }
         })
+        toast.success(response.data.success)
     })
 }
 
@@ -202,7 +206,7 @@ const DisconnectPeople = async (accessToken, username, setData) => {
         method: 'DELETE',
     }
 
-    await axios.request(options).then(() => {
+    await axios.request(options).then(response => {
         setData(pre => {
             return {
                 ...pre,
@@ -215,6 +219,7 @@ const DisconnectPeople = async (accessToken, username, setData) => {
                 }
             }
         })
+        toast.success(response.data.success)
     })
 }
 
