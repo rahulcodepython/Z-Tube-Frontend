@@ -55,7 +55,10 @@ const CreateFeed = ({ setIsOpen }) => {
                     </div>
                     <div className="col-span-2 grid w-full gap-2 px-1">
                         <Label htmlFor="visibility" className="uppercase text-gray-600 text-xs">Visibility</Label>
-                        <Select onValueChange={(e) => handleChange(e)}
+                        <Select onValueChange={(e) => {
+                            let value = { target: { type: "select", value: e, name: 'visibility' } }
+                            handleChange(value)
+                        }}
                             defaultValue={values.visibility}>
                             <SelectTrigger className="focus:ring-0 focus-visible:ring-0">
                                 <SelectValue placeholder="Select a visibility" />
@@ -118,7 +121,7 @@ const CreateFeed = ({ setIsOpen }) => {
 };
 
 const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpen, setData, userData) => {
-    if (media.length > 0) {
+    if (media.length == 0) {
         setUploading(() => true)
 
         const HandleTostify = new Promise(async (resolve, rejected) => {
