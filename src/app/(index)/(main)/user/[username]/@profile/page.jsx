@@ -135,7 +135,6 @@ const ProfileCard = ({ profile, params }) => {
 }
 
 const FetchProfileData = async (params, accessToken, setData, setLoading) => {
-    console.log("Fetching profile data");
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`

@@ -5,15 +5,7 @@ import { AuthContext } from '@/context/AuthContext'
 import Loading from "@/app/(index)/(main)/user/[username]/@feed/components/server/loading";
 import axios from "axios";
 import { DataContext } from '@/context/DataContext';
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination"
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Feed = ({ params }) => {
     const { accessToken } = React.useContext(AuthContext)
@@ -23,90 +15,76 @@ const Feed = ({ params }) => {
     const [loading, setLoading] = React.useState('feedPost' in data ? decodeURIComponent(params.username) in data.feedPost ? false : true : true)
     const [pagination, setPagination] = React.useState({
         count: 0,
-        next: null,
-        previous: null,
+        nextUrl: null,
+        previousUrl: null,
     })
-    const [page, setPage] = React.useState(1)
-
-    const pageNumbers = Array.from({ length: calculatePages(pagination.count, 3) }, (_, index) => index + 1);
 
     React.useEffect(() => {
         const handler = async () => {
-            await FetchFeedPost(accessToken, params.username, setData, setLoading, setPagination, page);
+            await FetchFeedPost(accessToken, params.username, setData, setLoading, setPagination);
         }
         handler();
     }, [])
 
-    return loading ? <Loading /> : <div className='w-full flex flex-col gap-8'>
+    return loading ? <Loading /> : data.feedPost[decodeURIComponent(params.username)].length === 0 ? <div>No Post There</div> : <InfiniteScroll dataLength={pagination.count} next={FetchNextFeedPost(accessToken, pagination.nextUrl, params.username, setData, setPagination)} hasMore={pagination.nextUrl !== null} loader={<h4>Loading...</h4>}>
         <div className='grid grid-cols-3 gap-4 mt-8'>
             {
-                data.feedPost[decodeURIComponent(params.username)].length === 0 ? <div>No Post There</div> : data.feedPost[decodeURIComponent(params.username)].map((item, index) => {
+                data.feedPost[decodeURIComponent(params.username)].map((item, index) => {
                     return <PostCard key={index} feed={item} feedIndex={index} username={params.username} />
                 })
             }
         </div>
-        <Pagination>
-            <PaginationContent>
-                <PaginationItem>
-                    {pagination.previous && <PaginationPrevious href="#" onClick={() => setPage(page - 1)} />}
-                </PaginationItem>
-                {
-                    pageNumbers.map((item, index) => {
-                        return <PaginationItem key={index}>
-                            <PaginationLink href="#" isActive={item === page ? true : false} onClick={() => setPage(item)}>
-                                {item}
-                            </PaginationLink>
-                        </PaginationItem>
-                    })
-                }
-                <PaginationItem>
-                    {pagination.next && <PaginationNext href="#" onClick={() => setPage(page + 1)} />}
-                </PaginationItem>
-            </PaginationContent>
-        </Pagination>
-    </div>
+    </InfiniteScroll>
 }
 
-const FetchFeedPost = async (accessToken, username, setData, setLoading, setPagination, page) => {
+const FetchFeedPost = async (accessToken, username, setData, setLoading, setPagination) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
-        }, url: `${process.env.BASE_API_URL}/feed/posts/${username}/${page <= 1 ? '' : `?page=${page}`}`, method: 'GET',
+        }, url: `${process.env.BASE_API_URL}/feed/posts/${username}/`, method: 'GET',
     };
 
     await axios.request(options).then(response => {
         setData(pre => {
             let newData = { ...pre };
 
-            const resultFeedPost = 'feedPost' in newData ? decodeURIComponent(username) in newData.feedPost ? [...newData.feedPost[decodeURIComponent(username)], ...response.data.results] : response.data.results : response.data.results
+            const resultFeedPost = response.status === 200 ? 'feedPost' in newData ? decodeURIComponent(username) in newData.feedPost ? [...newData.feedPost[decodeURIComponent(username)], ...response.data.results] : response.data.results : response.data.results : []
 
             newData.feedPost = {
-                [decodeURIComponent(username)]: response.status === 200 ? resultFeedPost : []
+                [decodeURIComponent(username)]: resultFeedPost
             }
             return newData;
         })
         setPagination({
-            count: response.data.count,
-            next: response.data.next,
-            previous: response.data.previous,
+            count: response.data.count || null,
+            nextUrl: response.data.next || null,
+            previousUrl: response.data.previous || null,
         })
     }).finally(() => setLoading(false))
 }
 
-const calculatePages = (totalItems, itemsPerPage) => {
-    // Calculate the number of full pages needed
-    const fullPages = Math.floor(totalItems / itemsPerPage);
+const FetchNextFeedPost = async (accessToken, url, username, setData, setPagination) => {
+    if (!url) return;
+    const options = {
+        headers: {
+            Authorization: `JWT ${accessToken}`
+        }, url: url, method: 'GET',
+    };
 
-    // If there are any remaining items that don't make a full page
-    const remainder = totalItems % itemsPerPage;
+    await axios.request(options).then(response => {
+        setData(pre => {
+            let newData = { ...pre };
 
-    // If remainder is greater than 0, we need an additional page for them
-    const additionalPage = remainder > 0 ? 1 : 0;
+            newData.feedPost[decodeURIComponent(username)] = [...newData.feedPost[decodeURIComponent(username)], ...response.data.results]
 
-    // Total pages required
-    const totalPages = fullPages + additionalPage;
-
-    return totalPages;
+            return newData;
+        })
+        setPagination({
+            count: response.data.count || null,
+            nextUrl: response.data.next || null,
+            previousUrl: response.data.previous || null,
+        })
+    })
 }
 
 export default Feed
