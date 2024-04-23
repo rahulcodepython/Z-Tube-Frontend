@@ -18,8 +18,6 @@ const Feed = ({ params }) => {
     const [pagination, setPagination] = React.useState({
         count: 0,
         nextUrl: null,
-        previousUrl: null,
-        hasMore: false
     })
 
     React.useEffect(() => {
@@ -37,8 +35,8 @@ const Feed = ({ params }) => {
             </TabsList>
             <div className='col-span-5'>
                 <TabsContent value="feeds" className="mt-0">
-                    <InfiniteScroll dataLength={pagination.count} next={FetchNextFeedPost(accessToken, pagination.nextUrl, setFeed, setPagination)} hasMore={pagination.hasMore} loader={<h4>Loading...</h4>}>
-                        <div className='grid grid-cols-3 gap-4'>
+                    <InfiniteScroll dataLength={feed.length} next={() => FetchNextFeedPost(accessToken, pagination.nextUrl, setFeed, setPagination)} hasMore={feed.length !== pagination.count} loader={<h4>Loading...</h4>}>
+                        <div className='grid grid-cols-1 gap-4'>
                             {
                                 feed.map((item, index) => {
                                     return <PostCard key={index} feed={item} feedIndex={index} />
@@ -64,17 +62,15 @@ const FetchFeedPost = async (accessToken, username, setFeed, setLoading, setPagi
     await axios.request(options).then(response => {
         setFeed(response.data.results)
         setPagination({
-            count: response.data.count ?? null,
+            count: response.data.count,
             nextUrl: response.data.next ?? null,
-            previousUrl: response.data.previous ?? null,
-            hasMore: response.data.next ? true : false
         })
     }).finally(() => setLoading(false))
 }
 
 const FetchNextFeedPost = async (accessToken, url, setFeed, setPagination) => {
-    if (!url) return;
-    console.log("Next");
+    if (url === null) return;
+
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -89,10 +85,8 @@ const FetchNextFeedPost = async (accessToken, url, setFeed, setPagination) => {
             ]
         })
         setPagination({
-            count: response.data.count ?? null,
+            count: response.data.count,
             nextUrl: response.data.next ?? null,
-            previousUrl: response.data.previous ?? null,
-            hasMore: response.data.next ? true : false
         })
     })
 }

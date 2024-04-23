@@ -1,13 +1,12 @@
 "use client"
 import React from "react";
-import {Separator} from "@/components/ui/separator"
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
-import {CaretSortIcon} from "@radix-ui/react-icons"
+import { CaretSortIcon } from "@radix-ui/react-icons"
 import {
     Command,
     CommandEmpty,
@@ -15,7 +14,7 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
     Popover,
     PopoverContent,
@@ -27,9 +26,10 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
-import {Button} from "@/components/ui/button"
-import {Checkbox} from "@/components/ui/checkbox"
-import {Slider} from "@/components/ui/slider"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Slider } from "@/components/ui/slider"
+import { Separator } from "@/components/ui/separator";
 
 const FilterSidebar = () => {
 
@@ -37,7 +37,7 @@ const FilterSidebar = () => {
         <div className={'font-bold text-lg px-4 py-2'}>
             Filter
         </div>
-        <Separator/>
+        <Separator />
         <div className={'mt-2'}>
             <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="item-0">
@@ -45,22 +45,23 @@ const FilterSidebar = () => {
                         Category
                     </AccordionTrigger>
                     <AccordionContent className={'px-2'}>
-                        <FilterItem/>
+                        <FilterItem />
                     </AccordionContent>
-                </AccordionItem><AccordionItem value="item-1">
-                <AccordionTrigger className={'hover:no-underline px-2'}>
-                    Pricing
-                </AccordionTrigger>
-                <AccordionContent className={'px-2'}>
-                    <PricingMeter/>
-                </AccordionContent>
-            </AccordionItem>
+                </AccordionItem>
+                <AccordionItem value="item-1">
+                    <AccordionTrigger className={'hover:no-underline px-2'}>
+                        Pricing
+                    </AccordionTrigger>
+                    <AccordionContent className={'px-2'}>
+                        <PricingMeter />
+                    </AccordionContent>
+                </AccordionItem>
                 <AccordionItem value="item-2">
                     <AccordionTrigger className={'hover:no-underline px-2'}>
                         Verified
                     </AccordionTrigger>
                     <AccordionContent className={'px-2'}>
-                        <Verification/>
+                        <Verification />
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-3">
@@ -68,7 +69,7 @@ const FilterSidebar = () => {
                         Ratings
                     </AccordionTrigger>
                     <AccordionContent className={'px-2'}>
-                        <Ratings/>
+                        <Ratings />
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
@@ -107,16 +108,16 @@ const FilterItem = () => {
         <Popover open={open} onOpenChange={() => setOpen(() => !open)}>
             <PopoverTrigger asChild>
                 <Button variant="outline" role="combobox" aria-expanded={open}
-                        className="w-full justify-between focus-visible:ring-0">
+                    className="w-full justify-between focus-visible:ring-0">
                     {
                         value || "Select Your Filter"
                     }
-                    <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                    <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-fit p-0">
                 <Command>
-                    <CommandInput placeholder="Type..."/>
+                    <CommandInput placeholder="Type..." />
                     <CommandList>
                         <CommandEmpty>No results found.</CommandEmpty>
                         <CommandGroup>
@@ -147,9 +148,9 @@ const Verification = () => {
     return <div className="flex items-center space-x-2 px-2">
         <Checkbox id="terms" onCheckedChange={e => {
             console.log(e)
-        }} className={'focus-visible:ring-0'}/>
+        }} className={'focus-visible:ring-0'} />
         <label htmlFor="terms"
-               className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             Verified
         </label>
     </div>
@@ -160,36 +161,36 @@ const Ratings = () => {
         <div className="flex items-center space-x-2">
             <Checkbox id="rating-4" onCheckedChange={e => {
                 console.log(e)
-            }} className={'focus-visible:ring-0'}/>
+            }} className={'focus-visible:ring-0'} />
             <label htmlFor="terms"
-                   className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 4 & Above
             </label>
         </div>
         <div className="flex items-center space-x-2">
             <Checkbox id="rating-3" onCheckedChange={e => {
                 console.log(e)
-            }} className={'focus-visible:ring-0'}/>
+            }} className={'focus-visible:ring-0'} />
             <label htmlFor="terms"
-                   className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 3 & Above
             </label>
         </div>
         <div className="flex items-center space-x-2">
             <Checkbox id="rating-2" onCheckedChange={e => {
                 console.log(e)
-            }} className={'focus-visible:ring-0'}/>
+            }} className={'focus-visible:ring-0'} />
             <label htmlFor="terms"
-                   className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 2 & Above
             </label>
         </div>
         <div className="flex items-center space-x-2">
             <Checkbox id="rating-1" onCheckedChange={e => {
                 console.log(e)
-            }} className={'focus-visible:ring-0'}/>
+            }} className={'focus-visible:ring-0'} />
             <label htmlFor="terms"
-                   className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 1 & Above
             </label>
         </div>
@@ -204,7 +205,7 @@ const PricingMeter = () => {
             <Tooltip>
                 <TooltipTrigger className={'w-full'}>
                     <Slider defaultValue={[value]} min={0} max={100} step={1} onValueChange={e => setValue(() => e)}
-                            onValueCommit={e => console.log(e, "After Commit")}/>
+                        onValueCommit={e => console.log(e, "After Commit")} />
                 </TooltipTrigger>
                 <TooltipContent>
                     <p>
