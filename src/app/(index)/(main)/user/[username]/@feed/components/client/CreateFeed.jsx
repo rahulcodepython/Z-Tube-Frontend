@@ -19,13 +19,11 @@ import ImageUploading from 'react-images-uploading';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import TagsInput from "@/components/TagsInput";
-import { FeedContext } from '@/context/FeedContext';
 import { ProfileContext } from '@/context/ProfileContext';
 
 const CreateFeed = () => {
     const { accessToken } = React.useContext(AuthContext)
     const { setProfile } = React.useContext(ProfileContext)
-    const { setFeed } = React.useContext(FeedContext)
 
     const [uploading, setUploading] = React.useState(false)
     const [media, setMedia] = React.useState([])
@@ -37,7 +35,7 @@ const CreateFeed = () => {
         tags: [],
         allowComments: false
     }}
-        onSubmit={async (values, actions) => await CreateFeedPost(setUploading, accessToken, media, values, setFeed, setProfile, actions)}>
+        onSubmit={async (values, actions) => await CreateFeedPost(setUploading, accessToken, media, values, setProfile, actions)}>
         {({ values, handleChange, handleSubmit }) => {
             return <Form onKeyDown={e => {
                 e.key === 'Enter' ? e.preventDefault() : null;
@@ -121,7 +119,7 @@ const CreateFeed = () => {
     </Formik>
 };
 
-const CreateFeedPost = async (setUploading, accessToken, media, values, setFeed, setProfile, actions) => {
+const CreateFeedPost = async (setUploading, accessToken, media, values, setProfile, actions) => {
     if (media.length > 0) {
         setUploading(() => true)
 
@@ -155,12 +153,6 @@ const CreateFeedPost = async (setUploading, accessToken, media, values, setFeed,
                         let newData = { ...pre };
                         newData.posts = response.data.posts;
                         return newData;
-                    })
-                    setFeed(pre => {
-                        return [
-                            response.data.content,
-                            ...pre
-                        ]
                     })
                     resolve();
                 })

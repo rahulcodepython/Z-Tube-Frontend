@@ -6,8 +6,6 @@ import Loading from "@/app/(index)/(main)/user/[username]/@feed/components/serve
 import axios from "axios";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { FeedContext } from '@/context/FeedContext';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import CreateFeed from './components/client/CreateFeed';
 
 const Feed = ({ params }) => {
     const { accessToken } = React.useContext(AuthContext)
@@ -27,29 +25,15 @@ const Feed = ({ params }) => {
         handler();
     }, [])
 
-    return loading ? <Loading /> : feed.length === 0 ? <div>No Post There</div> :
-        <Tabs defaultValue="feeds" className="w-full grid grid-cols-6 gap-4 mt-4">
-            <TabsList className="grid grid-cols-1 h-fit">
-                <TabsTrigger value="feeds">Posts</TabsTrigger>
-                <TabsTrigger value="createFeed">Create Feed</TabsTrigger>
-            </TabsList>
-            <div className='col-span-5'>
-                <TabsContent value="feeds" className="mt-0">
-                    <InfiniteScroll dataLength={feed.length} next={() => FetchNextFeedPost(accessToken, pagination.nextUrl, setFeed, setPagination)} hasMore={feed.length !== pagination.count} loader={<h4>Loading...</h4>}>
-                        <div className='grid grid-cols-1 gap-4'>
-                            {
-                                feed.map((item, index) => {
-                                    return <PostCard key={index} feed={item} feedIndex={index} />
-                                })
-                            }
-                        </div>
-                    </InfiniteScroll>
-                </TabsContent>
-                <TabsContent value="createFeed">
-                    <CreateFeed />
-                </TabsContent>
-            </div>
-        </Tabs>
+    return loading ? <Loading /> : feed.length === 0 ? <div>No Post There</div> : <InfiniteScroll dataLength={feed.length} next={() => FetchNextFeedPost(accessToken, pagination.nextUrl, setFeed, setPagination)} hasMore={feed.length !== pagination.count} loader={<h4>Loading...</h4>}>
+        <div className='grid grid-cols-1 gap-4 px-60'>
+            {
+                feed.map((item, index) => {
+                    return <PostCard key={index} feed={item} feedIndex={index} />
+                })
+            }
+        </div>
+    </InfiniteScroll>
 }
 
 const FetchFeedPost = async (accessToken, username, setFeed, setLoading, setPagination) => {

@@ -110,30 +110,30 @@ const PostCard = ({ feed, feedIndex }) => {
             </CardHeader>
             <CardContent className="p-6 my-3">
                 {
-                    // feed.media.length > 1 ? <Carousel>
-                    //     <CarouselContent>
-                    //         {
-                    //             feed.media.map((item, index) => {
-                    //                 return <CarouselItem key={index}>
-                    //                     <AspectRatio ratio={16 / 9} className={'flex items-center justify-center'}>
-                    //                         <Image src={item} width={250} height={250} alt="Image"
-                    //                             className='object-cover' />
-                    //                     </AspectRatio>
-                    //                 </CarouselItem>
-                    //             })
-                    //         }
-                    //     </CarouselContent>
-                    //     <CarouselPrevious />
-                    //     <CarouselNext />
-                    // </Carousel>
-                    //     : <AspectRatio ratio={16 / 9} className={'flex items-center justify-center'}>
-                    //         {
-                    //             feed.media.map((item, index) => {
-                    //                 return <Image src={item} width={250} height={250} alt="Image" className='object-cover'
-                    //                     key={index} />
-                    //             })
-                    //         }
-                    //     </AspectRatio>
+                    feed.media.length > 1 ? <Carousel>
+                        <CarouselContent>
+                            {
+                                feed.media.map((item, index) => {
+                                    return <CarouselItem key={index}>
+                                        <AspectRatio ratio={16 / 9} className={'flex items-center justify-center'}>
+                                            <Image src={item} width={250} height={250} alt="Image"
+                                                className='object-cover' />
+                                        </AspectRatio>
+                                    </CarouselItem>
+                                })
+                            }
+                        </CarouselContent>
+                        <CarouselPrevious />
+                        <CarouselNext />
+                    </Carousel>
+                        : <AspectRatio ratio={16 / 9} className={'flex items-center justify-center'}>
+                            {
+                                feed.media.map((item, index) => {
+                                    return <Image src={item} width={250} height={250} alt="Image" className='object-cover'
+                                        key={index} />
+                                })
+                            }
+                        </AspectRatio>
                 }
             </CardContent>
             <CardFooter className="px-2 py-1 flex flex-col">
