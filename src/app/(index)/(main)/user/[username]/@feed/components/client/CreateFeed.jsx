@@ -19,11 +19,13 @@ import ImageUploading from 'react-images-uploading';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import TagsInput from "@/components/TagsInput";
-import { DataContext } from '@/context/DataContext';
+import { FeedContext } from '@/context/FeedContext';
+import { ProfileContext } from '@/context/ProfileContext';
 
-const CreateFeed = ({ setIsOpen }) => {
-    const { accessToken, userData } = React.useContext(AuthContext)
-    const { setData } = React.useContext(DataContext)
+const CreateFeed = () => {
+    const { accessToken } = React.useContext(AuthContext)
+    const { setProfile } = React.useContext(ProfileContext)
+    const { setFeed } = React.useContext(FeedContext)
 
     const [uploading, setUploading] = React.useState(false)
     const [media, setMedia] = React.useState([])
@@ -35,18 +37,17 @@ const CreateFeed = ({ setIsOpen }) => {
         tags: [],
         allowComments: false
     }}
-        onSubmit={async values => await CreateFeedPost(setUploading, accessToken, media, values, setIsOpen, setData, userData)}>
+        onSubmit={async (values, actions) => await CreateFeedPost(setUploading, accessToken, media, values, setFeed, setProfile, actions)}>
         {({ values, handleChange, handleSubmit }) => {
             return <Form onKeyDown={e => {
                 e.key === 'Enter' ? e.preventDefault() : null;
             }}
                 onSubmit={e => e.preventDefault()}
-                className='pt-8 flex flex-col gap-4'>
-
+                className='flex flex-col gap-4'>
                 <h6 className="text-gray-400 text-lg font-bold uppercase">
                     Post Details
                 </h6>
-                <div className="grid grid-cols-2 gap-4 overflow-y-scroll max-h-[50vh]">
+                <div className="grid grid-cols-2 gap-4">
                     <div className="col-span-2 grid w-full gap-2 px-1">
                         <Label htmlFor="caption" className="uppercase text-gray-600 text-xs">Caption</Label>
                         <Textarea placeholder="Type your caption." rows="7" name="caption" value={values.caption}
@@ -120,8 +121,8 @@ const CreateFeed = ({ setIsOpen }) => {
     </Formik>
 };
 
-const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpen, setData, userData) => {
-    if (media.length == 0) {
+const CreateFeedPost = async (setUploading, accessToken, media, values, setFeed, setProfile, actions) => {
+    if (media.length > 0) {
         setUploading(() => true)
 
         const HandleTostify = new Promise(async (resolve, rejected) => {
@@ -150,26 +151,16 @@ const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpe
 
             await axios.request(options)
                 .then(response => {
-                    setData(data => {
-                        let newData = { ...data };
-                        if ('feedPost' in newData) {
-                            newData.feedPost[decodeURIComponent(userData.username)] = [response.data.content, ...newData.feedPost[decodeURIComponent(userData.username)]];
-
-                        } else {
-                            let newDataFeedPost = {};
-                            newDataFeedPost[decodeURIComponent(userData.username)] = [response.data.content];
-                            newData = {
-                                ...newData,
-                                feedPost: newDataFeedPost
-                            }
-                        }
-
-                        if ('profile' in newData) {
-                            if (decodeURIComponent(userData.username) in newData.profile) {
-                                newData.profile[decodeURIComponent(userData.username)].posts = response.data.posts;
-                            }
-                        }
+                    setProfile(pre => {
+                        let newData = { ...pre };
+                        newData.posts = response.data.posts;
                         return newData;
+                    })
+                    setFeed(pre => {
+                        return [
+                            response.data.content,
+                            ...pre
+                        ]
                     })
                     resolve();
                 })
@@ -177,7 +168,7 @@ const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpe
                     rejected();
                 })
                 .finally(() => {
-                    setIsOpen(() => false);
+                    actions.resetForm();
                     setUploading(() => false);
                 })
         })

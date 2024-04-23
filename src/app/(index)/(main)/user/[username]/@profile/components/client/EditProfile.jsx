@@ -23,11 +23,11 @@ import ImageUploading from 'react-images-uploading';
 import Image from 'next/image';
 import TagsInput from "@/components/TagsInput";
 import { Label } from "@/components/ui/label";
-import { DataContext } from '@/context/DataContext';
+import { ProfileContext } from '@/context/ProfileContext';
 
 const EditProfile = ({ profileData, username }) => {
     const { accessToken, setUserData } = React.useContext(AuthContext)
-    const { setData } = React.useContext(DataContext)
+    const { setProfile } = React.useContext(ProfileContext)
 
     const router = useRouter();
     const search = useSearchParams();
@@ -63,7 +63,7 @@ const EditProfile = ({ profileData, username }) => {
                     bio: profileData.bio || '',
                     isLocked: profileData?.isLocked,
                     tags: profileData?.tags,
-                }} onSubmit={async values => await UpdateProfile(accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, setData, setUserData, setIsUpdating, setIsOpen, username, router, search.get('tabs'), values)}>
+                }} onSubmit={async values => await UpdateProfile(accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, setProfile, setUserData, setIsUpdating, setIsOpen, username, router, search.get('tabs'), values)}>
                     {({ values, handleChange, handleSubmit }) => {
                         return <Form onSubmit={(e) => { e.preventDefault() }} onKeyDown={(e) => {
                             e.key === 'Enter' ? e.preventDefault() : null;
@@ -200,7 +200,7 @@ const CheckUsername = async (e, profileData, setIsUsernameValid, accessToken) =>
     }
 }
 
-const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, setData, setUserData, setIsUpdating, setIsOpen, username, router, search, values) => {
+const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, setProfile, setUserData, setIsUpdating, setIsOpen, username, router, search, values) => {
     setIsUpdating(() => true)
 
     const HandleTostify = new Promise(async (resolve, rejected) => {
@@ -226,12 +226,7 @@ const UpdateProfile = async (accessToken, isUserImageChange, isBannerImageChange
 
         await axios.request(options).then(async response => {
             setUserData(() => response.data.user)
-            setData(pre => {
-                let newData = { ...pre };
-                delete newData.profile[decodeURIComponent(username)];
-                newData.profile[decodeURIComponent(response.data.user.username)] = response.data.profile;
-                return newData;
-            })
+            setProfile(() => response.data.profile)
             resolve();
             router.push(`/user/${encodeURIComponent(response.data.user.username)}${search === null ? '' : `?tabs=${search}`}`)
         }).catch(() => {

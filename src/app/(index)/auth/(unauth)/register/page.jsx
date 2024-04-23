@@ -103,13 +103,12 @@ const Register = async (values, data, setData) => {
             data: values,
         }
         axios.request(options).then((() => {
-            setData(() => ({
-                ...data,
-                registration_data: {
-                    email: values.email,
-                    password: values.password
-                }
-            }))
+            setData(pre => {
+                const { registration_data } = pre;
+                registration_data.email = values.email;
+                registration_data.password = values.password;
+                return { ...pre, registration_data }
+            })
             resolve();
         })).catch(() => rejected())
     });

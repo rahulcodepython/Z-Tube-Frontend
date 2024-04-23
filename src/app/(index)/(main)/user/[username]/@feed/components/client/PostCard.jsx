@@ -39,13 +39,15 @@ import { Data } from "@/data/data/data";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { AuthContext } from '@/context/AuthContext';
 import axios from "axios";
-import { DataContext } from '@/context/DataContext'
+import { FeedContext } from '@/context/FeedContext'
+import { ProfileContext } from '@/context/ProfileContext'
 
-const PostCard = ({ feed, feedIndex, username }) => {
+const PostCard = ({ feed, feedIndex }) => {
     const [isOpen, setIsOpen] = React.useState(false)
 
-    const { accessToken, userData } = React.useContext(AuthContext)
-    const { setData } = React.useContext(DataContext)
+    const { accessToken } = React.useContext(AuthContext)
+    const { setFeed } = React.useContext(FeedContext)
+    const { setProfile } = React.useContext(ProfileContext)
 
     return (
         <Card className="pt-3 rounded-md">
@@ -75,7 +77,7 @@ const PostCard = ({ feed, feedIndex, username }) => {
                                             </MenubarItem>
                                         }
                                         {
-                                            feed.self && <MenubarItem className="cursor-pointer" onClick={() => DeleteFeed(accessToken, feed, feedIndex, username, setData, userData)}>
+                                            feed.self && <MenubarItem className="cursor-pointer" onClick={() => DeleteFeed(accessToken, feed, feedIndex, setFeed, setProfile)}>
                                                 Delete Post
                                             </MenubarItem>
                                         }
@@ -108,30 +110,30 @@ const PostCard = ({ feed, feedIndex, username }) => {
             </CardHeader>
             <CardContent className="p-6 my-3">
                 {
-                    feed.media.length > 1 ? <Carousel>
-                        <CarouselContent>
-                            {
-                                feed.media.map((item, index) => {
-                                    return <CarouselItem key={index}>
-                                        <AspectRatio ratio={16 / 9} className={'flex items-center justify-center'}>
-                                            <Image src={item} width={250} height={250} alt="Image"
-                                                className='object-cover' />
-                                        </AspectRatio>
-                                    </CarouselItem>
-                                })
-                            }
-                        </CarouselContent>
-                        <CarouselPrevious />
-                        <CarouselNext />
-                    </Carousel>
-                        : <AspectRatio ratio={16 / 9} className={'flex items-center justify-center'}>
-                            {
-                                feed.media.map((item, index) => {
-                                    return <Image src={item} width={250} height={250} alt="Image" className='object-cover'
-                                        key={index} />
-                                })
-                            }
-                        </AspectRatio>
+                    // feed.media.length > 1 ? <Carousel>
+                    //     <CarouselContent>
+                    //         {
+                    //             feed.media.map((item, index) => {
+                    //                 return <CarouselItem key={index}>
+                    //                     <AspectRatio ratio={16 / 9} className={'flex items-center justify-center'}>
+                    //                         <Image src={item} width={250} height={250} alt="Image"
+                    //                             className='object-cover' />
+                    //                     </AspectRatio>
+                    //                 </CarouselItem>
+                    //             })
+                    //         }
+                    //     </CarouselContent>
+                    //     <CarouselPrevious />
+                    //     <CarouselNext />
+                    // </Carousel>
+                    //     : <AspectRatio ratio={16 / 9} className={'flex items-center justify-center'}>
+                    //         {
+                    //             feed.media.map((item, index) => {
+                    //                 return <Image src={item} width={250} height={250} alt="Image" className='object-cover'
+                    //                     key={index} />
+                    //             })
+                    //         }
+                    //     </AspectRatio>
                 }
             </CardContent>
             <CardFooter className="px-2 py-1 flex flex-col">
@@ -234,8 +236,8 @@ const AllReactions = ({ like }) => {
 const Reaction = ({ feed, feedIndex }) => {
     const [reaction, setReaction] = React.useState(feed.user_reaction ? Data.emoji.find(item => item.name.toLowerCase() === feed.user_reaction.toLowerCase())?.id || null : null)
 
-    const { accessToken, userData } = React.useContext(AuthContext)
-    const { setData } = React.useContext(DataContext)
+    const { accessToken } = React.useContext(AuthContext)
+    const { setFeed } = React.useContext(FeedContext)
 
     return (
         <Menubar className="justify-center border-none p-0">
@@ -258,7 +260,7 @@ const Reaction = ({ feed, feedIndex }) => {
                             return <MenubarItem key={index}
                                 className='flex items-center cursor-pointer p-0 hover:-translate-y-2 transition-all duration-100 ease-in-out'
                                 onClick={() => {
-                                    ReactOnPost(accessToken, feed, setData, feedIndex, item.name, setReaction, index, userData)
+                                    ReactOnPost(accessToken, feed, feedIndex, item.name, setReaction, index, setFeed)
                                 }}>
                                 <Image src={item.icon} width={30} height={30} alt={''} />
                             </MenubarItem>
@@ -267,7 +269,7 @@ const Reaction = ({ feed, feedIndex }) => {
                     <MenubarItem
                         className='flex items-center cursor-pointer p-0 hover:-translate-y-2 transition-all duration-100 ease-in-out'
                         onClick={() => {
-                            RemoveReactOnPost(accessToken, feed, setData, feedIndex, Data.emoji[reaction].name, setReaction, userData)
+                            RemoveReactOnPost(accessToken, feed, feedIndex, Data.emoji[reaction].name, setReaction, setFeed)
                         }}>
                         <MdDoNotDisturb className='text-3xl' />
                     </MenubarItem>
@@ -277,7 +279,7 @@ const Reaction = ({ feed, feedIndex }) => {
     )
 }
 
-const ReactOnPost = async (accessToken, feed, setData, feedIndex, reaction, setReaction, index, userData) => {
+const ReactOnPost = async (accessToken, feed, feedIndex, reaction, setReaction, index, setFeed) => {
     const options = {
         method: 'POST',
         url: `${process.env.BASE_API_URL}/feed/postreaction/${feed.id}/${reaction.toLowerCase()}/`,
@@ -288,16 +290,16 @@ const ReactOnPost = async (accessToken, feed, setData, feedIndex, reaction, setR
 
     await axios.request(options)
         .then(response => {
-            setData(prevData => {
-                let newData = { ...prevData };
-                newData.feedPost[decodeURIComponent(userData.username)][feedIndex].likeNo = response.data.likeNo;
+            setFeed(pre => {
+                let newData = [...pre];
+                newData[feedIndex].likeNo = response.data.likeNo;
                 return newData;
-            });
+            })
             setReaction(() => index)
         })
 }
 
-const RemoveReactOnPost = async (accessToken, feed, setData, feedIndex, reaction, setReaction, userData) => {
+const RemoveReactOnPost = async (accessToken, feed, feedIndex, reaction, setReaction, setFeed) => {
     const options = {
         method: 'DELETE',
         url: `${process.env.BASE_API_URL}/feed/postreaction/${feed.id}/${reaction.toLowerCase()}/`,
@@ -308,16 +310,16 @@ const RemoveReactOnPost = async (accessToken, feed, setData, feedIndex, reaction
 
     await axios.request(options)
         .then(response => {
-            setData(prevData => {
-                let newData = { ...prevData };
-                newData.feedPost[decodeURIComponent(userData.username)][feedIndex].likeNo = response.data.likeNo;
+            setFeed(pre => {
+                let newData = [...pre];
+                newData[feedIndex] = response.data.likeNo;
                 return newData;
-            });
+            })
             setReaction(() => null)
         })
 }
 
-const DeleteFeed = async (accessToken, feed, feedIndex, username, setData, userData) => {
+const DeleteFeed = async (accessToken, feed, feedIndex, setFeed, setProfile) => {
     const options = {
         method: 'DELETE',
         url: `${process.env.BASE_API_URL}/feed/editpost/${feed.id}/`,
@@ -327,12 +329,15 @@ const DeleteFeed = async (accessToken, feed, feedIndex, username, setData, userD
     };
     await axios.request(options)
         .then(response => {
-            setData(prevData => {
-                let newData = { ...prevData };
-                delete newData.feedPost[decodeURIComponent(userData.username)][feedIndex]
-                newData.profile[decodeURIComponent(username)].posts = response.data.posts
-                return newData;
-            });
+            setFeed(pre => {
+                return pre.filter((item, index) => index !== feedIndex)
+            })
+            setProfile(pre => {
+                return {
+                    ...pre,
+                    posts: response.data.posts
+                }
+            })
         })
 }
 

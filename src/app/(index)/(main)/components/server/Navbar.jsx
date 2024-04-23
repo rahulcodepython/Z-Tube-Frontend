@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import CustomTooltip from "@/components/Tooltip";
-import {ThemeToggle} from "@/app/(index)/(main)/components/server/ThemeToggle";
-import CreatePost from "@/app/(index)/(main)/components/client/CreatePost";
+import { ThemeToggle } from "@/app/(index)/(main)/components/server/ThemeToggle";
 
 const Navbar = ({ userData, toggleNavbar, showTopicAll, setShowTopicAll }) => {
     return (
@@ -24,7 +23,6 @@ const Navbar = ({ userData, toggleNavbar, showTopicAll, setShowTopicAll }) => {
                 </Button>
             </div>
             <div className="flex gap-4 items-center">
-                <CreatePost />
                 <CustomTooltip icon={<BiBell />} text="Notifications" />
                 <ThemeToggle />
                 {

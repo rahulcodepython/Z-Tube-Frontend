@@ -54,8 +54,8 @@ const EmailVerifySuccess = () => {
 
 const AutoLoginUser = async (AuthenticateUser, router, data) => {
     await Login({
-        email: data.registration_data.email || '',
-        password: data.registration_data.password || '',
+        email: data.registration_data.email ?? '',
+        password: data.registration_data.password ?? '',
     }, AuthenticateUser, router)
 }
 

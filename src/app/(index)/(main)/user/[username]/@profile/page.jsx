@@ -12,38 +12,36 @@ import {
 import EditProfile from "@/app/(index)/(main)/user/[username]/@profile/components/client/EditProfile";
 import Loading from "@/app/(index)/(main)/user/[username]/@profile/components/server/loading";
 import axios from "axios";
-import { DataContext } from '@/context/DataContext'
 import { toast } from 'react-toastify'
+import { ProfileContext } from '@/context/ProfileContext'
 
 const Profile = ({ params }) => {
-    const [loading, setLoading] = React.useState(true)
-
     const { accessToken } = React.useContext(AuthContext)
-    const { data, setData } = React.useContext(DataContext)
+    const { setProfile } = React.useContext(ProfileContext)
+
+    const [loading, setLoading] = React.useState(true)
+    const [error, setError] = React.useState(false)
+    const [errorMsg, setErrorMsg] = React.useState('')
 
     React.useEffect(() => {
         const handler = async () => {
-            if ('profile' in data) {
-                if (decodeURIComponent(params.username) in data.profile) {
-                    setLoading(false)
-                }
-            }
-            await FetchProfileData(params, accessToken, setData, setLoading);
+            await FetchProfileData(params, accessToken, setProfile, setError, setErrorMsg, setLoading);
         }
         handler();
     }, [])
 
     return (
-        loading ? <Loading /> : <ProfileCard profile={data.profile?.[decodeURIComponent(params.username)]} params={params} />
+        loading ? <Loading /> : <ProfileCard params={params} error={error} errorMsg={errorMsg} />
     )
 }
 
-const ProfileCard = ({ profile, params }) => {
-    const { setData } = React.useContext(DataContext)
+const ProfileCard = ({ params, error, errorMsg }) => {
     const { accessToken } = React.useContext(AuthContext)
 
-    return profile.error ? <div className='py-4'>
-        {profile.msg || 'Something went wrong. Try again later.'}
+    const { profile, addFriend, removeFriend } = React.useContext(ProfileContext)
+
+    return error ? <div className='py-4'>
+        {errorMsg}
     </div> : <Card className="h-[457.66px] rounded-lg shadow-none divide-y">
         <CardHeader className='h-[297.66px] p-0 rounded-t-lg'>
             <Image src={profile?.banner ? profile?.banner : '/image/profile-banner.png'} width={1334} height={297.66} priority={true} alt='...' className='rounded-t-lg' placeholder='blur' blurDataURL="/image/profile-banner.png" style={{ width: "100%", height: "297.66px" }} />
@@ -101,12 +99,12 @@ const ProfileCard = ({ profile, params }) => {
                 {
                     profile?.self ? <EditProfile profileData={profile} username={params.username} /> :
                         profile?.isFriend ?
-                            <Button className='gap-[0.5rem]' onClick={async () => await DisconnectPeople(accessToken, params.username, setData)}>
+                            <Button className='gap-[0.5rem]' onClick={async () => await DisconnectPeople(accessToken, params.username, addFriend)}>
                                 <BsLink />
                                 <span>
                                     Disconnect
                                 </span>
-                            </Button> : <Button className='gap-[0.5rem]' onClick={async () => await ConnectPeople(accessToken, params.username, setData)}>
+                            </Button> : <Button className='gap-[0.5rem]' onClick={async () => await ConnectPeople(accessToken, params.username, removeFriend)}>
                                 <MdAddLink />
                                 <span>
                                     Connect
@@ -134,7 +132,7 @@ const ProfileCard = ({ profile, params }) => {
     </Card>
 }
 
-const FetchProfileData = async (params, accessToken, setData, setLoading) => {
+const FetchProfileData = async (params, accessToken, setProfile, setError, setErrorMsg, setLoading) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -144,33 +142,14 @@ const FetchProfileData = async (params, accessToken, setData, setLoading) => {
     }
 
     await axios.request(options).then(response => {
-        setData(pre => {
-            return {
-                ...pre,
-                profile: {
-                    ...pre?.profile,
-                    [decodeURIComponent(params.username)]: { ...response.data, error: false }
-                }
-            }
-        })
+        setProfile(response.data)
     }).catch(error => {
-        setData(pre => {
-            return {
-                ...pre,
-                profile: {
-                    ...pre?.profile,
-                    [decodeURIComponent(params.username)]: {
-                        msg: error.response.data?.msg || null,
-                        error: true
-                    }
-                }
-            }
-        })
-        error.response.data.error ? toast.error(error.response.data.error) : null
+        setError(() => true)
+        setErrorMsg(() => error.response.data?.msg ?? 'There is some issue')
     }).finally(() => setLoading(() => false))
 }
 
-const ConnectPeople = async (accessToken, username, setData) => {
+const ConnectPeople = async (accessToken, username, addFriend) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -180,23 +159,12 @@ const ConnectPeople = async (accessToken, username, setData) => {
     }
 
     await axios.request(options).then(response => {
-        setData(pre => {
-            return {
-                ...pre,
-                profile: {
-                    ...pre.profile,
-                    [decodeURIComponent(username)]: {
-                        ...pre.profile[decodeURIComponent(username)],
-                        isFriend: true
-                    }
-                }
-            }
-        })
+        addFriend();
         toast.success(response.data.success)
     })
 }
 
-const DisconnectPeople = async (accessToken, username, setData) => {
+const DisconnectPeople = async (accessToken, username, removeFriend) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -206,18 +174,7 @@ const DisconnectPeople = async (accessToken, username, setData) => {
     }
 
     await axios.request(options).then(response => {
-        setData(pre => {
-            return {
-                ...pre,
-                profile: {
-                    ...pre.profile,
-                    [decodeURIComponent(username)]: {
-                        ...pre.profile[decodeURIComponent(username)],
-                        isFriend: false
-                    }
-                }
-            }
-        })
+        removeFriend();
         toast.success(response.data.success)
     })
 }

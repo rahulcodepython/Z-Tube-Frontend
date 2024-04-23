@@ -19,14 +19,14 @@ import { UploadMediaFiles } from '@/utils';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Form, Formik, FieldArray } from "formik";
-import { MediaUploader } from "@/app/(index)/(main)/components/client/CreateFeed";
+import { MediaUploader } from "./CreateFeed";
 import { Checkbox } from "@/components/ui/checkbox"
 import TagsInput from "@/components/TagsInput";
-import { DataContext } from '@/context/DataContext';
+import { FeedContext } from '@/context/FeedContext';
 
 const EditFeed = ({ setIsOpen, feed, feedIndex }) => {
-    const { accessToken, userData } = React.useContext(AuthContext)
-    const { setData } = React.useContext(DataContext)
+    const { accessToken } = React.useContext(AuthContext)
+    const { setFeed } = React.useContext(FeedContext)
 
     const [uploading, setUploading] = React.useState(false)
     const [isMediaUpdate, setIsMediaUpdate] = React.useState(false)
@@ -45,7 +45,7 @@ const EditFeed = ({ setIsOpen, feed, feedIndex }) => {
             tags: feed.tags,
             allowComments: feed.allowComments
         }} onSubmit={
-            async values => await CreateFeedPost(setUploading, accessToken, media, values, setIsOpen, setData, feed, feedIndex, isMediaUpdate, userData)
+            async values => await EditFeedPost(setUploading, accessToken, media, values, setIsOpen, feed, feedIndex, isMediaUpdate, setFeed)
         }>
             {({ values, handleChange, handleSubmit }) => (
                 <Form onKeyDown={e => {
@@ -130,7 +130,7 @@ const EditFeed = ({ setIsOpen, feed, feedIndex }) => {
     );
 };
 
-const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpen, setData, feed, feedIndex, isMediaUpdate, userData) => {
+const EditFeedPost = async (setUploading, accessToken, media, values, setIsOpen, feed, feedIndex, isMediaUpdate, setFeed) => {
     if (media.length > 0) {
         setUploading(() => true)
 
@@ -159,11 +159,11 @@ const CreateFeedPost = async (setUploading, accessToken, media, values, setIsOpe
 
             await axios.request(options)
                 .then(response => {
-                    setData(prevData => {
-                        let newData = { ...prevData };
-                        newData.feedPost[decodeURIComponent(userData.username)][feedIndex] = response.data;
+                    setFeed(pre => {
+                        let newData = [...pre];
+                        newData[feedIndex] = response.data;
                         return newData;
-                    });
+                    })
                     resolve();
                 })
                 .catch(() => {

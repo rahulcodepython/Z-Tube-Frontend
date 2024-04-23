@@ -4,40 +4,57 @@ import PostCard from "@/app/(index)/(main)/user/[username]/@feed/components/clie
 import { AuthContext } from '@/context/AuthContext'
 import Loading from "@/app/(index)/(main)/user/[username]/@feed/components/server/loading";
 import axios from "axios";
-import { DataContext } from '@/context/DataContext';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { FeedContext } from '@/context/FeedContext';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import CreateFeed from './components/client/CreateFeed';
 
 const Feed = ({ params }) => {
     const { accessToken } = React.useContext(AuthContext)
 
-    const { data, setData } = React.useContext(DataContext)
+    const { feed, setFeed } = React.useContext(FeedContext)
 
-    const [loading, setLoading] = React.useState('feedPost' in data ? decodeURIComponent(params.username) in data.feedPost ? false : true : true)
+    const [loading, setLoading] = React.useState(true)
     const [pagination, setPagination] = React.useState({
         count: 0,
         nextUrl: null,
         previousUrl: null,
+        hasMore: false
     })
 
     React.useEffect(() => {
         const handler = async () => {
-            await FetchFeedPost(accessToken, params.username, setData, setLoading, setPagination);
+            await FetchFeedPost(accessToken, params.username, setFeed, setLoading, setPagination);
         }
         handler();
     }, [])
 
-    return loading ? <Loading /> : data.feedPost[decodeURIComponent(params.username)].length === 0 ? <div>No Post There</div> : <InfiniteScroll dataLength={pagination.count} next={FetchNextFeedPost(accessToken, pagination.nextUrl, params.username, setData, setPagination)} hasMore={pagination.nextUrl !== null} loader={<h4>Loading...</h4>}>
-        <div className='grid grid-cols-3 gap-4 mt-8'>
-            {
-                data.feedPost[decodeURIComponent(params.username)].map((item, index) => {
-                    return <PostCard key={index} feed={item} feedIndex={index} username={params.username} />
-                })
-            }
-        </div>
-    </InfiniteScroll>
+    return loading ? <Loading /> : feed.length === 0 ? <div>No Post There</div> :
+        <Tabs defaultValue="feeds" className="w-full grid grid-cols-6 gap-4 mt-4">
+            <TabsList className="grid grid-cols-1 h-fit">
+                <TabsTrigger value="feeds">Posts</TabsTrigger>
+                <TabsTrigger value="createFeed">Create Feed</TabsTrigger>
+            </TabsList>
+            <div className='col-span-5'>
+                <TabsContent value="feeds" className="mt-0">
+                    <InfiniteScroll dataLength={pagination.count} next={FetchNextFeedPost(accessToken, pagination.nextUrl, setFeed, setPagination)} hasMore={pagination.hasMore} loader={<h4>Loading...</h4>}>
+                        <div className='grid grid-cols-3 gap-4'>
+                            {
+                                feed.map((item, index) => {
+                                    return <PostCard key={index} feed={item} feedIndex={index} />
+                                })
+                            }
+                        </div>
+                    </InfiniteScroll>
+                </TabsContent>
+                <TabsContent value="createFeed">
+                    <CreateFeed />
+                </TabsContent>
+            </div>
+        </Tabs>
 }
 
-const FetchFeedPost = async (accessToken, username, setData, setLoading, setPagination) => {
+const FetchFeedPost = async (accessToken, username, setFeed, setLoading, setPagination) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -45,26 +62,19 @@ const FetchFeedPost = async (accessToken, username, setData, setLoading, setPagi
     };
 
     await axios.request(options).then(response => {
-        setData(pre => {
-            let newData = { ...pre };
-
-            const resultFeedPost = response.status === 200 ? 'feedPost' in newData ? decodeURIComponent(username) in newData.feedPost ? [...newData.feedPost[decodeURIComponent(username)], ...response.data.results] : response.data.results : response.data.results : []
-
-            newData.feedPost = {
-                [decodeURIComponent(username)]: resultFeedPost
-            }
-            return newData;
-        })
+        setFeed(response.data.results)
         setPagination({
-            count: response.data.count || null,
-            nextUrl: response.data.next || null,
-            previousUrl: response.data.previous || null,
+            count: response.data.count ?? null,
+            nextUrl: response.data.next ?? null,
+            previousUrl: response.data.previous ?? null,
+            hasMore: response.data.next ? true : false
         })
     }).finally(() => setLoading(false))
 }
 
-const FetchNextFeedPost = async (accessToken, url, username, setData, setPagination) => {
+const FetchNextFeedPost = async (accessToken, url, setFeed, setPagination) => {
     if (!url) return;
+    console.log("Next");
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -72,17 +82,17 @@ const FetchNextFeedPost = async (accessToken, url, username, setData, setPaginat
     };
 
     await axios.request(options).then(response => {
-        setData(pre => {
-            let newData = { ...pre };
-
-            newData.feedPost[decodeURIComponent(username)] = [...newData.feedPost[decodeURIComponent(username)], ...response.data.results]
-
-            return newData;
+        setFeed(pre => {
+            return [
+                ...pre,
+                ...response.data.results
+            ]
         })
         setPagination({
-            count: response.data.count || null,
-            nextUrl: response.data.next || null,
-            previousUrl: response.data.previous || null,
+            count: response.data.count ?? null,
+            nextUrl: response.data.next ?? null,
+            previousUrl: response.data.previous ?? null,
+            hasMore: response.data.next ? true : false
         })
     })
 }
