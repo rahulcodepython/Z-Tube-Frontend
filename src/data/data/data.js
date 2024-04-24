@@ -250,6 +250,34 @@ export const Data = {
             },
         ]
     },
+    ecom: {
+        navbarItems: [
+            {
+                title: "Grocery",
+                link: '/ecom/grocery',
+            },
+            {
+                title: "Fashion",
+                link: '/ecom/fashion',
+            },
+            {
+                title: "Electronics",
+                link: '/ecom/electronics',
+            },
+            {
+                title: "Home & Furniture",
+                link: '/ecom/home-furniture',
+            },
+            {
+                title: "Appliances",
+                link: '/ecom/appliances',
+            },
+            {
+                title: "Beauty & Toys",
+                link: '/ecom/beauty-toys',
+            },
+        ]
+    },
     youtube: {
         allVideos: {
             videos: [

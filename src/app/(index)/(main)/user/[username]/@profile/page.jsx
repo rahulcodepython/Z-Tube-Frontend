@@ -38,7 +38,7 @@ const Profile = ({ params }) => {
 const ProfileCard = ({ params, error, errorMsg }) => {
     const { accessToken } = React.useContext(AuthContext)
 
-    const { profile, addFriend, removeFriend } = React.useContext(ProfileContext)
+    const { profile, setProfile } = React.useContext(ProfileContext)
 
     return error ? <div className='py-4'>
         {errorMsg}
@@ -99,12 +99,12 @@ const ProfileCard = ({ params, error, errorMsg }) => {
                 {
                     profile?.self ? <EditProfile profileData={profile} username={params.username} /> :
                         profile?.isFriend ?
-                            <Button className='gap-[0.5rem]' onClick={async () => await DisconnectPeople(accessToken, params.username, addFriend)}>
+                            <Button className='gap-[0.5rem]' onClick={async () => await DisconnectPeople(accessToken, params.username, setProfile)}>
                                 <BsLink />
                                 <span>
                                     Disconnect
                                 </span>
-                            </Button> : <Button className='gap-[0.5rem]' onClick={async () => await ConnectPeople(accessToken, params.username, removeFriend)}>
+                            </Button> : <Button className='gap-[0.5rem]' onClick={async () => await ConnectPeople(accessToken, params.username, setProfile)}>
                                 <MdAddLink />
                                 <span>
                                     Connect
@@ -149,7 +149,7 @@ const FetchProfileData = async (params, accessToken, setProfile, setError, setEr
     }).finally(() => setLoading(() => false))
 }
 
-const ConnectPeople = async (accessToken, username, addFriend) => {
+const ConnectPeople = async (accessToken, username, setProfile) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -159,12 +159,18 @@ const ConnectPeople = async (accessToken, username, addFriend) => {
     }
 
     await axios.request(options).then(response => {
-        addFriend();
+        setProfile((pre) => {
+            return {
+                ...pre,
+                isFriend: true,
+                followers: pre.followers + 1
+            }
+        });
         toast.success(response.data.success)
     })
 }
 
-const DisconnectPeople = async (accessToken, username, removeFriend) => {
+const DisconnectPeople = async (accessToken, username, setProfile) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
@@ -174,7 +180,13 @@ const DisconnectPeople = async (accessToken, username, removeFriend) => {
     }
 
     await axios.request(options).then(response => {
-        removeFriend();
+        setProfile((pre) => {
+            return {
+                ...pre,
+                isFriend: false,
+                followers: pre.followers - 1
+            }
+        });
         toast.success(response.data.success)
     })
 }

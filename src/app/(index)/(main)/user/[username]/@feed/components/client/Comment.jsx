@@ -5,7 +5,7 @@ import { AuthContext } from "@/context/AuthContext";
 import axios from "axios";
 import { Avatar } from '@/components/ui/avatar';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import { BiSend, IoChatbubbleOutline, FiEdit, FiTrash } from '@/data/icons/icons'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
@@ -27,8 +27,6 @@ const Comment = ({ feed, feedIndex }) => {
 
     const [comments, setComments] = React.useState([])
     const [loading, setLoading] = React.useState(true)
-
-    console.log(comments);
 
     React.useEffect(() => {
         const handler = async () => {

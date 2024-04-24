@@ -1,6 +1,6 @@
 import { BiSearch, BiBell } from "@/data/icons/icons";
 import React from 'react'
-import Link from 'next/link'
+import { Link } from 'next-view-transitions'
 import { Avatar } from "@/components/ui/avatar"
 import Sidebar from "@/app/(index)/(main)/components/server/Sidebar";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ const Navbar = ({ userData, toggleNavbar, showTopicAll, setShowTopicAll }) => {
             </aside>
             <div className="flex items-center justify-center w-[40rem]">
                 <Input type="text" placeholder="Search" className="px-5 py-1 rounded-l-full border-r-0 focus:ring-0 focus-visible:ring-0" />
-                <Button variant="outline" className="rounded-l-none rounded-r-full">
+                <Button variant="outline" className="rounded-l-none rounded-r-full h-[2.25rem]">
                     <BiSearch />
                 </Button>
             </div>

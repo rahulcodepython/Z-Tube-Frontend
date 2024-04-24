@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/sheet"
 import { BiMenu } from "@/data/icons/icons";
 import { Data } from '@/data/data/data'
-import Link from 'next/link'
+import { Link } from 'next-view-transitions'
 import { AiFillPieChart } from '@/data/icons/icons'
 
 const Sidebar = ({ userData, showTopicAll, setShowTopicAll }) => {

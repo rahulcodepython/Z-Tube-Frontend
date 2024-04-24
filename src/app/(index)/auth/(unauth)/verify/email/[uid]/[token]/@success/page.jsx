@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { Link } from 'next-view-transitions'
 import Image from 'next/image'
 import { Card } from '@/components/ui/card'
 import { AuthContext } from '@/context/AuthContext'

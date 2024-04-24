@@ -1,7 +1,7 @@
 "use client"
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { BiSend, GoArrowLeft } from '@/data/icons/icons';
+import { Link } from 'next-view-transitions';
+import { BiSend } from '@/data/icons/icons';
 import { Formik, Form } from 'formik';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';

@@ -1,5 +1,5 @@
 "use client"
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import { BiSend } from '@/data/icons/icons';
 import { GoogleLogin } from '@/utils';
 import { Formik, Form } from 'formik';
