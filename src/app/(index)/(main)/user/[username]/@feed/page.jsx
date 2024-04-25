@@ -44,11 +44,15 @@ const FetchFeedPost = async (accessToken, username, setFeed, setLoading, setPagi
     };
 
     await axios.request(options).then(response => {
-        setFeed(response.data.results)
-        setPagination({
-            count: response.data.count,
-            nextUrl: response.data.next ?? null,
-        })
+        if (response.status === 200) {
+            setFeed(response.data.results)
+            setPagination({
+                count: response.data.count,
+                nextUrl: response.data.next ?? null,
+            })
+        } else if (response.status === 204) {
+            setFeed([])
+        }
     }).finally(() => setLoading(false))
 }
 

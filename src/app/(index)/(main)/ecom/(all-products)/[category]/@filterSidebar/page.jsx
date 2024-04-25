@@ -29,7 +29,6 @@ import {
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
-import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { FiFilter } from "@/data/icons/icons";
 import {

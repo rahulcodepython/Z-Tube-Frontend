@@ -23,7 +23,7 @@ const MainLayout = ({ children }) => {
     if (isAuthenticated) {
         return !loading && <React.Fragment>
             <Navbar userData={userData} toggleNavbar={toggleNavbar} showTopicAll={showTopicAll} setShowTopicAll={setShowTopicAll} />
-            <main className='mt-16'>
+            <main className='py-16'>
                 {children}
             </main>
         </React.Fragment>

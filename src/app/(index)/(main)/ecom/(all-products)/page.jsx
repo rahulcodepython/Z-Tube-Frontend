@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MdOutlineShoppingCart } from "@/data/icons/icons";
 import { Link } from 'next-view-transitions'
 
-const ECom = () => {
+const EComAllProducts = () => {
     return <div className={'grid grid-cols-4 gap-4 mx-24 mt-4'}>
         {
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((item, index) => {
@@ -73,4 +73,4 @@ export const StarBlank = () => {
     </svg>
 }
 
-export default ECom
+export default EComAllProducts

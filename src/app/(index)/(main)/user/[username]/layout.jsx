@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ProfileProvider } from '@/context/ProfileContext'
 import { FeedProvider } from '@/context/FeedContext'
 
-const Layout = ({ children, params, profile, feed }) => {
+const Layout = ({ children, params, profile, feed, ecom }) => {
     const [defaultTab, setDefaultTab] = React.useState(null)
     const [loading, setLoading] = React.useState(true)
 
@@ -19,25 +19,27 @@ const Layout = ({ children, params, profile, feed }) => {
 
     return (
         !loading && <ProfileProvider>
-            <div className='my-4 mx-auto container'>
+            <div className='mx-auto container'>
                 <section className='space-y-4'>
-                    <div className='space-y-4'>
-                        {profile}
-                        <Tabs defaultValue={`${defaultTab || 'profile'}`} className="w-full">
-                            <TabsList className="w-full justify-start">
-                                <TabsTrigger value="profile" onClick={() => router.push(`/user/${params.username}`)}>Profile</TabsTrigger>
-                                <TabsTrigger value="feed" onClick={() => router.push(`/user/${params.username}?tabs=feed`)}>Feed</TabsTrigger>
-                            </TabsList>
-                            <TabsContent value="profile">
-                                {children}
-                            </TabsContent>
-                            <TabsContent value="feed">
-                                <FeedProvider>
-                                    {feed}
-                                </FeedProvider>
-                            </TabsContent>
-                        </Tabs>
-                    </div>
+                    {profile}
+                    <Tabs defaultValue={`${defaultTab || 'profile'}`} className="w-full">
+                        <TabsList className="w-full justify-start">
+                            <TabsTrigger value="profile" onClick={() => router.push(`/user/${params.username}`)}>Profile</TabsTrigger>
+                            <TabsTrigger value="feed" onClick={() => router.push(`/user/${params.username}?tabs=feed`)}>Feed</TabsTrigger>
+                            <TabsTrigger value="ecom" onClick={() => router.push(`/user/${params.username}?tabs=ecom`)}>ECommerce</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="profile">
+                            {children}
+                        </TabsContent>
+                        <TabsContent value="feed">
+                            <FeedProvider>
+                                {feed}
+                            </FeedProvider>
+                        </TabsContent>
+                        <TabsContent value="ecom">
+                            {ecom}
+                        </TabsContent>
+                    </Tabs>
                 </section>
             </div>
         </ProfileProvider>

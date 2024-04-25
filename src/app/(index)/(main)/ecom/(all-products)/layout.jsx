@@ -3,7 +3,7 @@ import EComNavbar from "./components/client/EComNavbar";
 import PaginationButton from "./components/server/PaginationButton";
 
 const EComLayout = ({ children }) => {
-    return <section className="my-8">
+    return <section>
         <EComNavbar />
         {children}
         <PaginationButton />
