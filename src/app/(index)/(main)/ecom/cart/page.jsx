@@ -3,6 +3,7 @@ import { Cross2Icon } from '@radix-ui/react-icons'
 import Image from 'next/image'
 import React from 'react'
 import { QuantityButton } from '../product/[category]/[product]/page'
+import { Link } from 'next-view-transitions'
 
 const Cart = () => {
     return (
@@ -54,9 +55,11 @@ const Cart = () => {
                             </span>
                         </div>
                     </div>
-                    <Button className={'w-full'}>
-                        Checkout
-                    </Button>
+                    <Link href={'/ecom/checkout'}>
+                        <Button className={'w-full'}>
+                            Checkout
+                        </Button>
+                    </Link>
                 </div>
             </div>
         </section>

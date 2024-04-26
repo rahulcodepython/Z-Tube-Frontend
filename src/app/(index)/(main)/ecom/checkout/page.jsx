@@ -131,10 +131,10 @@ const Checkout = () => {
 
 const CheckoutProductItem = () => {
     return <div className='p-8 flex items-start justify-between gap-2 h-fit'>
-        <div className='grid grid-cols-3 gap-12 w-full'>
+        <div className='grid grid-cols-3 gap-2 w-full'>
             <Image src='/image/product.png' width={100} height={100} />
             <div className='flex gap-8 items-start w-full col-span-2'>
-                <div className='flex flex-col gap-2'>
+                <div className='flex flex-col gap-2 flex-1'>
                     <h1 className='text-md'>
                         Product Name
                     </h1>

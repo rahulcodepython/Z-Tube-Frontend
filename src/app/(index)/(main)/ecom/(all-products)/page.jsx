@@ -17,7 +17,7 @@ const EComAllProducts = () => {
 export const ProductItem = () => {
     return <div className="relative flex flex-1 flex-col overflow-hidden rounded-lg border border-gray-100 dark:border-border bg-white dark:bg-background shadow w-full">
         <div className="relative mx-3 mt-3 flex h-52 overflow-hidden rounded-sm">
-            <Image className="object-cover" src="/image/image.png" alt="product image" width={500} height={500} />
+            <Image className="object-cover" src="/image/product.png" alt="product image" width={500} height={500} />
             <span className="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">
                 39% OFF
             </span>
@@ -48,7 +48,7 @@ export const ProductItem = () => {
                     </span>
                 </div>
             </div>
-            <Button className={'gap-2 w-full'}>
+            <Button className={'gap-2 w-full cursor-pointer'}>
                 <MdOutlineShoppingCart className={'text-lg'} />
                 Add To Cart
             </Button>
