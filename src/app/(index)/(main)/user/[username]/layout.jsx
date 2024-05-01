@@ -6,7 +6,7 @@ import { ProfileProvider } from '@/context/ProfileContext'
 import { FeedProvider } from '@/context/FeedContext'
 
 const Layout = ({ children, params, profile, feed, ecom }) => {
-    const [defaultTab, setDefaultTab] = React.useState(null)
+    const [defaultTab, setDefaultTab] = React.useState('profile')
     const [loading, setLoading] = React.useState(true)
 
     const search = useSearchParams()
@@ -14,7 +14,7 @@ const Layout = ({ children, params, profile, feed, ecom }) => {
 
     React.useEffect(() => {
         setDefaultTab(() => search.get('tabs'))
-        setLoading(() => false)
+        setLoading(false)
     }, [search.get('tabs')])
 
     return (
@@ -22,7 +22,7 @@ const Layout = ({ children, params, profile, feed, ecom }) => {
             <div className='mx-auto container'>
                 <section className='space-y-4'>
                     {profile}
-                    <Tabs defaultValue={`${defaultTab || 'profile'}`} className="w-full">
+                    <Tabs defaultValue={defaultTab} className="w-full">
                         <TabsList className="w-full justify-start">
                             <TabsTrigger value="profile" onClick={() => router.push(`/user/${params.username}`)}>Profile</TabsTrigger>
                             <TabsTrigger value="feed" onClick={() => router.push(`/user/${params.username}?tabs=feed`)}>Feed</TabsTrigger>

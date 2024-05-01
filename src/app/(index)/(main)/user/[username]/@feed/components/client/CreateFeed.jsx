@@ -49,7 +49,7 @@ const CreateFeed = () => {
                     <div className="col-span-2 grid w-full gap-2 px-1">
                         <Label htmlFor="caption" className="uppercase text-gray-600 text-xs">Caption</Label>
                         <Textarea placeholder="Type your caption." rows="7" name="caption" value={values.caption}
-                            onChange={handleChange} className="focus:ring-0 focus-visible:ring-0" autoFocus
+                            onChange={handleChange} autoFocus
                             autoComplete="email" required />
                     </div>
                     <div className="col-span-2 grid w-full gap-2 px-1">
@@ -59,7 +59,7 @@ const CreateFeed = () => {
                             handleChange(value)
                         }}
                             defaultValue={values.visibility}>
-                            <SelectTrigger className="focus:ring-0 focus-visible:ring-0">
+                            <SelectTrigger>
                                 <SelectValue placeholder="Select a visibility" />
                             </SelectTrigger>
                             <SelectContent>

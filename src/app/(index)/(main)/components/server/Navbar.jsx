@@ -17,7 +17,7 @@ const Navbar = ({ userData, toggleNavbar, showTopicAll, setShowTopicAll }) => {
                 <span className="text-xl font-semibold cursor-pointer">ZTube</span>
             </aside>
             <div className="flex items-center justify-center w-[40rem]">
-                <Input type="text" placeholder="Search" className="px-5 py-1 rounded-l-full border-r-0 focus:ring-0 focus-visible:ring-0" />
+                <Input type="text" placeholder="Search" className="px-5 py-1 rounded-l-full border-r-0" />
                 <Button variant="outline" className="rounded-l-none rounded-r-full h-[2.25rem]">
                     <BiSearch />
                 </Button>

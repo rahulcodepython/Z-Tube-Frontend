@@ -41,51 +41,9 @@ import {
 } from "@/components/ui/dialog"
 
 const FilterSidebar = () => {
-    // return <div className={'bg-gray-50 dark:bg-gray-900 rounded-md'}>
-    //     <div className={'font-bold text-lg px-4 py-2'}>
-    //         Filter
-    //     </div>
-    //     <Separator />
-    //     <div className={'mt-2'}>
-    //         <Accordion type="single" collapsible className="w-full">
-    //             <AccordionItem value="item-0">
-    //                 <AccordionTrigger className={'hover:no-underline px-2'}>
-    //                     Category
-    //                 </AccordionTrigger>
-    //                 <AccordionContent className={'px-2'}>
-    //                     <FilterItem />
-    //                 </AccordionContent>
-    //             </AccordionItem>
-    //             <AccordionItem value="item-1">
-    //                 <AccordionTrigger className={'hover:no-underline px-2'}>
-    //                     Pricing
-    //                 </AccordionTrigger>
-    //                 <AccordionContent className={'px-2'}>
-    //                     <PricingMeter />
-    //                 </AccordionContent>
-    //             </AccordionItem>
-    //             <AccordionItem value="item-2">
-    //                 <AccordionTrigger className={'hover:no-underline px-2'}>
-    //                     Verified
-    //                 </AccordionTrigger>
-    //                 <AccordionContent className={'px-2'}>
-    //                     <Verification />
-    //                 </AccordionContent>
-    //             </AccordionItem>
-    //             <AccordionItem value="item-3">
-    //                 <AccordionTrigger className={'hover:no-underline px-2'}>
-    //                     Ratings
-    //                 </AccordionTrigger>
-    //                 <AccordionContent className={'px-2'}>
-    //                     <Ratings />
-    //                 </AccordionContent>
-    //             </AccordionItem>
-    //         </Accordion>
-    //     </div>
-    // </div>
     return <div className="py-4 px-8 flex items-center justify-between gap-4">
         <div className="flex-1">
-            <Input placeholder="Search..." className="focus-visible:ring-0 focus-visible:ring-ring border-t-0 border-r-0 border-l-0 border-b rounded-none" />
+            <Input placeholder="Search..." className="border-t-0 border-r-0 border-l-0 border-b rounded-none" />
         </div>
         <Dialog>
             <DialogTrigger className="flex items-center px-4 gap-2 cursor-pointer hover:bg-secondary p-2 rounded-md">
@@ -163,7 +121,7 @@ const FilterItem = () => {
         <Popover open={open} onOpenChange={() => setOpen(() => !open)}>
             <PopoverTrigger asChild>
                 <Button variant="outline" role="combobox" aria-expanded={open}
-                    className="w-full justify-between focus-visible:ring-0">
+                    className="w-full justify-between">
                     {
                         value || "Select Your Filter"
                     }
@@ -203,7 +161,7 @@ const Ratings = () => {
         <div className="flex items-center space-x-2">
             <Checkbox id="rating-4" onCheckedChange={e => {
                 console.log(e)
-            }} className={'focus-visible:ring-0'} />
+            }} />
             <label htmlFor="terms"
                 className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 4 & Above
@@ -212,7 +170,7 @@ const Ratings = () => {
         <div className="flex items-center space-x-2">
             <Checkbox id="rating-3" onCheckedChange={e => {
                 console.log(e)
-            }} className={'focus-visible:ring-0'} />
+            }} />
             <label htmlFor="terms"
                 className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 3 & Above
@@ -221,7 +179,7 @@ const Ratings = () => {
         <div className="flex items-center space-x-2">
             <Checkbox id="rating-2" onCheckedChange={e => {
                 console.log(e)
-            }} className={'focus-visible:ring-0'} />
+            }} />
             <label htmlFor="terms"
                 className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 2 & Above
@@ -230,7 +188,7 @@ const Ratings = () => {
         <div className="flex items-center space-x-2">
             <Checkbox id="rating-1" onCheckedChange={e => {
                 console.log(e)
-            }} className={'focus-visible:ring-0'} />
+            }} />
             <label htmlFor="terms"
                 className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 1 & Above

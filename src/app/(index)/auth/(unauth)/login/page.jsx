@@ -45,11 +45,11 @@ const LoginPage = () => {
                                 <div className='flex flex-col gap-4'>
                                     <div className='flex flex-col gap-2'>
                                         <Label htmlFor="email" className="uppercase text-gray-600 text-xs">Email</Label>
-                                        <Input type="email" name="email" value={values.email} onChange={handleChange} placeholder="Enter your email" id="email" className="w-full focus-visible:ring-0" autoFocus autoComplete="email" required />
+                                        <Input type="email" name="email" value={values.email} onChange={handleChange} placeholder="Enter your email" id="email" className="w-full" autoFocus autoComplete="email" required />
                                     </div>
                                     <div className='flex flex-col gap-2'>
                                         <Label htmlFor="password" className="uppercase text-gray-600 text-xs">Password</Label>
-                                        <Input type="password" name="password" value={values.password} onChange={handleChange} placeholder="Enter your password" id="password" className="w-full focus-visible:ring-0" autoFocus autoComplete="password" required />
+                                        <Input type="password" name="password" value={values.password} onChange={handleChange} placeholder="Enter your password" id="password" className="w-full" autoFocus autoComplete="password" required />
                                     </div>
                                     <div className="text-right">
                                         <span className="text-sm font-semibold text-gray-700 hover:text-gray-500 focus:text-gray-500 hover:underline">

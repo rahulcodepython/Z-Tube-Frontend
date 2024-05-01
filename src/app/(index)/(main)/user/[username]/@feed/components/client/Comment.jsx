@@ -113,7 +113,7 @@ const CommentForm = ({ setComments, feed }) => {
                 <Form className='flex flex-col gap-2 pt-4'>
                     <Textarea placeholder="Add a comment..." rows="3" value={values.comment} name={'comment'}
                         onChange={e => handleChange(e)}
-                        class="w-full border rounded-md p-2 bg-transparent focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                        class="w-full border rounded-md p-2 bg-transparent focus:outline-none" />
                     {
                         loading ? <Button disabled className="gap-2">
                             <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
@@ -157,7 +157,7 @@ const ReplyModal = ({ comment, commentIndex, feed, feedIndex, setComments }) => 
                                     <Textarea placeholder="Add a comment..." rows="3" name={'comment'}
                                         value={values.comment}
                                         onChange={e => handleChange(e)}
-                                        class="w-full border rounded-md p-2 bg-transparent focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                        class="w-full border rounded-md p-2 bg-transparent focus:outline-none" />
                                     {
                                         loading ? <Button disabled className="gap-2">
                                             <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
@@ -208,7 +208,7 @@ const EditCommentModal = ({ comment, commentIndex, replyIndex, reply, setComment
                                         <Textarea placeholder="Add a comment..." rows="3" name={'comment'}
                                             value={values.comment}
                                             onChange={e => handleChange(e)}
-                                            class="w-full border rounded-md p-2 bg-transparent focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                            class="w-full border rounded-md p-2 bg-transparent focus:outline-none" />
                                         {
                                             loading ? <Button disabled className="gap-2">
                                                 <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />

@@ -90,7 +90,7 @@ const EditProfile = ({ profileData, username }) => {
                                             <Label className="block uppercase text-xs font-bold" htmlFor="first_name">
                                                 First Name
                                             </Label>
-                                            <Input type="text" name="first_name" id='first_name' value={values.first_name} onChange={handleChange} className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                            <Input type="text" name="first_name" id='first_name' value={values.first_name} onChange={handleChange} />
                                         </div>
                                     </div>
                                     <div className="col-span-1">
@@ -98,7 +98,7 @@ const EditProfile = ({ profileData, username }) => {
                                             <Label className="block uppercase text-xs font-bold" htmlFor="last_name">
                                                 Last Name
                                             </Label>
-                                            <Input type="text" name="last_name" id="last_name" value={values.last_name} onChange={handleChange} className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                            <Input type="text" name="last_name" id="last_name" value={values.last_name} onChange={handleChange} />
                                         </div>
                                     </div>
                                     <div className="col-span-1">
@@ -110,7 +110,7 @@ const EditProfile = ({ profileData, username }) => {
                                                 <Input type="text" name="username" id="username" value={values.username} onChange={async (e) => {
                                                     handleChange(e)
                                                     await CheckUsername(e, profileData, setIsUsernameValid, accessToken)
-                                                }} className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                                }} />
                                                 <FaCircleCheck className={isUsernameValid ? 'text-green-500' : 'text-red-500'} />
                                             </div>
                                         </div>
@@ -141,7 +141,7 @@ const EditProfile = ({ profileData, username }) => {
                                             <Label className="block uppercase text-xs font-bold" htmlFor="bio">
                                                 About me
                                             </Label>
-                                            <Textarea placeholder="Type your bio here." rows="5" name="bio" id="bio" value={values.bio} onChange={handleChange} className="focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                            <Textarea placeholder="Type your bio here." rows="5" name="bio" id="bio" value={values.bio} onChange={handleChange} />
                                         </div>
                                     </div>
                                     <div className="col-span-2">

@@ -1,20 +1,19 @@
 "use client"
 import React from "react";
-import {Input} from "@/components/ui/input";
-import {AiOutlineClose} from "@/data/icons/icons";
+import { Input } from "@/components/ui/input";
+import { AiOutlineClose } from "@/data/icons/icons";
 
-const TagsInput = ({tags, max, remove, push})=> {
+const TagsInput = ({ tags, max, remove, push }) => {
     const [tagsInput, setTagsInput] = React.useState('')
 
     return <div>
         <Input type="text" placeholder="Enter a tags"
-               className="focus:ring-0 focus-visible:ring-0"
-               disabled={tags.length >= max} value={tagsInput}
-               onChange={e => setTagsInput(() => e.target.value)}
-               onKeyUp={e => {
-                   e.key === 'Enter' ? push(tagsInput) : null
-                   e.key === 'Enter' ? setTagsInput('') : null
-               }} />
+            disabled={tags.length >= max} value={tagsInput}
+            onChange={e => setTagsInput(() => e.target.value)}
+            onKeyUp={e => {
+                e.key === 'Enter' ? push(tagsInput) : null
+                e.key === 'Enter' ? setTagsInput('') : null
+            }} />
         {
             tags.length > 0 ? <div className='flex items-center gap-2 my-2'>
                 {
