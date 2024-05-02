@@ -19,7 +19,6 @@ import {BiSend} from "react-icons/bi";
 import {toast} from "react-toastify";
 import {useRouter} from "next/navigation";
 import {AuthContext, AuthContextType, LoggedInUserType} from "@/context/AuthContext";
-import {number} from "prop-types";
 
 const VerifyEmail = () => {
     const [code, setCode] = React.useState<string>("");
