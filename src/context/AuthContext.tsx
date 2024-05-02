@@ -5,7 +5,7 @@ import React from "react";
 export type AccessToken = string | null;
 export type RefreshToken = string | null;
 
-export interface User {
+export interface UserType {
     username: string,
     first_name: string,
     last_name: string,
@@ -35,13 +35,13 @@ export interface AuthContextType {
     isAuthenticated: boolean;
     accessToken: AccessToken;
     refreshToken: RefreshToken;
-    user: User | null;
+    user: UserType | null;
     profile: Profile | null;
     AuthenticateUser: (accessToken: AccessToken, refreshToken: RefreshToken) => void;
     UnAuthenticateUser: () => void;
     LoggedInUser: (access: AccessToken, refresh: RefreshToken) => Promise<void>;
     LogoutUser: () => Promise<void>;
-    setUser: React.Dispatch<React.SetStateAction<User | null>>;
+    setUser: React.Dispatch<React.SetStateAction<UserType | null>>;
     setProfile: React.Dispatch<React.SetStateAction<Profile | null>>;
 }
 
@@ -61,7 +61,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
     const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(false);
     const [accessToken, setAccessToken] = React.useState<AccessToken>(null);
     const [refreshToken, setRefreshToken] = React.useState<RefreshToken>(null);
-    const [user, setUser] = React.useState<User | null>(null);
+    const [user, setUser] = React.useState<UserType | null>(null);
     const [profile, setProfile] = React.useState<Profile | null>(null);
 
     const AuthenticateUser: AuthenticateUserType = async (accessToken: AccessToken, refreshToken: RefreshToken) => {

@@ -1,6 +1,6 @@
 "use client";
 import Loading from '@/components/Loading';
-import { AuthContext, AuthContextType, LoggedInUserType, User } from '@/context/AuthContext';
+import { AuthContext, AuthContextType, LoggedInUserType, UserType } from '@/context/AuthContext';
 import { Decrypt } from '@/utils';
 import React, { useEffect, useState, useContext, Dispatch, SetStateAction } from 'react';
 import axios, { AxiosResponse } from 'axios';
@@ -56,7 +56,7 @@ const RefreshTheAccessToken = async (token: string, LoggedInUser: LoggedInUserTy
     await LoggedInUser(response.data.access, response.data.refresh);
 };
 
-const FetchUserData = async (token: string, setUser: Dispatch<SetStateAction<User | null>>): Promise<void> => {
+const FetchUserData = async (token: string, setUser: Dispatch<SetStateAction<UserType | null>>): Promise<void> => {
     const options = {
         headers: {
             Authorization: `JWT ${token}`
@@ -69,7 +69,7 @@ const FetchUserData = async (token: string, setUser: Dispatch<SetStateAction<Use
     setUser(response.data);
 };
 
-const CheckUser = async (setUser: Dispatch<SetStateAction<User | null>>, LoggedInUser: LoggedInUserType, LogoutUser: () => Promise<void>): Promise<void> => {
+const CheckUser = async (setUser: Dispatch<SetStateAction<UserType | null>>, LoggedInUser: LoggedInUserType, LogoutUser: () => Promise<void>): Promise<void> => {
     const isRefreshTokenExists = localStorage.getItem("refresh") || null;
     const refresh_token = isRefreshTokenExists ? Decrypt(localStorage.getItem("refresh") || '', process.env.ENCRYPTION_KEY) : null;
     const isValidateRefreshToken = refresh_token ? await VerifyToken(refresh_token) : false;

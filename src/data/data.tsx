@@ -20,7 +20,7 @@ interface emoji{
     name: string,
 }
 
-interface sidebarItem{
+export interface sidebarItem{
     icon: React.ReactNode,
     title: string,
     link: string,
@@ -67,7 +67,7 @@ interface Data {
     }
 }
 
-export const Data: Data = {
+const Data: Data = {
     emoji: [
         { id: 0, icon: '/svg/like.svg', name: 'Like' },
         { id: 1, icon: '/svg/heart.svg', name: 'Love' },
@@ -530,3 +530,5 @@ export const Data: Data = {
         },
     }
 }
+
+export default Data
