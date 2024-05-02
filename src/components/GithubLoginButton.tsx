@@ -3,7 +3,7 @@ import Image from 'next/image'
 import {Button} from "@/components/ui/button";
 import axios from "axios";
 
-const GithubLoginButton = (label: string) => {
+const GithubLoginButton = ({label}: {label: string}) => {
     return <Button onClick={() => GithubSignIn()} className="gap-2 w-full" variant="outline">
         <Image className="w-5 h-5" src="/svg/github.svg" loading="lazy" alt="google logo" width={20} height={20} />
         <span>

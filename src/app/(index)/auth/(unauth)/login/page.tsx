@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Link } from 'next-view-transitions';
 import { ReloadIcon } from '@radix-ui/react-icons';
+import GithubLoginButton from "@/components/GithubLoginButton";
 
 interface LoginValuesType{
     email: string
@@ -120,6 +121,7 @@ const LoginPage: React.FC = () => {
                         <hr className="border-gray-500" />
                     </div>
                     <GoogleLoginButton label={'Sign in with Google'} />
+                    <GithubLoginButton label={'Sign in with Github'} />
                     <div className="text-sm flex justify-between items-center w-full">
                         <p>If you {`don't`} have an account...</p>
                         <Link href="/auth/register">

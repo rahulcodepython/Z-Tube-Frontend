@@ -18,6 +18,7 @@ import axios from 'axios';
 import {toast} from 'react-toastify';
 import {useRouter} from "next/navigation";
 import {ReloadIcon} from '@radix-ui/react-icons';
+import GithubLoginButton from "@/components/GithubLoginButton";
 
 interface RegistrationDataType {
     first_name: string
@@ -116,6 +117,7 @@ const RegisterPage: React.FC = () => {
                         <hr className="border-gray-500"/>
                     </div>
                     <GoogleLoginButton label="Sign up with Google"/>
+                    <GithubLoginButton label={'Sign in with Github'} />
                     <div className="text-sm flex justify-between items-center w-full">
                         <p>If you already have an account...</p>
                         <Link href={'/auth/login'}>
