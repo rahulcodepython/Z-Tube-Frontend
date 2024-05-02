@@ -42,41 +42,61 @@ const VerifyEmail = () => {
             <CardContent className={'flex flex-col gap-8 items-center justify-center mt-8'}>
                 <InputOTP maxLength={8} value={code} onChange={e => setCode(e)}>
                     <InputOTPGroup>
-                        <InputOTPSlot index={0} />
-                        <InputOTPSlot index={1} />
-                        <InputOTPSlot index={2} />
-                        <InputOTPSlot index={3} />
+                        <InputOTPSlot index={0}/>
+                        <InputOTPSlot index={1}/>
+                        <InputOTPSlot index={2}/>
+                        <InputOTPSlot index={3}/>
                     </InputOTPGroup>
-                    <InputOTPSeparator />
+                    <InputOTPSeparator/>
                     <InputOTPGroup>
-                        <InputOTPSlot index={4} />
-                        <InputOTPSlot index={5} />
-                        <InputOTPSlot index={6} />
-                        <InputOTPSlot index={7} />
+                        <InputOTPSlot index={4}/>
+                        <InputOTPSlot index={5}/>
+                        <InputOTPSlot index={6}/>
+                        <InputOTPSlot index={7}/>
                     </InputOTPGroup>
                 </InputOTP>
+                <p className={'text-end w-full text-sm -mt-2 cursor-pointer hover:underline'}
+                   onClick={() => handleResendVerficationCode()}>
+                    Resend Verfication Code
+                </p>
                 {
                     loading ? <Button disabled className="gap-2 w-full">
-                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
-                        Please wait
-                    </Button> :
-                    <Button onClick={()=>handleSubmit(code, setCode, setLoading, router, LoggedInUser)} className={'gap-2 w-full'}>
-                        <BiSend />
-                Submit
-            </Button>
-            }
+                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
+                            Please wait
+                        </Button> :
+                        <Button onClick={() => handleSubmit(code, setCode, setLoading, router, LoggedInUser)}
+                                className={'gap-2 w-full'}>
+                            <BiSend/>
+                            Submit
+                        </Button>
+                }
             </CardContent>
         </Card>
     </div>
 }
+const handleResendVerficationCode = () => {
+    const HandleTostify = new Promise<void>((resolve, rejected) => {
+        axios.post(`${process.env.BASE_API_URL}/auth/users/resend_activation/`, {
+            email: localStorage.getItem("email") ?? null,
+        }).then(() => resolve()).catch(() => rejected())
+    });
 
-const handleSubmit = async (code: string | null, setCode: (value: (((prevState: string ) => string) | string)) => void, setLoading: React.Dispatch<React.SetStateAction<boolean>>, router: any, LoggedInUser: LoggedInUserType | undefined): Promise<void> => {
+    toast.promise(
+        HandleTostify,
+        {
+            pending: 'Your request is on process.',
+            success: 'You are now updated.',
+            error: 'There is some issue, Try again.'
+        }
+    )
+}
+const handleSubmit = async (code: string | null, setCode: (value: (((prevState: string) => string) | string)) => void, setLoading: React.Dispatch<React.SetStateAction<boolean>>, router: any, LoggedInUser: LoggedInUserType | undefined): Promise<void> => {
     setLoading(true);
     try {
         if (!code) {
             throw new Error("Code is missing");
         }
-        if (code.length < 8){
+        if (code.length < 8) {
             throw new Error("Code is incomplete");
         }
         const response = await axios.post(`${process.env.BASE_API_URL}/auth/users/activation/`, {
@@ -84,6 +104,7 @@ const handleSubmit = async (code: string | null, setCode: (value: (((prevState: 
             token: parseInt(code?.slice(4, 8), 10),
         });
         await LoggedInUser?.(response.data.access, response.data.refresh);
+        localStorage.removeItem("email")
         router.push('/');
         toast.success('You are logged in.');
     } catch (error) {

@@ -134,6 +134,7 @@ const Register = async (values: RegistrationDataType, router: any, setLoading: R
     setLoading(true);
     try {
         await axios.post(`${process.env.BASE_API_URL}/auth/users/me/`, values);
+        localStorage.setItem("email", values.email)
         router.push('/auth/verify/email')
         toast.success('You are logged in.');
     } catch (error) {
