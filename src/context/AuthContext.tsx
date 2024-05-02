@@ -5,7 +5,7 @@ import React from "react";
 export type AccessToken = string | null;
 export type RefreshToken = string | null;
 
-interface User {
+export interface User {
     username: string,
     first_name: string,
     last_name: string,
@@ -31,7 +31,7 @@ interface Profile {
     self: boolean
 }
 
-interface AuthContextType {
+export interface AuthContextType {
     isAuthenticated: boolean;
     accessToken: AccessToken;
     refreshToken: RefreshToken;
@@ -44,6 +44,12 @@ interface AuthContextType {
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
     setProfile: React.Dispatch<React.SetStateAction<Profile | null>>;
 }
+
+export type AuthenticateUserType = (access: AccessToken, refresh: RefreshToken) => Promise<void>;
+
+export type LoggedInUserType = (access: AccessToken, refresh: RefreshToken) => Promise<void>;
+
+export type LogoutUserType = () => Promise<void>;
 
 export const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
@@ -58,25 +64,26 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
     const [user, setUser] = React.useState<User | null>(null);
     const [profile, setProfile] = React.useState<Profile | null>(null);
 
-    const AuthenticateUser = async (accessToken: AccessToken, refreshToken: RefreshToken): Promise<void> => {
+    const AuthenticateUser: AuthenticateUserType = async (accessToken: AccessToken, refreshToken: RefreshToken) => {
         setIsAuthenticated(true);
         setAccessToken(accessToken);
         setRefreshToken(refreshToken);
     };
 
-    const UnAuthenticateUser = async (): Promise<void> => {
+    const UnAuthenticateUser = async () => {
         setIsAuthenticated(false);
         setAccessToken(null);
         setRefreshToken(null);
     };
 
-    const LoggedInUser = async (access: AccessToken, refresh: RefreshToken): Promise<void> => {
+    const LoggedInUser: LoggedInUserType = async (access: AccessToken, refresh: RefreshToken) => {
         await AuthenticateUser(access, refresh);
         sessionStorage.setItem('access', Encrypt(access, process.env.ENCRYPTION_KEY));
         localStorage.setItem('refresh', Encrypt(refresh, process.env.ENCRYPTION_KEY));
     };
 
-    const LogoutUser = async (): Promise<void> => {
+    const LogoutUser: LogoutUserType = async () => {
+        // @ts-ignore
         await UnAuthenticateUser();
         sessionStorage.removeItem('access');
         localStorage.removeItem('refresh');
