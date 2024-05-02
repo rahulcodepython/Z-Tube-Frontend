@@ -1,7 +1,8 @@
+"use client"
 import React from 'react';
 import { BiSend } from 'react-icons/bi';
 import { Formik, Form } from 'formik';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import GoogleLoginButton from '@/components/GoogleLoginButton';
@@ -17,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Link } from 'next-view-transitions';
+import { ReloadIcon } from '@radix-ui/react-icons';
 
 interface LoginValuesType{
     email: string
@@ -24,13 +26,15 @@ interface LoginValuesType{
 }
 
 const LoginPage: React.FC = () => {
+    const [loading, setLoading] = React.useState<boolean>(false);
+
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext);
     const router = useRouter();
 
     const LoggedInUser = authContext?.LoggedInUser;
 
     const handleSubmit = async (values: LoginValuesType) => {
-        await login(values, LoggedInUser, router);
+        await login(values, LoggedInUser, router, setLoading);
     };
 
     return (
@@ -48,7 +52,10 @@ const LoginPage: React.FC = () => {
                         initialValues={{
                             email: '',
                             password: '',
-                        }} onSubmit={handleSubmit}>
+                        }} onSubmit={(values, actions) => {
+                            handleSubmit(values)
+                            actions.resetForm();
+                        }}>
                         {({ values, handleChange, handleSubmit }) => (
                             <Form className="flex flex-col gap-6">
                                 <div className="flex flex-col gap-4">
@@ -92,10 +99,16 @@ const LoginPage: React.FC = () => {
                                         </span>
                                     </div>
                                 </div>
-                                <Button type="submit" onClick={()=>handleSubmit} className="gap-2">
-                                    <BiSend className="text-base" />
-                                    <span>Log In</span>
-                                </Button>
+                                {
+                                    loading ? <Button disabled className="gap-2">
+                                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
+                                        Please wait
+                                    </Button> :
+                                    <Button type="submit" onClick={()=>handleSubmit} className="gap-2">
+                                <BiSend className="text-base"/>
+                                <span>Log In</span>
+                            </Button>
+                        }
                             </Form>
                         )}
                     </Formik>
@@ -106,7 +119,6 @@ const LoginPage: React.FC = () => {
                         <p className="text-center text-sm">OR</p>
                         <hr className="border-gray-500" />
                     </div>
-                    {/*<GoogleLoginButton label="Sign in with Google" />*/}
                     <GoogleLoginButton label={'Sign in with Google'} />
                     <div className="text-sm flex justify-between items-center w-full">
                         <p>If you {`don't`} have an account...</p>
@@ -120,16 +132,17 @@ const LoginPage: React.FC = () => {
     );
 };
 
-const login = async (values: LoginValuesType, LoggedInUser: LoggedInUserType | undefined, router: any) => {
+const login = async (values: LoginValuesType, LoggedInUser: LoggedInUserType | undefined, router: any, setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
+    setLoading(true)
     try {
-        const response = await axios.post(`${process.env.BASE_API_URL}/auth/token/jwt/create/`, values);
+        const response = await axios.post(`${process.env.BASE_API_URL}/auth/users/jwt/create/`, values);
         await LoggedInUser?.(response.data.access, response.data.refresh);
         router.push('/');
         toast.success('You are logged in.');
     } catch (error) {
-        router.push('/auth/login');
         toast.error('There was an issue. Please try again.');
     }
+    setLoading(false);
 };
 
 export default LoginPage;
