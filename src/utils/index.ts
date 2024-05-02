@@ -1,4 +1,6 @@
 import type {AccessToken} from "@/context/AuthContext";
+import { ref, uploadBytes, getDownloadURL, StorageReference } from 'firebase/storage'
+import {analytics} from "@/utils/firebase-config";
 
 export const Decrypt = (token: AccessToken, key: String|undefined) => {
     let decryptedToken = '';
@@ -19,3 +21,13 @@ export const Encrypt = (token: AccessToken, key: String|undefined) => {
     }
     return encryptedToken;
 }
+
+interface FileObject extends File {}
+
+export const UploadMediaFiles = async (item: FileObject, uploadFilePath: string): Promise<string> => {
+    let url: string;
+    const fileref: StorageReference = ref(analytics, uploadFilePath);
+    const response = await uploadBytes(fileref, item);
+    url = await getDownloadURL(response.ref);
+    return url;
+};
