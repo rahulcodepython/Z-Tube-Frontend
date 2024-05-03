@@ -24,7 +24,7 @@ export const Encrypt = (token: AccessToken, key: String|undefined) => {
 
 interface FileObject extends File {}
 
-export const UploadMediaFiles = async (item: FileObject, uploadFilePath: string): Promise<string> => {
+export const UploadMediaFiles = async (item: File | undefined, uploadFilePath: string): Promise<string> => {
     let url: string;
     const fileref: StorageReference = ref(analytics, uploadFilePath);
     const response = await uploadBytes(fileref, item);

@@ -13,7 +13,7 @@ export interface UserType {
     is_superuser: boolean
 }
 
-interface Profile {
+export interface ProfileType {
     username: string,
     email: string,
     first_name: string,
@@ -25,8 +25,9 @@ interface Profile {
     posts: number,
     followers: number,
     following: number,
-    is_verified: boolean,
-    is_locked: boolean,
+    isVerified: boolean,
+    isLocked: boolean,
+    isFriend: boolean,
     is_superuser: boolean,
     self: boolean
 }
@@ -36,13 +37,13 @@ export interface AuthContextType {
     accessToken: AccessToken;
     refreshToken: RefreshToken;
     user: UserType | null;
-    profile: Profile | null;
+    profile: ProfileType | null;
     AuthenticateUser: (accessToken: AccessToken, refreshToken: RefreshToken) => void;
     UnAuthenticateUser: () => void;
     LoggedInUser: (access: AccessToken, refresh: RefreshToken) => Promise<void>;
     LogoutUser: () => Promise<void>;
     setUser: React.Dispatch<React.SetStateAction<UserType | null>>;
-    setProfile: React.Dispatch<React.SetStateAction<Profile | null>>;
+    setProfile: React.Dispatch<React.SetStateAction<ProfileType | null>>;
 }
 
 export type AuthenticateUserType = (access: AccessToken, refresh: RefreshToken) => Promise<void>;
@@ -62,7 +63,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
     const [accessToken, setAccessToken] = React.useState<AccessToken>(null);
     const [refreshToken, setRefreshToken] = React.useState<RefreshToken>(null);
     const [user, setUser] = React.useState<UserType | null>(null);
-    const [profile, setProfile] = React.useState<Profile | null>(null);
+    const [profile, setProfile] = React.useState<ProfileType | null>(null);
 
     const AuthenticateUser: AuthenticateUserType = async (accessToken: AccessToken, refreshToken: RefreshToken) => {
         setIsAuthenticated(true);
