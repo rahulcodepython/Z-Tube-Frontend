@@ -18,7 +18,7 @@ import {Form, Formik, FieldArray, FormikValues} from 'formik';
 import {UploadMediaFiles} from '@/utils';
 import axios from "axios";
 import {toast} from "react-toastify";
-import ImageUploading, {ImageListType, } from 'react-images-uploading';
+import ImageUploading, {ImageListType} from 'react-images-uploading';
 import Image from 'next/image';
 import TagsInput from "@/components/TagsInput";
 import {Label} from "@/components/ui/label";

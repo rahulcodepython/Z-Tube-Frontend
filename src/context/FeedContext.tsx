@@ -1,6 +1,6 @@
 import React from "react";
 
-interface Feed {
+export interface FeedType {
     id: string
     caption: string
     tags: Array<string>
@@ -27,9 +27,9 @@ interface Feed {
     user_reaction: string | null;
 }
 
-interface FeedContextType {
-    feed: Array<Feed> | [];
-    setFeed: React.Dispatch<React.SetStateAction<Array<Feed>>>;
+export interface FeedContextType {
+    feed: Array<FeedType> | [];
+    setFeed: React.Dispatch<React.SetStateAction<Array<FeedType>>>;
 }
 
 export const FeedContext = React.createContext<FeedContextType | undefined>(undefined);
@@ -39,7 +39,7 @@ interface FeedProviderProps {
 }
 
 export const FeedProvider: React.FC<FeedProviderProps> = ({ children }) => {
-    const [feed, setFeed] = React.useState<Array<Feed>>([]);
+    const [feed, setFeed] = React.useState<Array<FeedType>>([]);
 
     return (
         <FeedContext.Provider value={{ feed, setFeed }}>
