@@ -28,16 +28,7 @@ import { FaCircleCheck } from "react-icons/fa6";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { AiOutlineClose } from "react-icons/ai";
 
-interface ValuesType {
-    first_name: string
-    last_name: string
-    username: string
-    bio: string
-    isLocked: boolean
-    tags: Array<string>
-}
-
-const EditProfile = ({ username }: { username: string }) => {
+const EditProfile = () => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
 
     const accessToken = authContext?.accessToken
@@ -52,10 +43,10 @@ const EditProfile = ({ username }: { username: string }) => {
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
     const [isUpdating, setIsUpdating] = React.useState<boolean>(false)
     const [bannerImage, setBannerImage] = React.useState<ImageListType>(
-        profile ? profile.banner.length > 0 ? [{ data_url: profile.banner }] : [] : [])
+        profile ? profile.banner.length > 0 ? [{ data_url: profile.banner }] : [{ data_url: '/image/profile-banner.png' }] : [])
     const [isBannerImageChange, setIsBannerImageChange] = React.useState<boolean>(false)
     const [userImage, setUserImage] = React.useState<ImageListType>(
-        profile ? profile.image.length > 0 ? [{ data_url: profile.image }] : [] : [])
+        profile ? profile.image.length > 0 ? [{ data_url: profile.image }] : [{ data_url: '/image/user.png' }] : [])
     const [isUserImageChange, setIsUserImageChange] = React.useState<boolean>(false)
     const [isUsernameValid, setIsUsernameValid] = React.useState<boolean>(true)
 
@@ -81,7 +72,9 @@ const EditProfile = ({ username }: { username: string }) => {
                     isLocked: profile?.isLocked,
                     tags: profile?.tags,
                 }}
-                    onSubmit={async values => await UpdateProfile(accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, setProfile, setUser, setIsUpdating, setIsOpen, username, router, search.get('tabs'), values)}>
+                    onSubmit={async values => {
+                        await UpdateProfile(accessToken, isUserImageChange, isBannerImageChange, userImage, bannerImage, setProfile, setUser, setIsUpdating, setIsOpen, router, search.get('tabs'), values)
+                    }}>
                     {({ values, handleChange, handleSubmit }) => {
                         return <Form onSubmit={(e) => {
                             e.preventDefault()
@@ -92,22 +85,22 @@ const EditProfile = ({ username }: { username: string }) => {
                                 <h6 className=" text-sm font-bold uppercase">
                                     Basic Information
                                 </h6>
-                                <div className="grid grid-cols-2 gap-4 overflow-y-scroll h-[50vh]">
-                                    <div className='col-span-2 flex flex-col justify-center gap-2'>
+                                <div className="grid grid-cols-1 gap-8 overflow-y-scroll h-[50vh]">
+                                    <div className='flex flex-col justify-center gap-2'>
                                         <Label className="block uppercase text-xs font-bold" htmlFor="banner">
                                             Banner Image
                                         </Label>
                                         <ImageUploader image={bannerImage} setImage={setBannerImage}
                                             setIsImageChange={setIsBannerImageChange} mode="banner" />
                                     </div>
-                                    <div className='col-span-2 flex flex-col justify-center gap-2'>
+                                    <div className='flex flex-col justify-center gap-2'>
                                         <Label className="block uppercase text-xs font-bold" htmlFor="user">
                                             User Image
                                         </Label>
                                         <ImageUploader image={userImage} setImage={setUserImage}
                                             setIsImageChange={setIsUserImageChange} mode="dp" />
                                     </div>
-                                    <div className="col-span-1">
+                                    <div className="grid grid-cols-2 gap-4">
                                         <div className="w-full flex flex-col gap-2">
                                             <Label className="block uppercase text-xs font-bold" htmlFor="first_name">
                                                 First Name
@@ -115,8 +108,6 @@ const EditProfile = ({ username }: { username: string }) => {
                                             <Input type="text" name="first_name" id='first_name'
                                                 value={values.first_name} onChange={handleChange} />
                                         </div>
-                                    </div>
-                                    <div className="col-span-1">
                                         <div className="w-full flex flex-col gap-2">
                                             <Label className="block uppercase text-xs font-bold" htmlFor="last_name">
                                                 Last Name
@@ -125,7 +116,7 @@ const EditProfile = ({ username }: { username: string }) => {
                                                 onChange={handleChange} />
                                         </div>
                                     </div>
-                                    <div className="col-span-1">
+                                    <div className="grid grid-cols-2 gap-4">
                                         <div className="w-full flex flex-col gap-2">
                                             <Label className="block uppercase text-xs font-bold" htmlFor="username">
                                                 Username
@@ -140,8 +131,6 @@ const EditProfile = ({ username }: { username: string }) => {
                                                     className={isUsernameValid ? 'text-green-500' : 'text-red-500'} />
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="col-span-1">
                                         <div className="w-full flex flex-col gap-2">
                                             <Label className="block uppercase text-xs font-bold" htmlFor="isLocked">
                                                 Lock Profile
@@ -164,29 +153,25 @@ const EditProfile = ({ username }: { username: string }) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-span-2">
-                                        <div className="w-full flex flex-col gap-2">
-                                            <Label className="block uppercase text-xs font-bold" htmlFor="bio">
-                                                About me
-                                            </Label>
-                                            <Textarea placeholder="Type your bio here." rows={5} name="bio" id="bio"
-                                                value={values.bio} onChange={handleChange} />
-                                        </div>
+                                    <div className="w-full flex flex-col gap-2">
+                                        <Label className="block uppercase text-xs font-bold" htmlFor="bio">
+                                            About me
+                                        </Label>
+                                        <Textarea placeholder="Type your bio here." rows={5} name="bio" id="bio"
+                                            value={values.bio} onChange={handleChange} />
                                     </div>
-                                    <div className="col-span-2">
-                                        <div className="w-full flex flex-col gap-2">
-                                            <Label className="block uppercase text-xs font-bold" htmlFor="tags">
-                                                Tags
-                                            </Label>
-                                            <FieldArray name={'tags'}>
-                                                {
-                                                    ({ remove, push }) => {
-                                                        return <TagsInput max={5} remove={remove} push={push}
-                                                            tags={values.tags} />
-                                                    }
+                                    <div className="w-full flex flex-col gap-2">
+                                        <Label className="block uppercase text-xs font-bold" htmlFor="tags">
+                                            Tags
+                                        </Label>
+                                        <FieldArray name={'tags'}>
+                                            {
+                                                ({ remove, push }) => {
+                                                    return <TagsInput max={5} remove={remove} push={push}
+                                                        tags={values.tags} />
                                                 }
-                                            </FieldArray>
-                                        </div>
+                                            }
+                                        </FieldArray>
                                     </div>
                                 </div>
                             </div>
@@ -195,7 +180,7 @@ const EditProfile = ({ username }: { username: string }) => {
                                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                                     Please wait
                                 </Button> :
-                                    <Button type='submit' onClick={() => handleSubmit} className="gap-2">
+                                    <Button type='submit' onClick={() => handleSubmit()} className="gap-2">
                                         <BiSend className='text-base' />
                                         <span>
                                             Update
@@ -239,15 +224,12 @@ const UpdateProfile = async (
     setUserData: ((value: (((prevState: (UserType | null)) => (UserType | null)) | UserType | null)) => void) | undefined,
     setIsUpdating: React.Dispatch<React.SetStateAction<boolean>>,
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    username: string,
     router: AppRouterInstance,
     search: string | null,
     values: FormikValues
 ) => {
     setIsUpdating(true);
-
     try {
-
         const userImageData: { image: string } | null = !isUserImageChange ? null : {
             image: await UploadMediaFiles(userImage[0]?.file, `User/DP/${userImage[0]?.file?.name}`)
         };
@@ -260,7 +242,7 @@ const UpdateProfile = async (
             headers: {
                 Authorization: `JWT ${accessToken}`,
             },
-            url: `${process.env.BASE_API_URL}/auth/profile/${username}/`,
+            url: `${process.env.BASE_API_URL}/auth/users/me/`,
             method: 'PATCH',
             data: {
                 ...values,
@@ -270,14 +252,13 @@ const UpdateProfile = async (
         };
 
         const response = await axios.request(options);
-        setUserData?.(response.data.user);
-        setProfile?.(response.data.profile);
+        setUserData?.(response.data.content.user);
+        setProfile?.(response.data.content.profile);
 
         toast.success('Profile updated successfully');
 
-        router.push(`/user/${encodeURIComponent(response.data.user.username)}${search ? `?tabs=${search}` : ''}`);
+        router.push(`/user/${encodeURIComponent(response.data.content.user.username)}${search ? `?tabs=${search}` : ''}`);
     } catch (error) {
-        console.error('Error updating profile:', error);
         toast.error('An error occurred while updating the profile. Please try again.');
     } finally {
         setIsOpen(false);
@@ -305,48 +286,60 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
     return (
         <ImageUploading value={image} onChange={handleImageUpload} dataURLKey="data_url">
-            {({ onImageUpdate, onImageRemove }) =>
-                image.map((img, index) => (
-                    <div key={index} className="relative flex justify-center items-center group">
-                        <Image
-                            src={img.data_url}
-                            width={300}
-                            height={300}
-                            priority={false}
-                            alt="user image"
-                            className={`${mode === 'full'
-                                ? 'w-full h-full rounded-lg'
-                                : mode === 'dp'
-                                    ? 'w-60 h-60 rounded-full'
-                                    : mode === 'banner'
-                                        ? 'w-full h-64 rounded-lg'
-                                        : ''
-                                }`}
-                        />
-                        <div
-                            className={`bg-whitebg-opacity-0 absolute ${mode === 'full'
-                                ? 'w-full h-full rounded-lg'
-                                : mode === 'dp'
-                                    ? 'w-60 h-60 rounded-full'
-                                    : mode === 'banner'
-                                        ? 'w-full h-64 rounded-lg'
-                                        : ''
-                                } text-2xl flex gap-4 items-center justify-center group-hover:bg-opacity-50 group-hover:bg-white/20 transition-all duration-300 ease-in-out`}
-                        >
-                            <BiCamera
-                                onClick={() => onImageUpdate(index)}
-                                className="cursor-pointer opacity-0 group-hover:opacity-100 bg-background p-2 rounded-full text-4xl"
-                            />
-                            <AiOutlineClose
-                                onClick={() => {
-                                    setIsImageChange(false);
-                                    onImageRemove(index);
-                                }}
-                                className="cursor-pointer opacity-0 group-hover:opacity-100 bg-background p-2 rounded-full text-4xl"
-                            />
-                        </div>
+            {({ onImageUpdate, onImageRemove, onImageUpload, dragProps }) =>
+                image.length === 0 ? <div
+                    className="flex items-center justify-center w-full h-40 border-2 border-border border-dashed rounded-lg cursor-pointer"
+                    onClick={onImageUpload} {...dragProps}>
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <svg className="w-8 h-8 mb-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 20 16">
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                        </svg>
+                        <p className="mb-2 text-sm"><span className="font-semibold">Click to upload</span> or drag and
+                            drop</p>
+                        <p className="text-xs">SVG, PNG, JPG or GIF</p>
                     </div>
-                ))
+                </div>
+                    : image.map((img, index) => {
+                        return <div key={index} className="relative flex justify-center items-center group">
+                            <Image
+                                src={img.data_url}
+                                width={300}
+                                height={300}
+                                priority={false}
+                                alt="user image"
+                                className={`${mode === 'full'
+                                    ? 'w-full h-full rounded-lg'
+                                    : mode === 'dp'
+                                        ? 'w-40 h-40 rounded-full'
+                                        : mode === 'banner'
+                                            ? 'w-full h-40 rounded-lg'
+                                            : ''
+                                    }`}
+                            />
+                            <div className={`bg-whitebg-opacity-0 absolute ${mode === 'full'
+                                ? 'w-full h-full rounded-lg'
+                                : mode === 'dp'
+                                    ? 'w-40 h-40 rounded-full'
+                                    : mode === 'banner'
+                                        ? 'w-full h-40 rounded-lg'
+                                        : ''
+                                } text-2xl flex gap-4 items-center justify-center group-hover:bg-opacity-50 group-hover:bg-white/20 transition-all duration-300 ease-in-out`}>
+                                <BiCamera
+                                    onClick={() => onImageUpdate(index)}
+                                    className="cursor-pointer opacity-0 group-hover:opacity-100 bg-background p-2 rounded-full text-4xl"
+                                />
+                                <AiOutlineClose
+                                    onClick={() => {
+                                        setIsImageChange(false);
+                                        onImageRemove(index);
+                                    }}
+                                    className="cursor-pointer opacity-0 group-hover:opacity-100 bg-background p-2 rounded-full text-4xl"
+                                />
+                            </div>
+                        </div>
+                    })
             }
         </ImageUploading>
     );

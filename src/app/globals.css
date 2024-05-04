@@ -59,3 +59,7 @@
         font-family: 'cascadia code', serif;
     }
 }
+
+::-webkit-scrollbar {
+    width: 0;
+}

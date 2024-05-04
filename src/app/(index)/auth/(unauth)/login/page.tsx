@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import GoogleLoginButton from '@/components/GoogleLoginButton';
-import {AuthContext, AuthContextType, LoggedInUserType} from '@/context/AuthContext';
+import { AuthContext, AuthContextType, LoggedInUserType, UserType } from '@/context/AuthContext';
 import {
     Card,
     CardContent,
@@ -20,8 +20,9 @@ import { Input } from '@/components/ui/input';
 import { Link } from 'next-view-transitions';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import GithubLoginButton from "@/components/GithubLoginButton";
+import { FetchUserData } from "@/utils";
 
-interface LoginValuesType{
+interface LoginValuesType {
     email: string
     password: string
 }
@@ -33,10 +34,7 @@ const LoginPage: React.FC = () => {
     const router = useRouter();
 
     const LoggedInUser = authContext?.LoggedInUser;
-
-    const handleSubmit = async (values: LoginValuesType) => {
-        await login(values, LoggedInUser, router, setLoading);
-    };
+    const setUser = authContext?.setUser;
 
     return (
         <div className="flex items-center justify-center w-screen h-screen">
@@ -53,8 +51,8 @@ const LoginPage: React.FC = () => {
                         initialValues={{
                             email: '',
                             password: '',
-                        }} onSubmit={(values, actions) => {
-                            handleSubmit(values)
+                        }} onSubmit={async (values, actions) => {
+                            await login(values, LoggedInUser, router, setLoading, setUser)
                             actions.resetForm();
                         }}>
                         {({ values, handleChange, handleSubmit }) => (
@@ -102,14 +100,14 @@ const LoginPage: React.FC = () => {
                                 </div>
                                 {
                                     loading ? <Button disabled className="gap-2">
-                                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
+                                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                                         Please wait
                                     </Button> :
-                                    <Button type="submit" onClick={()=>handleSubmit} className="gap-2">
-                                <BiSend className="text-base"/>
-                                <span>Log In</span>
-                            </Button>
-                        }
+                                        <Button type="submit" onClick={() => handleSubmit()} className="gap-2">
+                                            <BiSend className="text-base" />
+                                            <span>Log In</span>
+                                        </Button>
+                                }
                             </Form>
                         )}
                     </Formik>
@@ -134,11 +132,12 @@ const LoginPage: React.FC = () => {
     );
 };
 
-const login = async (values: LoginValuesType, LoggedInUser: LoggedInUserType | undefined, router: any, setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
+const login = async (values: LoginValuesType, LoggedInUser: LoggedInUserType | undefined, router: any, setLoading: React.Dispatch<React.SetStateAction<boolean>>, setUser: React.Dispatch<React.SetStateAction<UserType | null>> | undefined) => {
     setLoading(true)
     try {
         const response = await axios.post(`${process.env.BASE_API_URL}/auth/users/jwt/create/`, values);
         await LoggedInUser?.(response.data.access, response.data.refresh);
+        await FetchUserData(response.data.access, setUser)
         router.push('/');
         toast.success('You are logged in.');
     } catch (error) {

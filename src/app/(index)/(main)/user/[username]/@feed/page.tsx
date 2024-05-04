@@ -4,10 +4,10 @@ import { AccessToken, AuthContext, AuthContextType } from '@/context/AuthContext
 import axios from "axios";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { FeedContext, FeedContextType, FeedType } from '@/context/FeedContext';
-import Loading from "@/components/Loading";
 import PostCard from "@/app/(index)/(main)/user/[username]/@feed/components/client/PostCard";
+import Loading from "@/app/(index)/(main)/user/[username]/@feed/components/server/Loading";
 
-interface PaginationType {
+export interface PaginationType {
     count: number
     nextUrl: string | null
 }
@@ -33,15 +33,22 @@ const Feed = ({ params }: { params: { username: string } }) => {
         handler();
     }, [])
 
-    return loading ? <Loading /> : feed && feed.length === 0 ? <div>No Post There</div> : <InfiniteScroll dataLength={feed?.length ?? 0} next={() => FetchNextFeedPost(accessToken, pagination.nextUrl, setFeed, setPagination)} hasMore={feed ? feed.length !== pagination.count : false} loader={<h4>Loading...</h4>}>
-        <div className='grid grid-cols-1 gap-4 px-60'>
-            {
-                feed && feed.map((item, index) => {
-                    return <PostCard key={index} feed={item} feedIndex={index} />
-                })
-            }
-        </div>
-    </InfiniteScroll>
+    return <div className='grid grid-cols-1 gap-4 px-60'>
+        {
+            loading ? <Loading /> : feed && feed.length === 0 ? <div>No Post There</div> :
+                <InfiniteScroll dataLength={feed?.length ?? 0}
+                    next={() => FetchNextFeedPost(accessToken, pagination.nextUrl, setFeed, setPagination)}
+                    hasMore={feed ? feed.length !== pagination.count : false} loader={<Loading />}>
+                    <div className='grid grid-cols-1 gap-4'>
+                        {
+                            feed && feed.map((item, index) => {
+                                return <PostCard key={index} feed={item} feedIndex={index} setPagination={setPagination} />
+                            })
+                        }
+                    </div>
+                </InfiniteScroll>
+        }
+    </div>
 }
 
 const FetchFeedPost = async (accessToken: AccessToken | undefined, username: string, setFeed: ((value: (((prevState: Array<FeedType>) => Array<FeedType>) | Array<FeedType>)) => void) | undefined, setLoading: React.Dispatch<React.SetStateAction<boolean>>, setPagination: React.Dispatch<React.SetStateAction<PaginationType>>) => {

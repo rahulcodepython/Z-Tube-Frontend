@@ -6,7 +6,7 @@ import CreateProduct from "@/app/(index)/(main)/user/[username]/@ecom/components
 import ListProducts from "@/app/(index)/(main)/user/[username]/@ecom/components/server/ListProducts";
 import OrderHistory from "@/app/(index)/(main)/user/[username]/@ecom/components/client/OrderHistory";
 
-const EComLayout = ({ params, children }: {params: {username: string}, children: React.ReactNode}) => {
+const EComLayout = ({ params, children }: { params: { username: string }, children: React.ReactNode }) => {
     const [defaultTab, setDefaultTab] = React.useState<string>('dashboard')
     const [loading, setLoading] = React.useState<boolean>(true)
 

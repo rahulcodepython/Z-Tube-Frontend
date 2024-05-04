@@ -84,7 +84,6 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
     };
 
     const LogoutUser: LogoutUserType = async () => {
-        // @ts-ignore
         await UnAuthenticateUser();
         sessionStorage.removeItem('access');
         localStorage.removeItem('refresh');

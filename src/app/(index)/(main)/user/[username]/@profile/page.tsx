@@ -1,5 +1,5 @@
 "use client"
-import { AccessToken, AuthContext, AuthContextType, ProfileType } from '@/context/AuthContext'
+import { AccessToken, AuthContext, AuthContextType, ProfileType, UserType } from '@/context/AuthContext'
 import React from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -20,6 +20,8 @@ const Profile = ({ params }: { params: { username: string } }) => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
 
     const accessToken = authContext?.accessToken
+    const user = authContext?.user
+    const profile = authContext?.profile
     const setProfile: React.Dispatch<React.SetStateAction<ProfileType | null>> | undefined = authContext?.setProfile
 
     const [loading, setLoading] = React.useState<boolean>(true)
@@ -28,7 +30,8 @@ const Profile = ({ params }: { params: { username: string } }) => {
 
     React.useEffect(() => {
         const handler = async () => {
-            await FetchProfileData(params, accessToken, setProfile, setError, setErrorMsg, setLoading);
+            profile && profile.username === params.username ? setLoading(false) : null
+            await FetchProfileData(params, accessToken, setProfile, setError, setErrorMsg, setLoading, user);
         }
         handler();
     }, [])
@@ -105,7 +108,7 @@ const ProfileCard = ({ params, error, errorMsg }: { params: { username: string }
 
             <div className='absolute bottom-5 right-4 flex items-center justify-end gap-4'>
                 {
-                    profile?.self ? <EditProfile username={params.username} /> :
+                    profile?.self ? <EditProfile /> :
                         profile?.isFriend ?
                             <Button className='gap-[0.5rem]'
                                 onClick={async () => await DisconnectPeople(accessToken, params.username, setProfile)}>
@@ -142,14 +145,20 @@ const ProfileCard = ({ params, error, errorMsg }: { params: { username: string }
     </Card>
 }
 
-const FetchProfileData = async (params: {
-    username: string
-}, accessToken: AccessToken | undefined, setProfile: React.Dispatch<React.SetStateAction<ProfileType | null>> | undefined, setError: React.Dispatch<React.SetStateAction<boolean>>, setErrorMsg: React.Dispatch<React.SetStateAction<string>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
+const FetchProfileData = async (
+    params: { username: string },
+    accessToken: AccessToken | undefined,
+    setProfile: React.Dispatch<React.SetStateAction<ProfileType | null>> | undefined,
+    setError: React.Dispatch<React.SetStateAction<boolean>>,
+    setErrorMsg: React.Dispatch<React.SetStateAction<string>>,
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    user: UserType | null | undefined
+) => {
     const options = {
         headers: {
             Authorization: `JWT ${accessToken}`
         },
-        url: `${process.env.BASE_API_URL}/auth/profile/${params.username}/`,
+        url: `${process.env.BASE_API_URL}/auth/users/${!user || user.username === params.username ? `me` : `user/${params.username}`}/`,
         method: 'GET',
     }
 

@@ -3,8 +3,8 @@ import React from "react";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button";
-import {FaHeart} from "react-icons/fa";
-import {MdOutlineShoppingCart} from "react-icons/md"
+import { FaHeart } from "react-icons/fa";
+import { MdOutlineShoppingCart } from "react-icons/md"
 import { Toggle } from "@/components/ui/toggle";
 import {
     Breadcrumb,
@@ -14,7 +14,7 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import {StarFill, StarBlank} from "@/app/(index)/(main)/ecom/components/server/Starts";
+import { StarFill, StarBlank } from "@/app/(index)/(main)/ecom/components/server/Starts";
 import { Link } from "next-view-transitions";
 import {
     Dialog,
@@ -28,7 +28,7 @@ import { Textarea } from "@/components/ui/textarea";
 import QuantityButton from "@/app/(index)/(main)/ecom/components/client/QuantityButton";
 
 
-const Product = ({ params }: {params: {category: string, product: string}}) => {
+const Product = ({ params }: { params: { category: string, product: string } }) => {
     return <section>
         <div className="mx-24 flex items-center justify-between">
             <Breadcrumb>
@@ -233,7 +233,7 @@ const WishlistButton = () => {
     const [isHeart, setIsHeart] = React.useState<boolean>(false)
 
     return <Toggle onPressedChange={() => setIsHeart(!isHeart)}
-                   className={'p-0 pt-1 rounded-full w-12 h-12 items-center justify-center'}>
+        className={'p-0 pt-1 rounded-full w-12 h-12 items-center justify-center'}>
         <FaHeart className={`${isHeart && `text-red-600`} w-12 text-xl`} />
     </Toggle>
 }

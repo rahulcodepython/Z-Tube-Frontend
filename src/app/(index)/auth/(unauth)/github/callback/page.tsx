@@ -4,10 +4,12 @@ import axios from 'axios';
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { AuthContext, AuthContextType } from "@/context/AuthContext";
+import {FetchUserData} from "@/utils";
 
 const GithubAuthCallback = () => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext);
     const LoggedInUser = authContext?.LoggedInUser
+    const setUser = authContext?.setUser;
 
     const searchParams = useSearchParams()
     const router = useRouter();
@@ -20,6 +22,7 @@ const GithubAuthCallback = () => {
                 try {
                     const response = await axios.get(`${process.env.BASE_API_URL}/github/authenticate/?code=${code}`)
                     await LoggedInUser?.(response.data.access, response.data.refresh);
+                    await FetchUserData(response.data.access, setUser);
                     return router.push('/');
                 } catch (error) {
                     return router.push('/auth/login');

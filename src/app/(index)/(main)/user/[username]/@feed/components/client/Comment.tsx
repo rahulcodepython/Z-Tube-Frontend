@@ -249,7 +249,7 @@ const CommentForm = ({ setComments, feed }: { feed: FeedType, setComments: React
                             <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                             Please wait
                         </Button> : <Button type="submit" className="gap-2"
-                            onClick={() => handleSubmit}>
+                            onClick={() => handleSubmit()}>
                             <BiSend className='text-base' />
                             <span>Submit</span>
                         </Button>
@@ -306,7 +306,7 @@ const ReplyModal = ({ comment, commentIndex, feed, feedIndex, setComments }: Rep
                                         </Button> :
                                             <Button className="gap-2"
                                                 type={"submit"}
-                                                onClick={() => handleSubmit}>
+                                                onClick={() => handleSubmit()}>
                                                 <BiSend className='text-base' />
                                                 <span>Submit</span>
                                             </Button>
@@ -366,7 +366,7 @@ const EditCommentModal = ({ comment, commentIndex, replyIndex, reply, setComment
                                             </Button> :
                                                 <Button className="gap-2"
                                                     type={"submit"}
-                                                    onClick={() => handleSubmit}>
+                                                    onClick={() => handleSubmit()}>
                                                     <BiSend className='text-base' />
                                                     <span>Submit</span>
                                                 </Button>
@@ -455,7 +455,7 @@ const CreateReply = async (
                 newData[commentIndex].children = [response.data.comment, ...newData[commentIndex].children];
                 return newData;
             })
-            setFeed && setFeed(pre => {
+            setFeed?.(pre => {
                 let newData = [...pre];
                 newData[feedIndex].commentNo = response.data.commentNo;
                 return newData;
@@ -523,7 +523,7 @@ const DeleteComment = async (
                 }
                 return newData;
             })
-            setFeed && setFeed(pre => {
+            setFeed?.(pre => {
                 let newData = [...pre];
                 newData[feedIndex].commentNo = response.data.commentNo;
                 return newData;

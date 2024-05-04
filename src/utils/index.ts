@@ -1,6 +1,8 @@
-import type { AccessToken } from "@/context/AuthContext";
+import {AccessToken, UserType} from "@/context/AuthContext";
 import { ref, uploadBytes, getDownloadURL, StorageReference } from 'firebase/storage'
 import { analytics } from "@/utils/firebase-config";
+import React from "react";
+import axios from "axios";
 
 export const Decrypt = (token: AccessToken, key: String | undefined) => {
     let decryptedToken = '';
@@ -45,3 +47,20 @@ export const DateTimeParser = (timestamp: number) => {
     formattedTime = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()} at ${twelveHourFormat}:${minutes < 10 ? '0' + minutes : minutes} ${ampm}`;
     return formattedTime;
 }
+
+export const FetchUserData = async (token: string, setUser: React.Dispatch<React.SetStateAction<UserType | null>> | undefined): Promise<void> => {
+    const options = {
+        headers: {
+            Authorization: `JWT ${token}`
+        },
+        url: `${process.env.BASE_API_URL}/auth/users/me/user/`,
+        method: 'GET'
+    };
+    try {
+        const response = await axios.request(options);
+        setUser?.(response.data);
+        return;
+    } catch (error) {
+        return;
+    }
+};

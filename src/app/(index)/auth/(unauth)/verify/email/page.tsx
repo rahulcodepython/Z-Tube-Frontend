@@ -63,7 +63,7 @@ const VerifyEmail = () => {
                         <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                         Please wait
                     </Button> :
-                        <Button onClick={() => handleSubmit(code, setCode, setLoading, router, LoggedInUser)}
+                        <Button onClick={() => verifyEmail(code, setCode, setLoading, router, LoggedInUser)}
                             className={'gap-2 w-full'}>
                             <BiSend />
                             Submit
@@ -82,7 +82,7 @@ const handleResendVerficationCode = async () => {
         toast.error('There was an issue. Please try again.');
     }
 }
-const handleSubmit = async (code: string | null, setCode: (value: (((prevState: string) => string) | string)) => void, setLoading: React.Dispatch<React.SetStateAction<boolean>>, router: any, LoggedInUser: LoggedInUserType | undefined): Promise<void> => {
+const verifyEmail = async (code: string | null, setCode: (value: (((prevState: string) => string) | string)) => void, setLoading: React.Dispatch<React.SetStateAction<boolean>>, router: any, LoggedInUser: LoggedInUserType | undefined): Promise<void> => {
     setLoading(true);
     try {
         if (!code) {

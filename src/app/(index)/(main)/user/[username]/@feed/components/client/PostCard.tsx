@@ -28,24 +28,29 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import {AspectRatio} from "@/components/ui/aspect-ratio"
-import {Separator} from "@/components/ui/separator"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
+import { Separator } from "@/components/ui/separator"
 import Image from 'next/image';
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Avatar, AvatarFallback} from "@/components/ui/avatar";
-import {AccessToken, AuthContext, AuthContextType, ProfileType} from '@/context/AuthContext';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { AccessToken, AuthContext, AuthContextType, ProfileType } from '@/context/AuthContext';
 import axios from "axios";
-import {FeedContext, FeedContextType, FeedType} from '@/context/FeedContext'
-import {BsThreeDots} from "react-icons/bs";
-import {IoChatbubbleOutline} from "react-icons/io5";
+import { FeedContext, FeedContextType, FeedType } from '@/context/FeedContext'
+import { BsThreeDots } from "react-icons/bs";
+import { IoChatbubbleOutline } from "react-icons/io5";
 import Data from "@/data/data";
-import {AiOutlineLike} from "react-icons/ai";
-import {MdDoNotDisturb} from "react-icons/md";
-import {RiShareForwardLine} from "react-icons/ri";
+import { AiOutlineLike } from "react-icons/ai";
+import { MdDoNotDisturb } from "react-icons/md";
+import { RiShareForwardLine } from "react-icons/ri";
 import EditFeed from "@/app/(index)/(main)/user/[username]/@feed/components/client/EditFeed";
 import Comment from "@/app/(index)/(main)/user/[username]/@feed/components/client/Comment";
+import { PaginationType } from "@/app/(index)/(main)/user/[username]/@feed/page";
 
-const PostCard = ({feed, feedIndex}: { feed: FeedType, feedIndex: number }) => {
+const PostCard = ({ feed, feedIndex, setPagination }: {
+    feed: FeedType,
+    feedIndex: number,
+    setPagination: React.Dispatch<React.SetStateAction<PaginationType>>
+}) => {
     const [isOpen, setIsOpen] = React.useState<boolean>(false)
 
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
@@ -61,7 +66,7 @@ const PostCard = ({feed, feedIndex}: { feed: FeedType, feedIndex: number }) => {
                     <div className='flex justify-between items-center mx-2'>
                         <div className='flex items-center space-x-4'>
                             <Image src={feed.uploader.image ? feed.uploader.image : '/image/user.png'} width={36}
-                                   height={36} className="h-9 w-9 rounded-full" alt={'default'}/>
+                                height={36} className="h-9 w-9 rounded-full" alt={'default'} />
                             <div className="flex flex-col gap-1">
                                 <div
                                     className='text-sm leading-3'>{feed.uploader.first_name} {feed.uploader.last_name}</div>
@@ -72,7 +77,7 @@ const PostCard = ({feed, feedIndex}: { feed: FeedType, feedIndex: number }) => {
                             <Menubar className="border-none p-0 shadow-none">
                                 <MenubarMenu>
                                     <MenubarTrigger className="p-2 rounded-full">
-                                        <BsThreeDots className='cursor-pointer'/>
+                                        <BsThreeDots className='cursor-pointer' />
                                     </MenubarTrigger>
                                     <MenubarContent>
                                         {
@@ -84,7 +89,7 @@ const PostCard = ({feed, feedIndex}: { feed: FeedType, feedIndex: number }) => {
                                         }
                                         {
                                             feed.self && <MenubarItem className="cursor-pointer"
-                                                                      onClick={() => DeleteFeed(accessToken, feed, feedIndex, setFeed, setProfile)}>
+                                                onClick={() => DeleteFeed(accessToken, feed, feedIndex, setFeed, setProfile, setPagination)}>
                                                 Delete Post
                                             </MenubarItem>
                                         }
@@ -97,7 +102,7 @@ const PostCard = ({feed, feedIndex}: { feed: FeedType, feedIndex: number }) => {
                                         <p>Edit Feed</p>
                                     </DialogTitle>
                                     <DialogDescription>
-                                        <EditFeed setIsOpen={setIsOpen} feed={feed} feedIndex={feedIndex}/>
+                                        <EditFeed setIsOpen={setIsOpen} feed={feed} feedIndex={feedIndex} />
                                     </DialogDescription>
                                 </DialogHeader>
                             </DialogContent>
@@ -118,26 +123,26 @@ const PostCard = ({feed, feedIndex}: { feed: FeedType, feedIndex: number }) => {
             <CardContent className="p-6 my-3">
                 {
                     feed.media.length > 1 ? <Carousel>
-                            <CarouselContent>
-                                {
-                                    feed.media.map((item, index) => {
-                                        return <CarouselItem key={index}>
-                                            <AspectRatio ratio={16 / 9} className={'flex items-center justify-center'}>
-                                                <Image src={item} width={250} height={250} alt="Image"
-                                                       className='object-cover'/>
-                                            </AspectRatio>
-                                        </CarouselItem>
-                                    })
-                                }
-                            </CarouselContent>
-                            <CarouselPrevious/>
-                            <CarouselNext/>
-                        </Carousel>
+                        <CarouselContent>
+                            {
+                                feed.media.map((item, index) => {
+                                    return <CarouselItem key={index}>
+                                        <AspectRatio ratio={16 / 9} className={'flex items-center justify-center'}>
+                                            <Image src={item} width={250} height={250} alt="Image"
+                                                className='object-cover' />
+                                        </AspectRatio>
+                                    </CarouselItem>
+                                })
+                            }
+                        </CarouselContent>
+                        <CarouselPrevious />
+                        <CarouselNext />
+                    </Carousel>
                         : <AspectRatio ratio={16 / 9} className={'flex items-center justify-center'}>
                             {
                                 feed.media.map((item, index) => {
                                     return <Image src={item} width={250} height={250} alt="Image" className='object-cover'
-                                                  key={index}/>
+                                        key={index} />
                                 })
                             }
                         </AspectRatio>
@@ -145,7 +150,7 @@ const PostCard = ({feed, feedIndex}: { feed: FeedType, feedIndex: number }) => {
             </CardContent>
             <CardFooter className="px-2 py-1 flex flex-col">
                 <div className='flex items-center justify-between w-full pb-1'>
-                    <AllReactions like={feed.likeNo}/>
+                    <AllReactions like={feed.likeNo} />
                     <div className='flex items-center justify-center gap-2 text-xs'>
                         <span>
                             {feed.viewsNo} Views
@@ -160,39 +165,39 @@ const PostCard = ({feed, feedIndex}: { feed: FeedType, feedIndex: number }) => {
                         </span>
                     </div>
                 </div>
-                <Separator className="mt-1"/>
+                <Separator className="mt-1" />
                 <div className='grid grid-cols-3 gap-2 w-full pt-1'>
-                    <Reaction feed={feed} feedIndex={feedIndex}/>
+                    <Reaction feed={feed} feedIndex={feedIndex} />
                     {
                         feed.allowComments ? <Dialog>
                             <DialogTrigger>
                                 <div className='flex justify-center items-center gap-1 text-xs'>
-                                    <IoChatbubbleOutline className='text-lg'/>
+                                    <IoChatbubbleOutline className='text-lg' />
                                     <span>Comments</span>
                                 </div>
                             </DialogTrigger>
                             <DialogContent className="max-w-5xl w-[600px]">
                                 <DialogHeader>
                                     <DialogTitle>{feed.commentNo} Comment</DialogTitle>
-                                    <Comment feed={feed} feedIndex={feedIndex}/>
+                                    <Comment feed={feed} feedIndex={feedIndex} />
                                 </DialogHeader>
                             </DialogContent>
                         </Dialog> : <div></div>
                     }
-                    <Share/>
+                    <Share />
                 </div>
             </CardFooter>
         </Card>
     )
 }
 
-const AllReactions = ({like}: { like: number }) => {
+const AllReactions = ({ like }: { like: number }) => {
     return (
         <Dialog>
             <DialogTrigger>
                 <div className='flex items-center justify-center gap-1'>
-                    <Image src={'/svg/like.svg'} width={15} height={15} alt={''}/>
-                    <Image src={'/svg/heart.svg'} width={15} height={15} className='-ml-2' alt={''}/>
+                    <Image src={'/svg/like.svg'} width={15} height={15} alt={''} />
+                    <Image src={'/svg/heart.svg'} width={15} height={15} className='-ml-2' alt={''} />
                     <span className='text-sm'>{like}</span>
                 </div>
             </DialogTrigger>
@@ -204,8 +209,8 @@ const AllReactions = ({like}: { like: number }) => {
                             {
                                 Data.emoji.map((item, index) => {
                                     return <TabsTrigger className='flex items-center gap-1' key={index}
-                                                        value={`${item.id}`}>
-                                        <Image src={item.icon} width={15} height={15} alt={''}/>
+                                        value={`${item.id}`}>
+                                        <Image src={item.icon} width={15} height={15} alt={''} />
                                         <span>{item.name}</span>
                                     </TabsTrigger>
                                 })
@@ -217,12 +222,12 @@ const AllReactions = ({like}: { like: number }) => {
                                     <div className='flex items-center gap-2'>
                                         <Avatar className="w-8 h-8">
                                             <Image src="/image/user.png" alt="@shadcn" width={32} height={32}
-                                                   className='w-8 h-8'/>
+                                                className='w-8 h-8' />
                                             <AvatarFallback>CN</AvatarFallback>
                                         </Avatar>
                                         <span className='cursor-pointer'>Rahul Das</span>
                                     </div>
-                                    <Image src={Data.emoji[0].icon} width={15} height={15} alt={''}/>
+                                    <Image src={Data.emoji[0].icon} width={15} height={15} alt={''} />
                                 </li>
                             </ul>
                         </TabsContent>
@@ -241,15 +246,13 @@ const AllReactions = ({like}: { like: number }) => {
     )
 }
 
-const Reaction = ({feed, feedIndex}: { feed: FeedType, feedIndex: number }) => {
+const Reaction = ({ feed, feedIndex }: { feed: FeedType, feedIndex: number }) => {
     const [reaction, setReaction] = React.useState<number | null>(feed.user_reaction && Data.emoji.find(item => item.name.toLowerCase() === feed?.user_reaction?.toLowerCase())?.id || null)
 
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
-    // const { accessToken } = React.useContext(AuthContext)
     const accessToken = authContext?.accessToken
     const feedContext = React.useContext<FeedContextType | undefined>(FeedContext)
     const setFeed = feedContext?.setFeed
-    // const { setFeed } = React.useContext(FeedContext)
 
     return (
         <Menubar className="justify-center border-none p-0">
@@ -258,10 +261,10 @@ const Reaction = ({feed, feedIndex}: { feed: FeedType, feedIndex: number }) => {
                     className={`flex justify-center items-center cursor-pointer focus:bg-transparent data-[state=open]:bg-transparent`}>
                     {
                         reaction === null ? <div className='flex items-center gap-1'>
-                            <AiOutlineLike className='text-lg'/>
+                            <AiOutlineLike className='text-lg' />
                             <span className='text-xs'>Like</span>
                         </div> : <div className='flex justify-center items-center gap-1 cursor-pointer'>
-                            <Image src={Data.emoji[reaction]?.icon} width={15} height={15} alt={''}/>
+                            <Image src={Data.emoji[reaction]?.icon} width={15} height={15} alt={''} />
                             <span className='text-xs'>{Data.emoji[reaction]?.name}</span>
                         </div>
                     }
@@ -270,11 +273,11 @@ const Reaction = ({feed, feedIndex}: { feed: FeedType, feedIndex: number }) => {
                     {
                         Data.emoji.map((item, index) => {
                             return <MenubarItem key={index}
-                                                className='flex items-center cursor-pointer p-0 hover:-translate-y-2 transition-all duration-100 ease-in-out'
-                                                onClick={() => {
-                                                    ReactOnPost(accessToken, feed, feedIndex, item.name, setReaction, index, setFeed)
-                                                }}>
-                                <Image src={item.icon} width={30} height={30} alt={''}/>
+                                className='flex items-center cursor-pointer p-0 hover:-translate-y-2 transition-all duration-100 ease-in-out'
+                                onClick={() => {
+                                    ReactOnPost(accessToken, feed, feedIndex, item.name, setReaction, index, setFeed)
+                                }}>
+                                <Image src={item.icon} width={30} height={30} alt={''} />
                             </MenubarItem>
                         })
                     }
@@ -283,7 +286,7 @@ const Reaction = ({feed, feedIndex}: { feed: FeedType, feedIndex: number }) => {
                         onClick={() => {
                             reaction && RemoveReactOnPost(accessToken, feed, feedIndex, Data.emoji[reaction].name, setReaction, setFeed)
                         }}>
-                        <MdDoNotDisturb className='text-3xl'/>
+                        <MdDoNotDisturb className='text-3xl' />
                     </MenubarItem>
                 </MenubarContent>
             </MenubarMenu>
@@ -310,12 +313,12 @@ const ReactOnPost = async (
 
     await axios.request(options)
         .then(response => {
-            setFeed && setFeed(pre => {
+            setFeed?.(pre => {
                 if (pre) {
-                    let newData: Array<FeedType> | [] = [...pre];
+                    let newData = [...pre];
                     newData[feedIndex].likeNo = response.data.likeNo;
                     return newData;
-                }else{
+                } else {
                     return []
                 }
             })
@@ -341,10 +344,14 @@ const RemoveReactOnPost = async (
 
     await axios.request(options)
         .then(response => {
-            setFeed && setFeed(pre => {
-                let newData = [...pre];
-                newData[feedIndex] = response.data.likeNo;
-                return newData;
+            setFeed?.(pre => {
+                if (pre) {
+                    let newData = [...pre];
+                    newData[feedIndex].likeNo = response.data.likeNo;
+                    return newData;
+                } else {
+                    return []
+                }
             })
             setReaction(() => null)
         })
@@ -355,7 +362,8 @@ const DeleteFeed = async (
     feed: FeedType | undefined,
     feedIndex: number,
     setFeed: ((value: (((prevState: Array<FeedType>) => Array<FeedType>) | Array<FeedType>)) => void) | undefined,
-    setProfile: ((value: (((prevState: (ProfileType | null)) => (ProfileType | null)) | ProfileType | null)) => void) | undefined
+    setProfile: ((value: (((prevState: (ProfileType | null)) => (ProfileType | null)) | ProfileType | null)) => void) | undefined,
+    setPagination: React.Dispatch<React.SetStateAction<PaginationType>>
 ) => {
     const options = {
         method: 'DELETE',
@@ -366,10 +374,16 @@ const DeleteFeed = async (
     };
     await axios.request(options)
         .then(response => {
-            setFeed && setFeed(pre => {
+            setFeed?.(pre => {
                 return pre.filter((item, index) => index !== feedIndex)
             })
-            setProfile && setProfile(pre => {
+            setPagination(pre => {
+                return {
+                    ...pre,
+                    count: response.data.posts
+                }
+            })
+            setProfile?.(pre => {
                 if (pre) {
                     return {
                         ...pre,
@@ -387,7 +401,7 @@ const Share = () => {
         <Dialog>
             <DialogTrigger>
                 <div className='flex justify-center items-center gap-1'>
-                    <RiShareForwardLine className='text-lg'/>
+                    <RiShareForwardLine className='text-lg' />
                     <span className='text-xs'>Share</span>
                 </div>
             </DialogTrigger>

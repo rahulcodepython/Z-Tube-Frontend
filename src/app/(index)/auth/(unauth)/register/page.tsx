@@ -31,10 +31,6 @@ const RegisterPage: React.FC = () => {
     const [loading, setLoading] = React.useState<boolean>(false);
     const router = useRouter();
 
-    const handleSubmit = async (values: RegistrationDataType) => {
-        await Register(values, router, setLoading);
-    };
-
     return (
         <div className='flex items-center justify-center w-screen h-screen'>
             <Card className="max-w-xl w-full">
@@ -53,8 +49,8 @@ const RegisterPage: React.FC = () => {
                             email: '',
                             password: '',
                         }}
-                        onSubmit={(values, actions) => {
-                            handleSubmit(values)
+                        onSubmit={async (values, actions) => {
+                            await register(values, router, setLoading);
                             actions.resetForm();
                         }}
                     >
@@ -101,7 +97,7 @@ const RegisterPage: React.FC = () => {
                                         <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                                         Please wait
                                     </Button> :
-                                        <Button type="submit" onClick={() => handleSubmit} className={'gap-2'}>
+                                        <Button type="submit" onClick={() => handleSubmit()} className={'gap-2'}>
                                             <BiSend className='text-base' />
                                             Register
                                         </Button>
@@ -132,7 +128,7 @@ const RegisterPage: React.FC = () => {
     );
 }
 
-const Register = async (values: RegistrationDataType, router: any, setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
+const register = async (values: RegistrationDataType, router: any, setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
     setLoading(true);
     try {
         await axios.post(`${process.env.BASE_API_URL}/auth/users/me/`, values);
