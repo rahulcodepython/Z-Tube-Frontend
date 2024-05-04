@@ -11,7 +11,7 @@ interface Props {
     icon: React.ReactNode
 }
 
-const CustomTooltip = ({icon, text}: Props) => {
+const CustomTooltip = ({ icon, text }: Props) => {
     return (
         <TooltipProvider>
             <Tooltip>

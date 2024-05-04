@@ -1,13 +1,13 @@
 "use client"
 import React from "react";
 import { Input } from "@/components/ui/input";
-import {AiOutlineClose} from "react-icons/ai";
+import { AiOutlineClose } from "react-icons/ai";
 
 interface Props {
     tags: Array<string> | undefined
     max: number
-    push: (tagsInput: string)=>void
-    remove: (index: number)=>void
+    push: (tagsInput: string) => void
+    remove: (index: number) => void
 }
 
 const TagsInput = ({ tags, max, remove, push }: Props) => {
@@ -15,12 +15,12 @@ const TagsInput = ({ tags, max, remove, push }: Props) => {
 
     return <div>
         <Input type="text" placeholder="Enter a tags"
-               disabled={tags && tags.length >= max} value={tagsInput}
-               onChange={e => setTagsInput(() => e.target.value)}
-               onKeyUp={e => {
-                   e.key === 'Enter' ? push(tagsInput) : null
-                   e.key === 'Enter' ? setTagsInput('') : null
-               }} />
+            disabled={tags && tags.length >= max} value={tagsInput}
+            onChange={e => setTagsInput(() => e.target.value)}
+            onKeyUp={e => {
+                e.key === 'Enter' ? push(tagsInput) : null
+                e.key === 'Enter' ? setTagsInput('') : null
+            }} />
         {
             tags && tags.length > 0 ? <div className='flex items-center gap-2 my-2'>
                 {

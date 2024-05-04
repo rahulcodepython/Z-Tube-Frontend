@@ -1,6 +1,6 @@
-import type {AccessToken} from "@/context/AuthContext";
-import {ref, uploadBytes, getDownloadURL, StorageReference} from 'firebase/storage'
-import {analytics} from "@/utils/firebase-config";
+import type { AccessToken } from "@/context/AuthContext";
+import { ref, uploadBytes, getDownloadURL, StorageReference } from 'firebase/storage'
+import { analytics } from "@/utils/firebase-config";
 
 export const Decrypt = (token: AccessToken, key: String | undefined) => {
     let decryptedToken = '';

@@ -1,5 +1,5 @@
 "use client";
-import {Encrypt} from "@/utils";
+import { Encrypt } from "@/utils";
 import React from "react";
 
 export type AccessToken = string | null;
@@ -92,11 +92,11 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
     };
 
     return (
-        <AuthContext.Provider value = {{
-        isAuthenticated, accessToken, refreshToken, user, profile, setUser, setProfile, AuthenticateUser, UnAuthenticateUser, LoggedInUser, LogoutUser,
-    }}>
-    {children}
-    </AuthContext.Provider>
-)
-    ;
+        <AuthContext.Provider value={{
+            isAuthenticated, accessToken, refreshToken, user, profile, setUser, setProfile, AuthenticateUser, UnAuthenticateUser, LoggedInUser, LogoutUser,
+        }}>
+            {children}
+        </AuthContext.Provider>
+    )
+        ;
 };

@@ -13,12 +13,12 @@ import {
     InputOTPSeparator,
     InputOTPSlot,
 } from "@/components/ui/input-otp"
-import {Button} from "@/components/ui/button";
-import {ReloadIcon} from "@radix-ui/react-icons";
-import {BiSend} from "react-icons/bi";
-import {toast} from "react-toastify";
-import {useRouter} from "next/navigation";
-import {AuthContext, AuthContextType, LoggedInUserType} from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { BiSend } from "react-icons/bi";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { AuthContext, AuthContextType, LoggedInUserType } from "@/context/AuthContext";
 
 const VerifyEmail = () => {
     const [code, setCode] = React.useState<string>("");
@@ -41,31 +41,31 @@ const VerifyEmail = () => {
             <CardContent className={'flex flex-col gap-8 items-center justify-center mt-8'}>
                 <InputOTP maxLength={8} value={code} onChange={e => setCode(e)}>
                     <InputOTPGroup>
-                        <InputOTPSlot index={0}/>
-                        <InputOTPSlot index={1}/>
-                        <InputOTPSlot index={2}/>
-                        <InputOTPSlot index={3}/>
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                        <InputOTPSlot index={2} />
+                        <InputOTPSlot index={3} />
                     </InputOTPGroup>
-                    <InputOTPSeparator/>
+                    <InputOTPSeparator />
                     <InputOTPGroup>
-                        <InputOTPSlot index={4}/>
-                        <InputOTPSlot index={5}/>
-                        <InputOTPSlot index={6}/>
-                        <InputOTPSlot index={7}/>
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
+                        <InputOTPSlot index={6} />
+                        <InputOTPSlot index={7} />
                     </InputOTPGroup>
                 </InputOTP>
                 <p className={'text-end w-full text-sm -mt-2 cursor-pointer hover:underline'}
-                   onClick={() => handleResendVerficationCode()}>
+                    onClick={() => handleResendVerficationCode()}>
                     Resend Verfication Code
                 </p>
                 {
                     loading ? <Button disabled className="gap-2 w-full">
-                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
-                            Please wait
-                        </Button> :
+                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                        Please wait
+                    </Button> :
                         <Button onClick={() => handleSubmit(code, setCode, setLoading, router, LoggedInUser)}
-                                className={'gap-2 w-full'}>
-                            <BiSend/>
+                            className={'gap-2 w-full'}>
+                            <BiSend />
                             Submit
                         </Button>
                 }
@@ -73,21 +73,14 @@ const VerifyEmail = () => {
         </Card>
     </div>
 }
-const handleResendVerficationCode = () => {
-    const HandleTostify = new Promise<void>((resolve, rejected) => {
-        axios.post(`${process.env.BASE_API_URL}/auth/users/resend_activation/`, {
+const handleResendVerficationCode = async () => {
+    try {
+        await axios.post(`${process.env.BASE_API_URL}/auth/users/resend_activation/`, {
             email: localStorage.getItem("email") ?? null,
-        }).then(() => resolve()).catch(() => rejected())
-    });
-
-    toast.promise(
-        HandleTostify,
-        {
-            pending: 'Your request is on process.',
-            success: 'You are now updated.',
-            error: 'There is some issue, Try again.'
-        }
-    )
+        })
+    } catch (error) {
+        toast.error('There was an issue. Please try again.');
+    }
 }
 const handleSubmit = async (code: string | null, setCode: (value: (((prevState: string) => string) | string)) => void, setLoading: React.Dispatch<React.SetStateAction<boolean>>, router: any, LoggedInUser: LoggedInUserType | undefined): Promise<void> => {
     setLoading(true);

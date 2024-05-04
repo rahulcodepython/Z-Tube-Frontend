@@ -38,7 +38,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import {FiFilter} from "react-icons/fi";
+import { FiFilter } from "react-icons/fi";
 
 const FilterSidebar = () => {
     return <div className="py-4 px-8 flex items-center justify-between gap-4">
@@ -94,12 +94,12 @@ const FilterItem = () => {
     const [open, setOpen] = React.useState<boolean>(false)
     const [value, setValue] = React.useState<string | null>(null)
 
-    interface FrameworksType{
+    interface FrameworksType {
         value: string
         label: string
     }
 
-    const frameworks = [
+    const frameworks: Array<FrameworksType> = [
         {
             value: "next.js",
             label: "Next.js",
@@ -120,13 +120,13 @@ const FilterItem = () => {
             value: "astro",
             label: "Astro",
         },
-    ] as FrameworksType[]
+    ]
 
     return (
         <Popover open={open} onOpenChange={() => setOpen(() => !open)}>
             <PopoverTrigger asChild>
                 <Button variant="outline" role="combobox" aria-expanded={open}
-                        className="w-full justify-between">
+                    className="w-full justify-between">
                     {
                         value || "Select Your Filter"
                     }
@@ -168,7 +168,7 @@ const Ratings = () => {
                 console.log(e)
             }} />
             <label htmlFor="terms"
-                   className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 4 & Above
             </label>
         </div>
@@ -177,7 +177,7 @@ const Ratings = () => {
                 console.log(e)
             }} />
             <label htmlFor="terms"
-                   className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 3 & Above
             </label>
         </div>
@@ -186,7 +186,7 @@ const Ratings = () => {
                 console.log(e)
             }} />
             <label htmlFor="terms"
-                   className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 2 & Above
             </label>
         </div>
@@ -195,7 +195,7 @@ const Ratings = () => {
                 console.log(e)
             }} />
             <label htmlFor="terms"
-                   className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                className="text-sm opacity-50 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 1 & Above
             </label>
         </div>
@@ -210,7 +210,7 @@ const PricingMeter = () => {
             <Tooltip>
                 <TooltipTrigger className={'w-full'}>
                     <Slider defaultValue={[value]} min={0} max={100} step={1} onValueChange={e => setValue(e[0])}
-                            onValueCommit={e => console.log(e, "After Commit")} />
+                        onValueCommit={e => console.log(e, "After Commit")} />
                 </TooltipTrigger>
                 <TooltipContent>
                     <p>

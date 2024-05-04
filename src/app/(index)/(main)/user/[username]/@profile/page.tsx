@@ -1,22 +1,22 @@
 "use client"
-import {AccessToken, AuthContext, AuthContextType, ProfileType} from '@/context/AuthContext'
+import { AccessToken, AuthContext, AuthContextType, ProfileType } from '@/context/AuthContext'
 import React from 'react'
 import Image from 'next/image'
-import {Button} from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import {
     Card,
     CardContent,
     CardHeader
 } from "@/components/ui/card"
 import axios from "axios";
-import {toast} from 'react-toastify'
-import {MdAddLink, MdVerified} from "react-icons/md";
-import {BsLink} from "react-icons/bs";
-import {BiSolidLock, BiSolidLockOpen} from "react-icons/bi";
+import { toast } from 'react-toastify'
+import { MdAddLink, MdVerified } from "react-icons/md";
+import { BsLink } from "react-icons/bs";
+import { BiSolidLock, BiSolidLockOpen } from "react-icons/bi";
 import EditProfile from "@/app/(index)/(main)/user/[username]/@profile/components/client/EditProfile";
 import Loading from "@/app/(index)/(main)/user/[username]/@profile/components/server/Loading";
 
-const Profile = ({params}: { params: { username: string } }) => {
+const Profile = ({ params }: { params: { username: string } }) => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
 
     const accessToken = authContext?.accessToken
@@ -34,11 +34,11 @@ const Profile = ({params}: { params: { username: string } }) => {
     }, [])
 
     return (
-        loading ? <Loading/> : <ProfileCard params={params} error={error} errorMsg={errorMsg}/>
+        loading ? <Loading /> : <ProfileCard params={params} error={error} errorMsg={errorMsg} />
     )
 }
 
-const ProfileCard = ({params, error, errorMsg}: { params: { username: string }, error: boolean, errorMsg: string }) => {
+const ProfileCard = ({ params, error, errorMsg }: { params: { username: string }, error: boolean, errorMsg: string }) => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
 
     const accessToken = authContext?.accessToken
@@ -50,12 +50,12 @@ const ProfileCard = ({params, error, errorMsg}: { params: { username: string }, 
     </div> : <Card className="h-[457.66px] rounded-lg shadow-none divide-y">
         <CardHeader className='h-[297.66px] p-0 rounded-t-lg'>
             <Image src={profile?.banner ? profile?.banner : '/image/profile-banner.png'} width={1334} height={297.66}
-                   priority={true} alt='...' className='rounded-t-lg' placeholder='blur'
-                   blurDataURL="/image/profile-banner.png" style={{width: "100%", height: "297.66px"}}/>
+                priority={true} alt='...' className='rounded-t-lg' placeholder='blur'
+                blurDataURL="/image/profile-banner.png" style={{ width: "100%", height: "297.66px" }} />
         </CardHeader>
         <CardContent className="h-[160px] relative px-4 py-5 flex items-center justify-start gap-8">
             <Image src={profile?.image ? profile?.image : '/image/user.png'} width={120} height={120}
-                   className='rounded-lg w-[120px] h-[120px] overflow-hidden' alt='...'/>
+                className='rounded-lg w-[120px] h-[120px] overflow-hidden' alt='...' />
             <div className='space-y-6'>
                 <div className='space-y-1'>
                     <div className='space-y-1'>
@@ -65,7 +65,7 @@ const ProfileCard = ({params, error, errorMsg}: { params: { username: string }, 
                             </span>
                             {
                                 profile?.isVerified && <sup className='ml-1'>
-                                    <MdVerified className='inline-block text-sm'/>
+                                    <MdVerified className='inline-block text-sm' />
                                 </sup>
                             }
                         </div>
@@ -105,32 +105,32 @@ const ProfileCard = ({params, error, errorMsg}: { params: { username: string }, 
 
             <div className='absolute bottom-5 right-4 flex items-center justify-end gap-4'>
                 {
-                    profile?.self ? <EditProfile username={params.username}/> :
-                    profile?.isFriend ?
-                        <Button className='gap-[0.5rem]'
+                    profile?.self ? <EditProfile username={params.username} /> :
+                        profile?.isFriend ?
+                            <Button className='gap-[0.5rem]'
                                 onClick={async () => await DisconnectPeople(accessToken, params.username, setProfile)}>
-                            <BsLink/>
-                            <span>
+                                <BsLink />
+                                <span>
                                     Disconnect
                                 </span>
-                        </Button> : <Button className='gap-[0.5rem]'
-                                            onClick={async () => await ConnectPeople(accessToken, params.username, setProfile)}>
-                            <MdAddLink/>
-                            <span>
+                            </Button> : <Button className='gap-[0.5rem]'
+                                onClick={async () => await ConnectPeople(accessToken, params.username, setProfile)}>
+                                <MdAddLink />
+                                <span>
                                     Connect
                                 </span>
-                        </Button>
+                            </Button>
                 }
                 {
                     profile?.isLocked ?
                         <Button className={'gap-[0.5rem]'}>
-                            <BiSolidLock/>
+                            <BiSolidLock />
                             <span>
                                 Locked
                             </span>
                         </Button>
                         : <Button className={'gap-[0.5rem]'}>
-                            <BiSolidLockOpen/>
+                            <BiSolidLockOpen />
                             <span>
                                 Unlocked
                             </span>
@@ -154,7 +154,7 @@ const FetchProfileData = async (params: {
     }
 
     await axios.request(options).then(response => {
-        if (setProfile) setProfile(response.data)
+        setProfile?.(response.data)
     }).catch(error => {
         setError(() => true)
         setErrorMsg(() => error.response.data?.msg ?? 'There is some issue')
@@ -171,12 +171,15 @@ const ConnectPeople = async (accessToken: AccessToken | undefined, username: str
     }
 
     await axios.request(options).then(response => {
-        // @ts-ignore
-        setProfile((pre) => {
-            if (pre) return {
-                ...pre,
-                isFriend: true,
-                followers: pre.followers + 1
+        setProfile?.((pre) => {
+            if (pre) {
+                return {
+                    ...pre,
+                    isFriend: true,
+                    followers: pre.followers + 1
+                }
+            } else {
+                return null
             }
         });
         toast.success(response.data.success)
@@ -193,12 +196,15 @@ const DisconnectPeople = async (accessToken: AccessToken | undefined, username: 
     }
 
     await axios.request(options).then(response => {
-        // @ts-ignore
-        setProfile((pre) => {
-            if (pre) return {
-                ...pre,
-                isFriend: false,
-                followers: pre.followers - 1
+        setProfile?.((pre) => {
+            if (pre) {
+                return {
+                    ...pre,
+                    isFriend: false,
+                    followers: pre.followers - 1
+                }
+            } else {
+                return null
             }
         });
         toast.success(response.data.success)

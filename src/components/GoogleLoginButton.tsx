@@ -1,9 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import axios from "axios";
 
-const GoogleLoginButton = ({label}: {label: string}) => {
+const GoogleLoginButton = ({ label }: { label: string }) => {
     return <Button onClick={() => GoogleSignIn()} className="gap-2 w-full" variant="outline">
         <Image className="w-5 h-5" src="/svg/google.svg" loading="lazy" alt="google logo" width={20} height={20} />
         <span>

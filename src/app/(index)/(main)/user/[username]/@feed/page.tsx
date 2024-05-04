@@ -1,18 +1,18 @@
 "use client"
-import React, {useContext} from 'react'
-import {AccessToken, AuthContext, AuthContextType} from '@/context/AuthContext'
+import React, { useContext } from 'react'
+import { AccessToken, AuthContext, AuthContextType } from '@/context/AuthContext'
 import axios from "axios";
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {FeedContext, FeedContextType, FeedType} from '@/context/FeedContext';
+import { FeedContext, FeedContextType, FeedType } from '@/context/FeedContext';
 import Loading from "@/components/Loading";
 import PostCard from "@/app/(index)/(main)/user/[username]/@feed/components/client/PostCard";
 
-interface PaginationType{
+interface PaginationType {
     count: number
     nextUrl: string | null
 }
 
-const Feed = ({ params }: {params: {username: string}}) => {
+const Feed = ({ params }: { params: { username: string } }) => {
     const authContext = useContext<AuthContextType | undefined>(AuthContext)
     const feedContext = useContext<FeedContextType | undefined>(FeedContext)
 
@@ -53,13 +53,13 @@ const FetchFeedPost = async (accessToken: AccessToken | undefined, username: str
 
     await axios.request(options).then(response => {
         if (response.status === 200) {
-            setFeed && setFeed(response.data.results)
+            setFeed?.(response.data.results)
             setPagination({
                 count: response.data.count,
                 nextUrl: response.data.next ?? null,
             })
         } else if (response.status === 204) {
-            setFeed && setFeed([])
+            setFeed?.([])
         }
     }).finally(() => setLoading(false))
 }
@@ -74,13 +74,13 @@ const FetchNextFeedPost = async (accessToken: AccessToken | undefined, url: stri
     };
 
     await axios.request(options).then(response => {
-        setFeed && setFeed((pre) => {
+        setFeed?.((pre) => {
             if (pre) {
                 return [
                     ...pre,
                     ...response.data.results
                 ]
-            }else{
+            } else {
                 return []
             }
         })

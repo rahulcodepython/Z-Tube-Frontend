@@ -5,7 +5,7 @@ import { BsTwitter, BsDiscord, BsFillBookmarkFill, BsSteam, BsMusicNoteBeamed, B
 import { AiFillYoutube, AiFillFacebook, AiFillInstagram, AiFillHome, AiFillStar, AiOutlineRadarChart, AiOutlineStop } from 'react-icons/ai'
 import { PiHandbagSimpleFill, PiSignIn, PiShareFatLight, PiTelevisionBold } from 'react-icons/pi'
 import { BiSolidBookContent, BiSolidInbox, BiBell, BiSolidHot, BiWorld, BiCodeAlt, BiLogOut, BiTimeFive } from 'react-icons/bi'
-import { MdLibraryAdd, MdSubscriptions, MdBusiness, MdSportsVolleyball, MdFastfood, MdLocalMovies, MdPlace, MdScience, MdPrivacyTip, MdPlaylistAdd, MdOutlinedFlag, MdOutlineShoppingCart} from 'react-icons/md'
+import { MdLibraryAdd, MdSubscriptions, MdBusiness, MdSportsVolleyball, MdFastfood, MdLocalMovies, MdPlace, MdScience, MdPrivacyTip, MdPlaylistAdd, MdOutlinedFlag, MdOutlineShoppingCart } from 'react-icons/md'
 import { LuHistory } from 'react-icons/lu'
 import { VscLaw } from 'react-icons/vsc'
 import { GiAmpleDress, GiWhiteBook, GiLaptop } from 'react-icons/gi'
@@ -14,24 +14,24 @@ import { TbLetterZ } from "react-icons/tb";
 import { IoMdRemoveCircleOutline, } from "react-icons/io";
 import React from "react";
 
-interface emoji{
+interface emoji {
     id: number,
     icon: string,
     name: string,
 }
 
-export interface sidebarItem{
+export interface sidebarItem {
     icon: React.ReactNode,
     title: string,
     link: string,
 }
 
-interface navbarItems{
+interface navbarItems {
     title: string,
     link: string,
 }
 
-interface videos{
+interface videos {
     id: string,
     thumbnail: string,
     uploaderImage: string,
@@ -43,7 +43,7 @@ interface videos{
     duration: string
 }
 
-interface menuInterface{
+interface menuInterface {
     title: string
     icon: React.ReactNode,
 }
@@ -59,8 +59,8 @@ interface Data {
     ecom: {
         navbarItems: Array<navbarItems>
     }
-    youtube:{
-        allVideos:{
+    youtube: {
+        allVideos: {
             videos: Array<videos>
             menu: Array<Array<menuInterface>>
         }

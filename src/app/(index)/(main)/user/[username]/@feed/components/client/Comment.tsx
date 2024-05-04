@@ -1,16 +1,16 @@
 "use client"
 import React from 'react'
-import {ScrollArea} from '@/components/ui/scroll-area'
-import {AccessToken, AuthContext, AuthContextType} from "@/context/AuthContext";
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { AccessToken, AuthContext, AuthContextType } from "@/context/AuthContext";
 import axios from "axios";
-import {Avatar} from '@/components/ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 import Image from 'next/image';
-import {Link} from 'next-view-transitions';
-import {Textarea} from '@/components/ui/textarea'
-import {Button} from '@/components/ui/button'
-import {ReloadIcon} from '@radix-ui/react-icons'
-import {DateTimeParser} from '@/utils'
-import {Form, Formik} from "formik";
+import { Link } from 'next-view-transitions';
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+import { ReloadIcon } from '@radix-ui/react-icons'
+import { DateTimeParser } from '@/utils'
+import { Form, Formik } from "formik";
 import {
     Dialog,
     DialogContent,
@@ -19,12 +19,12 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {FeedContext, FeedContextType, FeedType} from '@/context/FeedContext';
-import {FiEdit, FiTrash} from "react-icons/fi";
-import {BiSend} from "react-icons/bi";
-import {IoChatbubbleOutline} from "react-icons/io5";
+import { FeedContext, FeedContextType, FeedType } from '@/context/FeedContext';
+import { FiEdit, FiTrash } from "react-icons/fi";
+import { BiSend } from "react-icons/bi";
+import { IoChatbubbleOutline } from "react-icons/io5";
 
-interface ReplyType{
+interface ReplyType {
     id: string
     master: string
     uploader: {
@@ -39,7 +39,7 @@ interface ReplyType{
     self: boolean
 }
 
-interface CommentType{
+interface CommentType {
     id: string
     master: string
     uploader: {
@@ -55,7 +55,7 @@ interface CommentType{
     children: Array<ReplyType>
 }
 
-const Comment = ({feed, feedIndex}: { feed: FeedType, feedIndex: number }) => {
+const Comment = ({ feed, feedIndex }: { feed: FeedType, feedIndex: number }) => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
     const accessToken = authContext?.accessToken
 
@@ -74,15 +74,15 @@ const Comment = ({feed, feedIndex}: { feed: FeedType, feedIndex: number }) => {
             {
                 comments.map((item, index) => {
                     return <CommentItem key={index} commentItem={item} commentIndex={index} reply={false}
-                                        feedIndex={feedIndex} feed={feed} replyIndex={null} setComments={setComments}/>
+                        feedIndex={feedIndex} feed={feed} replyIndex={null} setComments={setComments} />
                 })
             }
         </ScrollArea>
-        <CommentForm setComments={setComments} feed={feed}/>
+        <CommentForm setComments={setComments} feed={feed} />
     </DialogDescription>
 }
 
-interface CommentItemProps{
+interface CommentItemProps {
     commentItem: CommentType,
     commentIndex: number,
     reply: boolean,
@@ -93,14 +93,14 @@ interface CommentItemProps{
 }
 
 const CommentItem = ({
-                         commentItem,
-                         commentIndex,
-                         reply,
-                         feedIndex,
-                         replyIndex,
-                         feed,
-                         setComments
-                     }: CommentItemProps) => {
+    commentItem,
+    commentIndex,
+    reply,
+    feedIndex,
+    replyIndex,
+    feed,
+    setComments
+}: CommentItemProps) => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
     const accessToken = authContext?.accessToken
     const feedContext = React.useContext<FeedContextType | undefined>(FeedContext)
@@ -111,7 +111,7 @@ const CommentItem = ({
             <div className={`flex items-center justify-between w-full relative ${reply && 'pr-[2.4rem]'}`}>
                 <div className='flex items-start gap-2'>
                     <Avatar className="w-8 h-8">
-                        <Image src={commentItem?.uploader.image || '/image/user.png'} width={32} height={32} alt={''}/>
+                        <Image src={commentItem?.uploader.image || '/image/user.png'} width={32} height={32} alt={''} />
                     </Avatar>
                     <div className="space-y-1">
                         <Link href={`/user/${commentItem.uploader.username}`} className="text-sm font-semibold">
@@ -124,17 +124,17 @@ const CommentItem = ({
                             <div>{commentItem.createdAt}</div>
                             {
                                 !reply && <ReplyModal comment={commentItem} commentIndex={commentIndex} feed={feed}
-                                                      feedIndex={feedIndex} setComments={setComments}/>
+                                    feedIndex={feedIndex} setComments={setComments} />
                             }
                             {
                                 commentItem.self && <EditCommentModal comment={commentItem} commentIndex={commentIndex}
-                                                                      replyIndex={replyIndex} reply={reply}
-                                                                      setComments={setComments}/>
+                                    replyIndex={replyIndex} reply={reply}
+                                    setComments={setComments} />
                             }
                             {
                                 commentItem.self && <div className='flex cursor-pointer'
-                                                         onClick={() => DeleteComment(accessToken, commentItem, commentIndex, reply, replyIndex, feedIndex, setFeed, setComments)}>
-                                    <FiTrash className='text-sm'/>
+                                    onClick={() => DeleteComment(accessToken, commentItem, commentIndex, reply, replyIndex, feedIndex, setFeed, setComments)}>
+                                    <FiTrash className='text-sm' />
                                     <span>
                                         Delete
                                     </span>
@@ -149,8 +149,8 @@ const CommentItem = ({
                     {
                         commentItem.children.map((item, index) => {
                             return <ReplyItem commentItem={item} key={index} commentIndex={commentIndex}
-                                                replyIndex={index} feed={feed} feedIndex={feedIndex} reply={true}
-                                                setComments={setComments}/>
+                                replyIndex={index} feed={feed} feedIndex={feedIndex} reply={true}
+                                setComments={setComments} />
                         })
                     }
                 </div> : null
@@ -159,7 +159,7 @@ const CommentItem = ({
     )
 }
 
-interface ReplyItemProps{
+interface ReplyItemProps {
     commentItem: ReplyType,
     commentIndex: number,
     reply: boolean,
@@ -170,14 +170,14 @@ interface ReplyItemProps{
 }
 
 const ReplyItem = ({
-                         commentItem,
-                         commentIndex,
-                         reply,
-                         feedIndex,
-                         replyIndex,
-                         feed,
-                         setComments
-                     }: ReplyItemProps) => {
+    commentItem,
+    commentIndex,
+    reply,
+    feedIndex,
+    replyIndex,
+    feed,
+    setComments
+}: ReplyItemProps) => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
     const accessToken = authContext?.accessToken
     const feedContext = React.useContext<FeedContextType | undefined>(FeedContext)
@@ -188,7 +188,7 @@ const ReplyItem = ({
             <div className={`flex items-center justify-between w-full relative ${reply && 'pr-[2.4rem]'}`}>
                 <div className='flex items-start gap-2'>
                     <Avatar className="w-8 h-8">
-                        <Image src={commentItem?.uploader.image || '/image/user.png'} width={32} height={32} alt={''}/>
+                        <Image src={commentItem?.uploader.image || '/image/user.png'} width={32} height={32} alt={''} />
                     </Avatar>
                     <div className="space-y-1">
                         <Link href={`/user/${commentItem.uploader.username}`} className="text-sm font-semibold">
@@ -201,17 +201,17 @@ const ReplyItem = ({
                             <div>{commentItem.createdAt}</div>
                             {
                                 !reply && <ReplyModal comment={commentItem} commentIndex={commentIndex} feed={feed}
-                                                      feedIndex={feedIndex} setComments={setComments}/>
+                                    feedIndex={feedIndex} setComments={setComments} />
                             }
                             {
                                 commentItem.self && <EditCommentModal comment={commentItem} commentIndex={commentIndex}
-                                                                      replyIndex={replyIndex} reply={reply}
-                                                                      setComments={setComments}/>
+                                    replyIndex={replyIndex} reply={reply}
+                                    setComments={setComments} />
                             }
                             {
                                 commentItem.self && <div className='flex cursor-pointer'
-                                                         onClick={() => DeleteComment(accessToken, commentItem, commentIndex, reply, replyIndex, feedIndex, setFeed, setComments)}>
-                                    <FiTrash className='text-sm'/>
+                                    onClick={() => DeleteComment(accessToken, commentItem, commentIndex, reply, replyIndex, feedIndex, setFeed, setComments)}>
+                                    <FiTrash className='text-sm' />
                                     <span>
                                         Delete
                                     </span>
@@ -226,7 +226,7 @@ const ReplyItem = ({
 }
 
 
-const CommentForm = ({setComments, feed}: {feed: FeedType, setComments: React.Dispatch<React.SetStateAction<CommentType[]>>}) => {
+const CommentForm = ({ setComments, feed }: { feed: FeedType, setComments: React.Dispatch<React.SetStateAction<CommentType[]>> }) => {
     const [loading, setLoading] = React.useState(false)
 
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
@@ -239,18 +239,18 @@ const CommentForm = ({setComments, feed}: {feed: FeedType, setComments: React.Di
             await CreateComment(accessToken, values.comment, feed.id, setLoading, setComments)
             actions.resetForm()
         }}>
-            {({values, handleChange, handleSubmit}) => (
+            {({ values, handleChange, handleSubmit }) => (
                 <Form className='flex flex-col gap-2 pt-4'>
                     <Textarea placeholder="Add a comment..." rows={3} value={values.comment} name={'comment'}
-                              onChange={e => handleChange(e)}
-                              className="w-full border rounded-md p-2 bg-transparent focus:outline-none"/>
+                        onChange={e => handleChange(e)}
+                        className="w-full border rounded-md p-2 bg-transparent focus:outline-none" />
                     {
                         loading ? <Button disabled className="gap-2">
-                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
+                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                             Please wait
                         </Button> : <Button type="submit" className="gap-2"
-                                            onClick={()=>handleSubmit}>
-                            <BiSend className='text-base'/>
+                            onClick={() => handleSubmit}>
+                            <BiSend className='text-base' />
                             <span>Submit</span>
                         </Button>
                     }
@@ -268,7 +268,7 @@ interface ReplyModalProps {
     setComments: React.Dispatch<React.SetStateAction<CommentType[]>>
 }
 
-const ReplyModal = ({comment, commentIndex, feed, feedIndex, setComments}: ReplyModalProps) => {
+const ReplyModal = ({ comment, commentIndex, feed, feedIndex, setComments }: ReplyModalProps) => {
     const [isOpen, setIsOpen] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
 
@@ -281,7 +281,7 @@ const ReplyModal = ({comment, commentIndex, feed, feedIndex, setComments}: Reply
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger>
                 <div className='flex justify-center items-center gap-1'>
-                    <IoChatbubbleOutline className='text-sm'/>
+                    <IoChatbubbleOutline className='text-sm' />
                     <span className='text-xs'>Reply</span>
                 </div>
             </DialogTrigger>
@@ -292,22 +292,22 @@ const ReplyModal = ({comment, commentIndex, feed, feedIndex, setComments}: Reply
                         <Formik initialValues={{
                             comment: ''
                         }}
-                                onSubmit={async (values) => await CreateReply(accessToken, values.comment, comment, setComments, setLoading, setIsOpen, commentIndex, feed, setFeed, feedIndex)}>
-                            {({values, handleChange, handleSubmit}) => (
+                            onSubmit={async (values) => await CreateReply(accessToken, values.comment, comment, setComments, setLoading, setIsOpen, commentIndex, feed, setFeed, feedIndex)}>
+                            {({ values, handleChange, handleSubmit }) => (
                                 <Form className='flex flex-col gap-2 pt-4'>
                                     <Textarea placeholder="Add a comment..." rows={3} name={'comment'}
-                                              value={values.comment}
-                                              onChange={e => handleChange(e)}
-                                              className="w-full border rounded-md p-2 bg-transparent focus:outline-none"/>
+                                        value={values.comment}
+                                        onChange={e => handleChange(e)}
+                                        className="w-full border rounded-md p-2 bg-transparent focus:outline-none" />
                                     {
                                         loading ? <Button disabled className="gap-2">
-                                                <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
-                                                Please wait
-                                            </Button> :
+                                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                                            Please wait
+                                        </Button> :
                                             <Button className="gap-2"
-                                                    type={"submit"}
-                                                    onClick={() =>handleSubmit}>
-                                                <BiSend className='text-base'/>
+                                                type={"submit"}
+                                                onClick={() => handleSubmit}>
+                                                <BiSend className='text-base' />
                                                 <span>Submit</span>
                                             </Button>
                                     }
@@ -321,7 +321,7 @@ const ReplyModal = ({comment, commentIndex, feed, feedIndex, setComments}: Reply
     )
 }
 
-interface EditCommentModalProps{
+interface EditCommentModalProps {
     comment: CommentType | ReplyType,
     commentIndex: number,
     replyIndex: number | null,
@@ -329,7 +329,7 @@ interface EditCommentModalProps{
     setComments: React.Dispatch<React.SetStateAction<CommentType[]>>
 }
 
-const EditCommentModal = ({comment, commentIndex, replyIndex, reply, setComments}: EditCommentModalProps) => {
+const EditCommentModal = ({ comment, commentIndex, replyIndex, reply, setComments }: EditCommentModalProps) => {
     const [isOpen, setIsOpen] = React.useState<boolean>(false)
     const [loading, setLoading] = React.useState<boolean>(false)
 
@@ -340,7 +340,7 @@ const EditCommentModal = ({comment, commentIndex, replyIndex, reply, setComments
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger>
                 <div className='flex justify-center items-center gap-1'>
-                    <FiEdit className='text-sm'/>
+                    <FiEdit className='text-sm' />
                     <span className='text-xs'>Edit</span>
                 </div>
             </DialogTrigger>
@@ -351,23 +351,23 @@ const EditCommentModal = ({comment, commentIndex, replyIndex, reply, setComments
                         <Formik initialValues={{
                             comment: comment.comment
                         }}
-                                onSubmit={async values => await EditComment(accessToken, values.comment, comment, setLoading, setIsOpen, commentIndex, reply, replyIndex, setComments)}>
+                            onSubmit={async values => await EditComment(accessToken, values.comment, comment, setLoading, setIsOpen, commentIndex, reply, replyIndex, setComments)}>
                             {
-                                ({values, handleChange, handleSubmit}) => (
+                                ({ values, handleChange, handleSubmit }) => (
                                     <Form className='flex flex-col gap-2 pt-4'>
                                         <Textarea placeholder="Add a comment..." rows={3} name={'comment'}
-                                                  value={values.comment}
-                                                  onChange={e => handleChange(e)}
-                                                  className="w-full border rounded-md p-2 bg-transparent focus:outline-none"/>
+                                            value={values.comment}
+                                            onChange={e => handleChange(e)}
+                                            className="w-full border rounded-md p-2 bg-transparent focus:outline-none" />
                                         {
                                             loading ? <Button disabled className="gap-2">
-                                                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
-                                                    Please wait
-                                                </Button> :
+                                                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                                                Please wait
+                                            </Button> :
                                                 <Button className="gap-2"
-                                                        type={"submit"}
-                                                        onClick={()=>handleSubmit}>
-                                                    <BiSend className='text-base'/>
+                                                    type={"submit"}
+                                                    onClick={() => handleSubmit}>
+                                                    <BiSend className='text-base' />
                                                     <span>Submit</span>
                                                 </Button>
                                         }
