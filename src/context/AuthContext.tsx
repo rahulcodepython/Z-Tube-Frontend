@@ -90,12 +90,9 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
         sessionStorage.removeItem('user');
     };
 
-    return (
-        <AuthContext.Provider value={{
+    return <AuthContext.Provider value={{
             isAuthenticated, accessToken, refreshToken, user, profile, setUser, setProfile, AuthenticateUser, UnAuthenticateUser, LoggedInUser, LogoutUser,
         }}>
             {children}
         </AuthContext.Provider>
-    )
-        ;
 };

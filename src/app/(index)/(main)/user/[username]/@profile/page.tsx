@@ -15,33 +15,38 @@ import { BsLink } from "react-icons/bs";
 import { BiSolidLock, BiSolidLockOpen } from "react-icons/bi";
 import EditProfile from "@/app/(index)/(main)/user/[username]/@profile/components/client/EditProfile";
 import Loading from "@/app/(index)/(main)/user/[username]/@profile/components/server/Loading";
+import {UserContext, UserContextType} from "@/context/UserContext";
 
 const Profile = ({ params }: { params: { username: string } }) => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
+    const userContext = React.useContext<UserContextType | undefined>(UserContext)
 
     const accessToken = authContext?.accessToken
     const user = authContext?.user
     const profile = authContext?.profile
     const setProfile: React.Dispatch<React.SetStateAction<ProfileType | null>> | undefined = authContext?.setProfile
 
-    const [loading, setLoading] = React.useState<boolean>(true)
-    const [error, setError] = React.useState<boolean>(false)
+    const parentLoading = userContext?.parentLoading
+    const setParentLoading = userContext?.setParentLoading
+    const isError = userContext?.isError
+    const setIsError = userContext?.setIsError
+
     const [errorMsg, setErrorMsg] = React.useState<string>('')
 
     React.useEffect(() => {
         const handler = async () => {
-            profile && profile.username === params.username ? setLoading(false) : null
-            await FetchProfileData(params, accessToken, setProfile, setError, setErrorMsg, setLoading, user);
+            profile && profile.username === params.username ? setParentLoading?.(false) : null
+            await FetchProfileData(params, accessToken, setProfile, setIsError, setErrorMsg, setParentLoading, user);
         }
         handler();
     }, [])
 
     return (
-        loading ? <Loading /> : <ProfileCard params={params} error={error} errorMsg={errorMsg} />
+        parentLoading ? <Loading /> : <ProfileCard params={params} error={isError} errorMsg={errorMsg} />
     )
 }
 
-const ProfileCard = ({ params, error, errorMsg }: { params: { username: string }, error: boolean, errorMsg: string }) => {
+const ProfileCard = ({ params, error, errorMsg }: { params: { username: string }, error: boolean|undefined, errorMsg: string }) => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
 
     const accessToken = authContext?.accessToken
@@ -149,9 +154,9 @@ const FetchProfileData = async (
     params: { username: string },
     accessToken: AccessToken | undefined,
     setProfile: React.Dispatch<React.SetStateAction<ProfileType | null>> | undefined,
-    setError: React.Dispatch<React.SetStateAction<boolean>>,
+    setIsError: React.Dispatch<React.SetStateAction<boolean>> | undefined,
     setErrorMsg: React.Dispatch<React.SetStateAction<string>>,
-    setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    setParentLoading: React.Dispatch<React.SetStateAction<boolean>> | undefined,
     user: UserType | null | undefined
 ) => {
     const options = {
@@ -165,9 +170,10 @@ const FetchProfileData = async (
     await axios.request(options).then(response => {
         setProfile?.(response.data)
     }).catch(error => {
-        setError(() => true)
-        setErrorMsg(() => error.response.data?.msg ?? 'There is some issue')
-    }).finally(() => setLoading(() => false))
+        setIsError?.(() => true)
+        setErrorMsg('There is some issue')
+        toast.error(error.response.data.error)
+    }).finally(() => setParentLoading?.(() => false))
 }
 
 const ConnectPeople = async (accessToken: AccessToken | undefined, username: string, setProfile: ((value: (((prevState: (ProfileType | null)) => (ProfileType | null)) | ProfileType | null)) => void) | undefined) => {

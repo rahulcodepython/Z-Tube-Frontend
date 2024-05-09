@@ -1,23 +1,17 @@
 "use client"
 import React from 'react';
-import { BiSend } from 'react-icons/bi';
+import {BiSend} from 'react-icons/bi';
 import GoogleLoginButton from "@/components/GoogleLoginButton";
-import { Formik, Form } from 'formik';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Link } from 'next-view-transitions';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader
-} from "@/components/ui/card"
+import {Form, Formik} from 'formik';
+import {Button} from '@/components/ui/button';
+import {Label} from '@/components/ui/label';
+import {Input} from '@/components/ui/input';
+import {Link} from 'next-view-transitions';
+import {Card, CardContent, CardDescription, CardFooter, CardHeader} from "@/components/ui/card"
 import axios from 'axios';
-import { toast } from 'react-toastify';
-import { useRouter } from "next/navigation";
-import { ReloadIcon } from '@radix-ui/react-icons';
+import {toast} from 'react-toastify';
+import {useRouter} from "next/navigation";
+import {ReloadIcon} from '@radix-ui/react-icons';
 import GithubLoginButton from "@/components/GithubLoginButton";
 
 interface RegistrationDataType {
@@ -52,8 +46,7 @@ const RegisterPage: React.FC = () => {
                         onSubmit={async (values, actions) => {
                             await register(values, router, setLoading);
                             actions.resetForm();
-                        }}
-                    >
+                        }}>
                         {({ values, handleChange, handleSubmit }) => (
                             <Form className="flex flex-col gap-6">
                                 <div className='flex flex-col gap-4'>
@@ -131,12 +124,12 @@ const RegisterPage: React.FC = () => {
 const register = async (values: RegistrationDataType, router: any, setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
     setLoading(true);
     try {
-        await axios.post(`${process.env.BASE_API_URL}/auth/users/me/`, values);
+        const response = await axios.post(`${process.env.BASE_API_URL}/auth/users/me/`, values);
         localStorage.setItem("email", values.email)
         router.push('/auth/verify/email')
-        toast.success('You are logged in.');
-    } catch (error) {
-        toast.error('There was an issue. Please try again.');
+        toast.success(response.data.success);
+    } catch (error: any) {
+        toast.error(error?.response?.data?.error || 'Something went wrong');
     }
     setLoading(false)
 }

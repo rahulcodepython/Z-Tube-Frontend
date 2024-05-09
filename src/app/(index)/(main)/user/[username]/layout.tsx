@@ -1,10 +1,11 @@
 "use client"
 import React from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useRouter, useSearchParams } from 'next/navigation'
-import { FeedProvider } from '@/context/FeedContext'
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
+import {useRouter, useSearchParams} from 'next/navigation'
+import {FeedProvider} from '@/context/FeedContext'
+import {UserContextProvider} from "@/context/UserContext";
 
-const Layout = ({ children, params, profile, feed, ecom }: {
+const UserLayout = ({children, params, profile, feed, ecom}: {
     children: React.ReactNode
     profile: React.ReactNode
     feed: React.ReactNode
@@ -22,31 +23,36 @@ const Layout = ({ children, params, profile, feed, ecom }: {
         setLoading(false)
     }, [search.get('tabs')])
 
-    return (
-        !loading && <div className='mx-auto container'>
-            <section className='space-y-4'>
-                {profile}
-                <Tabs defaultValue={defaultTab} className="w-full">
-                    <TabsList className="w-full justify-start">
-                        <TabsTrigger value="profile" onClick={() => router.push(`/user/${params.username}`)}>Profile</TabsTrigger>
-                        <TabsTrigger value="feed" onClick={() => router.push(`/user/${params.username}?tabs=feed`)}>Feed</TabsTrigger>
-                        <TabsTrigger value="ecom" onClick={() => router.push(`/user/${params.username}?tabs=ecom`)}>ECommerce</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="profile">
-                        {children}
-                    </TabsContent>
-                    <TabsContent value="feed">
-                        <FeedProvider>
-                            {feed}
-                        </FeedProvider>
-                    </TabsContent>
-                    <TabsContent value="ecom">
-                        {ecom}
-                    </TabsContent>
-                </Tabs>
-            </section>
-        </div>
-    )
+    return <UserContextProvider>
+        {
+            !loading && <div className='mx-auto container'>
+                <section className='space-y-4'>
+                    {profile}
+                    <Tabs defaultValue={defaultTab} className="w-full">
+                        <TabsList className="w-full justify-start">
+                            <TabsTrigger value="profile"
+                                         onClick={() => router.push(`/user/${params.username}`)}>Profile</TabsTrigger>
+                            <TabsTrigger value="feed"
+                                         onClick={() => router.push(`/user/${params.username}?tabs=feed`)}>Feed</TabsTrigger>
+                            <TabsTrigger value="ecom"
+                                         onClick={() => router.push(`/user/${params.username}?tabs=ecom`)}>ECommerce</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="profile">
+                            {children}
+                        </TabsContent>
+                        <TabsContent value="feed">
+                            <FeedProvider>
+                                {feed}
+                            </FeedProvider>
+                        </TabsContent>
+                        <TabsContent value="ecom">
+                            {ecom}
+                        </TabsContent>
+                    </Tabs>
+                </section>
+            </div>
+        }
+    </UserContextProvider>
 }
 
-export default Layout
+export default UserLayout

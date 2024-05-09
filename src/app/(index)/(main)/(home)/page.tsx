@@ -1,6 +1,10 @@
+import {Link} from "next-view-transitions";
+
 const Home = ()=>{
     return <div>
-        Home
+        <Link href={'/user/xyz'}>
+            XYZ
+        </Link>
     </div>
 }
 

@@ -140,8 +140,8 @@ const login = async (values: LoginValuesType, LoggedInUser: LoggedInUserType | u
         await FetchUserData(response.data.access, setUser)
         router.push('/');
         toast.success('You are logged in.');
-    } catch (error) {
-        toast.error('There was an issue. Please try again.');
+    } catch (error: any) {
+        toast.error(error?.response?.data?.error || 'Something went wrong');
     }
     setLoading(false);
 };
