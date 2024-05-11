@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { AccessToken, AuthContext, AuthContextType, ProfileType, UserType } from '@/context/AuthContext';
+import { AccessToken, AuthContext, AuthContextType, LogoutUserType, ProfileType, UserType } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -22,7 +22,7 @@ import ImageUploading, { ImageListType } from 'react-images-uploading';
 import Image from 'next/image';
 import TagsInput from "@/components/TagsInput";
 import { Label } from "@/components/ui/label";
-import { FiEdit } from "react-icons/fi";
+import { FiEdit, FiTrash } from "react-icons/fi";
 import { BiCamera, BiSend } from "react-icons/bi";
 import { FaCircleCheck } from "react-icons/fa6";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
@@ -35,7 +35,7 @@ const EditProfile = () => {
     const profile = authContext?.profile
     const setProfile = authContext?.setProfile
     const setUser = authContext?.setUser
-
+    const LogoutUser = authContext?.LogoutUser
 
     const router = useRouter();
     const search = useSearchParams();
@@ -49,6 +49,7 @@ const EditProfile = () => {
         profile ? profile.image.length > 0 ? [{ data_url: profile.image }] : [{ data_url: '/image/user.png' }] : [])
     const [isUserImageChange, setIsUserImageChange] = React.useState<boolean>(false)
     const [isUsernameValid, setIsUsernameValid] = React.useState<boolean>(true)
+    const [isDeleting, setIsDeleting] = React.useState<boolean>(false)
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -80,7 +81,7 @@ const EditProfile = () => {
                             e.preventDefault()
                         }} onKeyDown={(e) => {
                             e.key === 'Enter' ? e.preventDefault() : null;
-                        }} className="flex flex-col divide-y-2 gap-4 first:divide-y-0 px-4 lg:px-10 py-10">
+                        }} className="flex flex-col gap-4 px-4 lg:px-10 py-10">
                             <div className='flex flex-col justify-start gap-8 pt-4 first:pt-0'>
                                 <h6 className=" text-sm font-bold uppercase">
                                     Basic Information
@@ -175,18 +176,29 @@ const EditProfile = () => {
                                     </div>
                                 </div>
                             </div>
-                            {
-                                isUpdating ? <Button disabled className="gap-2">
-                                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                                    Please wait
-                                </Button> :
-                                    <Button type='submit' onClick={() => handleSubmit()} className="gap-2">
-                                        <BiSend className='text-base' />
-                                        <span>
-                                            Update
-                                        </span>
+                            <div className='flex items-center justify-between pt-4'>
+                                {
+                                    isDeleting ? <Button disabled className="gap-2">
+                                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                                        Please wait
+                                    </Button> : <Button className='gap-2' onClick={() => handleDelete(accessToken, router, LogoutUser, setIsDeleting)}>
+                                        <FiTrash />
+                                        Delete Account
                                     </Button>
-                            }
+                                }
+                                {
+                                    isUpdating ? <Button disabled className="gap-2">
+                                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                                        Please wait
+                                    </Button> :
+                                        <Button type='submit' onClick={() => handleSubmit()} className="gap-2">
+                                            <BiSend className='text-base' />
+                                            <span>
+                                                Update
+                                            </span>
+                                        </Button>
+                                }
+                            </div>
                         </Form>
                     }}
                 </Formik>
@@ -344,5 +356,30 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         </ImageUploading>
     );
 };
+
+const handleDelete = async (
+    accessToken: AccessToken | undefined,
+    router: any,
+    LogoutUser: LogoutUserType | undefined,
+    setIsDeleting: React.Dispatch<React.SetStateAction<boolean>>,
+) => {
+    try {
+        const options = {
+            method: 'DELETE',
+            url: `${process.env.BASE_API_URL}/auth/users/me/`,
+            headers: {
+                Authorization: `JWT ${accessToken}`,
+            }
+        }
+        const response = await axios.request(options);
+        toast.success(response.data.message);
+        await LogoutUser?.();
+        router.push('/auth/register');
+    } catch (error: any) {
+        toast.error(error?.response?.data?.error ?? 'There is some issue. Please try again.');
+    } finally {
+        setIsDeleting(false);
+    }
+}
 
 export default EditProfile
