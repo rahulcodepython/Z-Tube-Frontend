@@ -1,11 +1,11 @@
 import {Link} from "next-view-transitions";
 
 const Home = ()=>{
-    return <div>
+    return <section className={'pt-16'}>
         <Link href={'/user/xyz'}>
             XYZ
         </Link>
-    </div>
+    </section>
 }
 
 export default Home;

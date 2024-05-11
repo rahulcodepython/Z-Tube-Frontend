@@ -129,7 +129,7 @@ const register = async (values: RegistrationDataType, router: any, setLoading: R
         router.push('/auth/verify/email')
         toast.success(response.data.success);
     } catch (error: any) {
-        toast.error(error?.response?.data?.error || 'Something went wrong');
+        toast.error(error?.response?.data?.error ?? 'Something went wrong');
     }
     setLoading(false)
 }

@@ -79,7 +79,7 @@ const handleResendVerficationCode = async () => {
             email: localStorage.getItem("email") ?? null,
         })
     } catch (error: any) {
-        toast.error(error?.response?.data?.error || 'Something went wrong');
+        toast.error(error?.response?.data?.error ?? 'Something went wrong');
     }
 }
 const verifyEmail = async (code: string | null, setCode: (value: (((prevState: string) => string) | string)) => void, setLoading: React.Dispatch<React.SetStateAction<boolean>>, router: any, LoggedInUser: LoggedInUserType | undefined): Promise<void> => {
@@ -99,8 +99,8 @@ const verifyEmail = async (code: string | null, setCode: (value: (((prevState: s
         localStorage.removeItem("email")
         router.push('/');
         toast.success('You are logged in.');
-    } catch (error) {
-        toast.error('There was an issue. Please try again.');
+    } catch (error: any) {
+        toast.error(error?.response?.data?.error ?? "There is some issue");
     }
     setCode("")
     setLoading(false);

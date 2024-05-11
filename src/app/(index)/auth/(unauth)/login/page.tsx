@@ -141,7 +141,7 @@ const login = async (values: LoginValuesType, LoggedInUser: LoggedInUserType | u
         router.push('/');
         toast.success('You are logged in.');
     } catch (error: any) {
-        toast.error(error?.response?.data?.error || 'Something went wrong');
+        toast.error(error?.response?.data?.error ?? 'Something went wrong');
     }
     setLoading(false);
 };

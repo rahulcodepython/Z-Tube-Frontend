@@ -258,8 +258,8 @@ const UpdateProfile = async (
         toast.success('Profile updated successfully');
 
         router.push(`/user/${encodeURIComponent(response.data.content.user.username)}${search ? `?tabs=${search}` : ''}`);
-    } catch (error) {
-        toast.error('An error occurred while updating the profile. Please try again.');
+    } catch (error: any) {
+        toast.error(error?.response?.data?.error ?? 'There is some issue. Please try again.');
     } finally {
         setIsOpen(false);
         setIsUpdating(false);

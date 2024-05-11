@@ -172,7 +172,7 @@ const FetchProfileData = async (
     }).catch(error => {
         setIsError?.(() => true)
         setErrorMsg('There is some issue')
-        toast.error(error.response.data.error)
+        toast.error(error.response.data.error ?? "There is some issue")
     }).finally(() => setParentLoading?.(() => false))
 }
 

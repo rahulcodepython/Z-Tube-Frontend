@@ -1,11 +1,11 @@
 "use client"
 import React from 'react'
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
-import {useRouter, useSearchParams} from 'next/navigation'
-import {FeedProvider} from '@/context/FeedContext'
-import {UserContextProvider} from "@/context/UserContext";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useRouter, useSearchParams } from 'next/navigation'
+import { FeedProvider } from '@/context/FeedContext'
+import { UserContextProvider } from "@/context/UserContext";
 
-const UserLayout = ({children, params, profile, feed, ecom}: {
+const UserLayout = ({ children, params, profile, feed, ecom }: {
     children: React.ReactNode
     profile: React.ReactNode
     feed: React.ReactNode
@@ -25,17 +25,17 @@ const UserLayout = ({children, params, profile, feed, ecom}: {
 
     return <UserContextProvider>
         {
-            !loading && <div className='mx-auto container'>
+            !loading && <div className='mx-auto container pt-16'>
                 <section className='space-y-4'>
                     {profile}
                     <Tabs defaultValue={defaultTab} className="w-full">
                         <TabsList className="w-full justify-start">
                             <TabsTrigger value="profile"
-                                         onClick={() => router.push(`/user/${params.username}`)}>Profile</TabsTrigger>
+                                onClick={() => router.push(`/user/${params.username}`)}>Profile</TabsTrigger>
                             <TabsTrigger value="feed"
-                                         onClick={() => router.push(`/user/${params.username}?tabs=feed`)}>Feed</TabsTrigger>
+                                onClick={() => router.push(`/user/${params.username}?tabs=feed`)}>Feed</TabsTrigger>
                             <TabsTrigger value="ecom"
-                                         onClick={() => router.push(`/user/${params.username}?tabs=ecom`)}>ECommerce</TabsTrigger>
+                                onClick={() => router.push(`/user/${params.username}?tabs=ecom`)}>ECommerce</TabsTrigger>
                         </TabsList>
                         <TabsContent value="profile">
                             {children}

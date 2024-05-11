@@ -5,7 +5,7 @@ import { BsTwitter, BsDiscord, BsFillBookmarkFill, BsSteam, BsMusicNoteBeamed, B
 import { AiFillYoutube, AiFillFacebook, AiFillInstagram, AiFillHome, AiFillStar, AiOutlineRadarChart, AiOutlineStop } from 'react-icons/ai'
 import { PiHandbagSimpleFill, PiSignIn, PiShareFatLight, PiTelevisionBold } from 'react-icons/pi'
 import { BiSolidBookContent, BiSolidInbox, BiBell, BiSolidHot, BiWorld, BiCodeAlt, BiLogOut, BiTimeFive } from 'react-icons/bi'
-import { MdLibraryAdd, MdSubscriptions, MdBusiness, MdSportsVolleyball, MdFastfood, MdLocalMovies, MdPlace, MdScience, MdPrivacyTip, MdPlaylistAdd, MdOutlinedFlag, MdOutlineShoppingCart } from 'react-icons/md'
+import { MdLibraryAdd, MdSubscriptions, MdBusiness, MdSportsVolleyball, MdFastfood, MdLocalMovies, MdPlace, MdScience, MdPrivacyTip, MdPlaylistAdd, MdOutlinedFlag, MdOutlineShoppingCart, MdPassword } from 'react-icons/md'
 import { LuHistory } from 'react-icons/lu'
 import { VscLaw } from 'react-icons/vsc'
 import { GiAmpleDress, GiWhiteBook, GiLaptop } from 'react-icons/gi'
@@ -304,6 +304,10 @@ const Data: Data = {
                 icon: <MdPrivacyTip />,
                 title: "Privacy Policy",
                 link: '#'
+            }, {
+                icon: <MdPassword />,
+                title: "Update Password",
+                link: '/auth/password-update'
             },
             {
                 icon: <PiSignIn />,

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { AuthContext, AuthContextType } from "@/context/AuthContext";
 import {FetchUserData} from "@/utils";
+import {toast} from "react-toastify";
 
 const GithubAuthCallback = () => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext);
@@ -24,11 +25,13 @@ const GithubAuthCallback = () => {
                     await LoggedInUser?.(response.data.access, response.data.refresh);
                     await FetchUserData(response.data.access, setUser);
                     return router.push('/');
-                } catch (error) {
+                } catch (error: any) {
+                    toast.success(error?.response?.data?.error ?? "There is some issue.");
                     return router.push('/auth/login');
                 }
             } else {
-                router.push('/auht/login')
+                toast.success("The code is not found. Please try again.");
+                router.push('/auth/login')
             }
         }
         handler();

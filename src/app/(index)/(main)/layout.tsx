@@ -26,7 +26,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         return !loading && <React.Fragment>
             <Navbar user={user} toggleNavbar={toggleNavbar} showTopicAll={showTopicAll}
                 setShowTopicAll={setShowTopicAll} />
-            <main className='py-16'>
+            <main className=''>
                 {children}
             </main>
         </React.Fragment>
