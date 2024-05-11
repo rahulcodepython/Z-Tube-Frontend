@@ -21,12 +21,11 @@ import { toast } from "react-toastify";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useRouter } from 'next/navigation';
 
-const PasswordUpdate = () => {
+const EmailUpdate = () => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext);
 
     const [code, setCode] = React.useState<string>("");
-    const [currentPassword, setCurrentPassword] = React.useState<string>("")
-    const [newPassword, setNewPassword] = React.useState<string>("")
+    const [email, setEmail] = React.useState<string>("")
     const [isRequested, setIsRequested] = React.useState<boolean>(false)
     const [isRequestedLoading, setIsRequestedLoading] = React.useState<boolean>(false)
     const [loading, setLoading] = React.useState<boolean>(false)
@@ -39,18 +38,24 @@ const PasswordUpdate = () => {
     return <section className={'flex w-screen h-screen justify-center items-center'}>
         <Card className={'max-w-xl w-full'}>
             <CardHeader>
-                <CardTitle>Reset Password</CardTitle>
+                <CardTitle>Update Email</CardTitle>
             </CardHeader>
             <CardContent className='flex flex-col gap-8'>
-                {
-                    isRequestedLoading ? <Button disabled className="gap-2">
-                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                        Please wait
-                    </Button> : <Button className={'w-full'} disabled={isRequested}
-                        onClick={() => handleRequestPasswordUpdate(accessToken, setIsRequested, setIsRequestedLoading)}>
-                        Request For Password Change
-                    </Button>
-                }
+                <form onSubmit={e => e.preventDefault()} className={'flex flex-col gap-2 w-full'}>
+                    <div className={'flex flex-col gap-2 w-full'}>
+                        <Label htmlFor={'new-email'}>New Email</Label>
+                        <Input id={'new-email'} value={email} onChange={e => setEmail(e.target.value)} disabled={isRequested} placeholder={'Enter your new email'} />
+                    </div>
+                    {
+                        isRequestedLoading ? <Button disabled className="gap-2">
+                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                            Please wait
+                        </Button> : <Button className={'w-full'} disabled={isRequested}
+                            onClick={() => handleRequestEmailUpdate(accessToken, setIsRequested, setIsRequestedLoading, email, setEmail)}>
+                            Request For Email Update
+                        </Button>
+                    }
+                </form>
                 <form onSubmit={e => e.preventDefault()} className={'flex flex-col gap-4 justify-center items-center w-full'}>
                     <InputOTP maxLength={8} value={code} onChange={e => setCode(e)} disabled={!isRequested}>
                         <InputOTPGroup>
@@ -67,19 +72,11 @@ const PasswordUpdate = () => {
                             <InputOTPSlot index={7} />
                         </InputOTPGroup>
                     </InputOTP>
-                    <div className={'flex flex-col gap-2 w-full'}>
-                        <Label htmlFor={'old-password'}>Old Password</Label>
-                        <Input id={'old-password'} value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} disabled={!isRequested} placeholder={'Enter your current password'} />
-                    </div>
-                    <div className={'flex flex-col gap-2 w-full'}>
-                        <Label htmlFor={'new-password'}>New Password</Label>
-                        <Input id={'new-password'} value={newPassword} onChange={e => setNewPassword(e.target.value)} disabled={!isRequested} placeholder={'Enter your new password'} />
-                    </div>
                     {
                         loading ? <Button disabled className="gap-2 w-full">
                             <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                             Please wait
-                        </Button> : <Button className={'w-full'} disabled={!isRequested} onClick={() => handlePasswordUpdate(accessToken, code, setCode, currentPassword, setCurrentPassword, newPassword, setNewPassword, setLoading, LogoutUser, router)}>
+                        </Button> : <Button className={'w-full'} disabled={!isRequested} onClick={() => handlePasswordUpdate(accessToken, code, setCode, setLoading, LogoutUser, router)}>
                             Update Password
                         </Button>
                     }
@@ -90,16 +87,18 @@ const PasswordUpdate = () => {
     </section>
 }
 
-const handleRequestPasswordUpdate = async (
+const handleRequestEmailUpdate = async (
     accessToken: AccessToken | undefined,
     setIsRequested: React.Dispatch<React.SetStateAction<boolean>>,
     setIsRequestedLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    email: string,
+    setEmail: React.Dispatch<React.SetStateAction<string>>
 ) => {
     setIsRequestedLoading(true)
     try {
         const options = {
             method: 'GET',
-            url: `${process.env.BASE_API_URL}/auth/users/set_password/`,
+            url: `${process.env.BASE_API_URL}/auth/users/set_email/?email=${email}`,
             headers: {
                 Authorization: `JWT ${accessToken}`,
             },
@@ -111,6 +110,7 @@ const handleRequestPasswordUpdate = async (
         toast.error(error?.response?.data?.error || "There is some issue. Please try again.")
     } finally {
         setIsRequestedLoading(false)
+        setEmail("")
     }
 }
 
@@ -118,10 +118,6 @@ const handlePasswordUpdate = async (
     accessToken: AccessToken | undefined,
     code: string,
     setCode: React.Dispatch<React.SetStateAction<string>>,
-    currentPassword: string,
-    setCurrentPassword: React.Dispatch<React.SetStateAction<string>>,
-    newPassword: string,
-    setNewPassword: React.Dispatch<React.SetStateAction<string>>,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     LogoutUser: LogoutUserType | undefined,
     router: any
@@ -137,9 +133,7 @@ const handlePasswordUpdate = async (
             },
             data: {
                 uid: parseInt(code?.slice(0, 4), 10),
-                token: parseInt(code?.slice(4, 8), 10),
-                current_password: currentPassword,
-                new_password: newPassword
+                token: parseInt(code?.slice(4, 8), 10)
             }
         }
 
@@ -149,12 +143,10 @@ const handlePasswordUpdate = async (
         router.push('/auth/login')
     } catch (error: any) {
         toast.error(error?.response?.data?.error || "There is some issue. Please try again.")
-        setCurrentPassword("")
-        setNewPassword("")
         setCode("")
     } finally {
         setLoading(false)
     }
 }
 
-export default PasswordUpdate
+export default EmailUpdate
