@@ -64,7 +64,8 @@ interface Data {
             videos: Array<videos>
             menu: Array<Array<menuInterface>>
         }
-    }
+    },
+    unauthenticatedRoutes: Array<string>
 }
 
 const Data: Data = {
@@ -538,7 +539,14 @@ const Data: Data = {
                 ]
             ]
         },
-    }
+    },
+    unauthenticatedRoutes: [
+        '/auth/login',
+        '/auth/register',
+        '/auth/github',
+        '/auth/google',
+        '/auth/verify-email',
+    ]
 }
 
 export default Data

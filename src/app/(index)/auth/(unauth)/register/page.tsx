@@ -1,17 +1,17 @@
 "use client"
 import React from 'react';
-import {BiSend} from 'react-icons/bi';
+import { BiSend } from 'react-icons/bi';
 import GoogleLoginButton from "@/components/GoogleLoginButton";
-import {Form, Formik} from 'formik';
-import {Button} from '@/components/ui/button';
-import {Label} from '@/components/ui/label';
-import {Input} from '@/components/ui/input';
-import {Link} from 'next-view-transitions';
-import {Card, CardContent, CardDescription, CardFooter, CardHeader} from "@/components/ui/card"
+import { Form, Formik } from 'formik';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Link } from 'next-view-transitions';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
 import axios from 'axios';
-import {toast} from 'react-toastify';
-import {useRouter} from "next/navigation";
-import {ReloadIcon} from '@radix-ui/react-icons';
+import { toast } from 'react-toastify';
+import { useRouter } from "next/navigation";
+import { ReloadIcon } from '@radix-ui/react-icons';
 import GithubLoginButton from "@/components/GithubLoginButton";
 
 interface RegistrationDataType {
@@ -126,7 +126,7 @@ const register = async (values: RegistrationDataType, router: any, setLoading: R
     try {
         const response = await axios.post(`${process.env.BASE_API_URL}/auth/users/me/`, values);
         localStorage.setItem("email", values.email)
-        router.push('/auth/verify/email')
+        router.push('/auth/verify-email')
         toast.success(response.data.success);
     } catch (error: any) {
         toast.error(error?.response?.data?.error ?? 'Something went wrong');

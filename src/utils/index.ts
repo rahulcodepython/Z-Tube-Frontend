@@ -1,4 +1,4 @@
-import {AccessToken, UserType} from "@/context/AuthContext";
+import { AccessToken, UserType } from "@/context/AuthContext";
 import { ref, uploadBytes, getDownloadURL, StorageReference } from 'firebase/storage'
 import { analytics } from "@/utils/firebase-config";
 import React from "react";
@@ -48,7 +48,10 @@ export const DateTimeParser = (timestamp: number) => {
     return formattedTime;
 }
 
-export const FetchUserData = async (token: string, setUser: React.Dispatch<React.SetStateAction<UserType | null>> | undefined): Promise<void> => {
+export const FetchUserData = async (
+    token: string | null,
+    setUser: React.Dispatch<React.SetStateAction<UserType | null>> | undefined
+): Promise<void> => {
     const options = {
         headers: {
             Authorization: `JWT ${token}`

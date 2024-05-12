@@ -18,10 +18,12 @@ const UserLayout = ({ children, params, profile, feed, ecom }: {
     const search = useSearchParams()
     const router = useRouter()
 
+    const tabs = search.get('tabs')
+
     React.useEffect(() => {
-        setDefaultTab(() => search.get('tabs') ?? 'profile')
+        setDefaultTab(() => tabs ?? 'profile')
         setLoading(false)
-    }, [search.get('tabs')])
+    }, [tabs])
 
     return <UserContextProvider>
         {

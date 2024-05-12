@@ -15,7 +15,7 @@ import { BsLink } from "react-icons/bs";
 import { BiSolidLock, BiSolidLockOpen } from "react-icons/bi";
 import EditProfile from "@/app/(index)/(main)/user/[username]/@profile/components/client/EditProfile";
 import Loading from "@/app/(index)/(main)/user/[username]/@profile/components/server/Loading";
-import {UserContext, UserContextType} from "@/context/UserContext";
+import { UserContext, UserContextType } from "@/context/UserContext";
 
 const Profile = ({ params }: { params: { username: string } }) => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
@@ -46,7 +46,7 @@ const Profile = ({ params }: { params: { username: string } }) => {
     )
 }
 
-const ProfileCard = ({ params, error, errorMsg }: { params: { username: string }, error: boolean|undefined, errorMsg: string }) => {
+const ProfileCard = ({ params, error, errorMsg }: { params: { username: string }, error: boolean | undefined, errorMsg: string }) => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
 
     const accessToken = authContext?.accessToken

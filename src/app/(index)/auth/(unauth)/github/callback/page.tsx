@@ -4,8 +4,8 @@ import axios from 'axios';
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { AuthContext, AuthContextType } from "@/context/AuthContext";
-import {FetchUserData} from "@/utils";
-import {toast} from "react-toastify";
+import { FetchUserData } from "@/utils";
+import { toast } from "react-toastify";
 
 const GithubAuthCallback = () => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext);

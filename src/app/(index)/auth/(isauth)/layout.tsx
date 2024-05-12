@@ -8,6 +8,7 @@ const IsAuthLayout = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter()
 
     const isAuthenticated = authContext?.isAuthenticated;
+
     if (isAuthenticated) {
         return children
     } else {

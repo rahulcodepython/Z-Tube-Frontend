@@ -1,11 +1,11 @@
 "use client"
 import React from 'react';
 import axios from 'axios';
-import {useRouter} from "next/navigation";
-import {useSearchParams} from "next/navigation";
-import {AuthContext, AuthContextType} from "@/context/AuthContext";
-import {FetchUserData} from "@/utils";
-import {toast} from "react-toastify";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { AuthContext, AuthContextType } from "@/context/AuthContext";
+import { FetchUserData } from "@/utils";
+import { toast } from "react-toastify";
 
 const GoogleAuthCallback = () => {
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext);

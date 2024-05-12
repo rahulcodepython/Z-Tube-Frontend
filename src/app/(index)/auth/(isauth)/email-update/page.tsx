@@ -127,7 +127,7 @@ const handlePasswordUpdate = async (
     try {
         const options = {
             method: 'POST',
-            url: `${process.env.BASE_API_URL}/auth/users/set_password/`,
+            url: `${process.env.BASE_API_URL}/auth/users/set_email/`,
             headers: {
                 authorization: `JWT ${accessToken}`
             },

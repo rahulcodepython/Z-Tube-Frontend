@@ -4,6 +4,9 @@ import { AuthContext, AuthContextType, LoggedInUserType, UserType } from '@/cont
 import { Decrypt, FetchUserData } from '@/utils';
 import React, { useEffect, useState, useContext, Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
+import { useRouter, usePathname } from 'next/navigation';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import Data from '@/data/data';
 
 const IndexLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [loading, setLoading] = useState<boolean>(true);
@@ -13,9 +16,12 @@ const IndexLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const LoggedInUser = authContext?.LoggedInUser;
     const LogoutUser = authContext?.LogoutUser;
 
+    const router = useRouter();
+    const pathname = usePathname();
+
     useEffect(() => {
         const handler = async () => {
-            await CheckUser(setUser, LoggedInUser, LogoutUser);
+            await CheckUser(setUser, LoggedInUser, LogoutUser, router, pathname);
         };
 
         handler().finally(() => {
@@ -43,7 +49,11 @@ const VerifyToken = async (token: string): Promise<boolean> => {
     }
 };
 
-const RefreshTheAccessToken = async (token: string, LoggedInUser: LoggedInUserType | undefined): Promise<void> => {
+const RefreshTheAccessToken = async (
+    token: string | null,
+    LoggedInUser: LoggedInUserType | undefined,
+    setUser: Dispatch<SetStateAction<UserType | null>> | undefined
+): Promise<void> => {
     const options = {
         url: `${process.env.BASE_API_URL}/auth/users/jwt/refresh/`,
         method: 'POST',
@@ -54,31 +64,47 @@ const RefreshTheAccessToken = async (token: string, LoggedInUser: LoggedInUserTy
     try {
         const response = await axios.request(options);
         await LoggedInUser?.(response.data.access, response.data.refresh);
+        await FetchUserData(response.data.access, setUser);
     } catch (error) {
         return;
     }
 };
 
-const CheckUser = async (setUser: Dispatch<SetStateAction<UserType | null>> | undefined, LoggedInUser: LoggedInUserType | undefined, LogoutUser: (() => Promise<void>) | undefined): Promise<void> => {
-    const isRefreshTokenExists = localStorage.getItem("refresh") || null;
+const CheckUser = async (
+    setUser: Dispatch<SetStateAction<UserType | null>> | undefined,
+    LoggedInUser: LoggedInUserType | undefined,
+    LogoutUser: (() => Promise<void>) | undefined,
+    router: AppRouterInstance,
+    pathname: string
+): Promise<void> => {
+    const isRefreshTokenExists = localStorage.getItem("refresh") ?? null;
     const refresh_token = isRefreshTokenExists ? Decrypt(localStorage.getItem("refresh"), process.env.ENCRYPTION_KEY) : null;
-    const isValidateRefreshToken = refresh_token && await VerifyToken(refresh_token);
+    const isValidateRefreshToken = refresh_token ? await VerifyToken(refresh_token) : null;
 
-    if (!isValidateRefreshToken) {
-        await LogoutUser?.();
-        return;
-    }
+    if (isValidateRefreshToken && refresh_token) {
+        const isAccessTokenExists = sessionStorage.getItem("access") ?? null;
+        const access_token = isAccessTokenExists ? Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY) : null;
+        const isValidateAccessToken = access_token ? await VerifyToken(access_token) : null;
 
-    const isAccessTokenExists = sessionStorage.getItem("access") || null;
-    const access_token = isAccessTokenExists ? Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY) : null;
-    const isValidateAccessToken = access_token && await VerifyToken(access_token);
+        if (!isValidateAccessToken && !access_token) {
+            await RefreshTheAccessToken(refresh_token, LoggedInUser, setUser);
+        }
 
-    if (!isValidateAccessToken) {
-        await RefreshTheAccessToken(refresh_token, LoggedInUser);
+        isValidateAccessToken && await FetchUserData(access_token, setUser);
     } else {
-        await LoggedInUser?.(access_token, refresh_token);
+        await LogoutUser?.();
+        if (isPathnameInUrl(pathname)) {
+            return;
+        } else {
+            router.push('/auth/login');
+        }
     }
-    isValidateAccessToken && await FetchUserData(access_token, setUser);
 };
+
+const isPathnameInUrl = (pathname: string) => {
+    return Data.unauthenticatedRoutes.some((url: string) => {
+        return pathname.startsWith(url);
+    });
+}
 
 export default IndexLayout;
