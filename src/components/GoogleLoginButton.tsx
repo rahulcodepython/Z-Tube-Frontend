@@ -14,7 +14,7 @@ const GoogleLoginButton = ({ label }: { label: string }) => {
 
 const GoogleSignIn = async () => {
     try {
-        const response = await axios.get(`${process.env.BASE_API_URL}/google/auth/`);
+        const response = await axios.get(`${process.env.BASE_API_URL}/auth/google/auth/`);
         window.location.href = response.data.url;
     } catch (error) {
         console.error('Google authentication error:', error);

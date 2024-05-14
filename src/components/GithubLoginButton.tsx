@@ -14,7 +14,7 @@ const GithubLoginButton = ({ label }: { label: string }) => {
 
 const GithubSignIn = async () => {
     try {
-        const response = await axios.get(`${process.env.BASE_API_URL}/github/auth/`);
+        const response = await axios.get(`${process.env.BASE_API_URL}/auth/github/auth/`);
         window.location.href = response.data.url;
     } catch (error) {
         console.error('Github authentication error:', error);

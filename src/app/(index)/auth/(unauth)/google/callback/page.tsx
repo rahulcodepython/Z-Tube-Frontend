@@ -21,7 +21,7 @@ const GoogleAuthCallback = () => {
 
             if (code) {
                 try {
-                    const response = await axios.get(`${process.env.BASE_API_URL}/google/authenticate/?code=${code}`)
+                    const response = await axios.get(`${process.env.BASE_API_URL}/auth/google/authenticate/?code=${code}`)
                     await LoggedInUser?.(response.data.access, response.data.refresh);
                     await FetchUserData(response.data.access, setUser);
                     return router.push('/');
