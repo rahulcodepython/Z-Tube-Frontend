@@ -48,6 +48,12 @@ interface menuInterface {
     icon: React.ReactNode,
 }
 
+interface productCategory {
+    key: string,
+    title: string
+
+}[]
+
 interface Data {
     emoji: Array<emoji>
     sidebar: {
@@ -58,6 +64,8 @@ interface Data {
     }
     ecom: {
         navbarItems: Array<navbarItems>
+        productCategory: Array<productCategory>
+        productSubCategory: Array<productCategory>
     }
     youtube: {
         allVideos: {
@@ -358,6 +366,18 @@ const Data: Data = {
             {
                 title: "Beauty & Toys",
                 link: '/ecom/beauty-toys',
+            },
+        ],
+        productCategory: [
+            {
+                key: 'fashion',
+                title: 'Fashion',
+            }
+        ],
+        productSubCategory: [
+            {
+                key: 't-shirt',
+                title: 'T-Shirt',
             },
         ]
     },

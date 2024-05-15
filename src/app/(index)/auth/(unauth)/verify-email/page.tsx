@@ -78,8 +78,9 @@ const handleResendVerficationCode = async () => {
         await axios.post(`${process.env.BASE_API_URL}/auth/users/resend_activation/`, {
             email: localStorage.getItem("email") ?? null,
         })
+        toast.success('Verification code has been sent to your email again.');
     } catch (error: any) {
-        toast.error(error?.response?.data?.error ?? 'Something went wrong');
+        toast.error(error?.response?.data?.error ?? 'Something went wrong.');
     }
 }
 const verifyEmail = async (code: string | null, setCode: (value: (((prevState: string) => string) | string)) => void, setLoading: React.Dispatch<React.SetStateAction<boolean>>, router: any, LoggedInUser: LoggedInUserType | undefined): Promise<void> => {

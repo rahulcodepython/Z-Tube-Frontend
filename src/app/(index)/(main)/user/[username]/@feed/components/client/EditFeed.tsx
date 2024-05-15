@@ -118,7 +118,7 @@ const EditFeed = ({ setIsOpen, feed, feedIndex }: EditFeedProps) => {
                         </div>
                         <div className="col-span-2 grid w-full gap-2 px-1">
                             <Label htmlFor="Media" className="uppercase text-gray-600 text-xs">Media</Label>
-                            <MediaUploader media={media} setMedia={setMedia} setIsMediaUpdate={setIsMediaUpdate} />
+                            <MediaUploader media={media} setMedia={setMedia} setIsMediaUpdate={setIsMediaUpdate} maxNumber={10} />
                         </div>
                     </div>
                     {

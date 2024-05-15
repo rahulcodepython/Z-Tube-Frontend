@@ -103,8 +103,8 @@ const handleRequestEmailUpdate = async (
                 Authorization: `JWT ${accessToken}`,
             },
         }
-        const response = await axios.request(options)
-        toast.success(response.data.success);
+        await axios.request(options)
+        toast.success("Email update code has been sent to your email. Please check your email.");
         setIsRequested(true)
     } catch (error: any) {
         toast.error(error?.response?.data?.error || "There is some issue. Please try again.")
@@ -137,8 +137,8 @@ const handlePasswordUpdate = async (
             }
         }
 
-        const response = await axios.request(options)
-        toast.success(response.data.success)
+        await axios.request(options)
+        toast.success("Email has been updated successfully.")
         await LogoutUser?.();
         router.push('/auth/login')
     } catch (error: any) {

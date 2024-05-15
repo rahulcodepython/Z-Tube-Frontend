@@ -124,10 +124,10 @@ const RegisterPage: React.FC = () => {
 const register = async (values: RegistrationDataType, router: any, setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
     setLoading(true);
     try {
-        const response = await axios.post(`${process.env.BASE_API_URL}/auth/users/me/`, values);
+        await axios.post(`${process.env.BASE_API_URL}/auth/users/me/`, values);
         localStorage.setItem("email", values.email)
         router.push('/auth/verify-email')
-        toast.success(response.data.success);
+        toast.success("Your account has been creates.At First verify it.");
     } catch (error: any) {
         toast.error(error?.response?.data?.error ?? 'Something went wrong');
     }

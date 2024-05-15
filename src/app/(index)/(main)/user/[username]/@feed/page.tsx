@@ -35,7 +35,7 @@ const Feed = ({ params }: { params: { username: string } }) => {
 
     return <div className='grid grid-cols-1 gap-4 px-60'>
         {
-            loading ? <Loading /> : feed && feed.length === 0 ? <div>No Post There</div> :
+            loading ? <Loading /> : feed && feed.length === 0 ? <div className='w-full flex justify-center'>No Post There</div> :
                 <InfiniteScroll dataLength={feed?.length ?? 0}
                     next={() => FetchNextFeedPost(accessToken, pagination.nextUrl, setFeed, setPagination)}
                     hasMore={feed ? feed.length !== pagination.count : false} loader={<Loading />}>

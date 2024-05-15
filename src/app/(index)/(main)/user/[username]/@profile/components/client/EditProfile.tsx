@@ -264,12 +264,12 @@ const UpdateProfile = async (
         };
 
         const response = await axios.request(options);
-        setUserData?.(response.data.content.user);
-        setProfile?.(response.data.content.profile);
+        setUserData?.(response.data.user);
+        setProfile?.(response.data.profile);
 
-        toast.success('Profile updated successfully');
+        toast.success('Profile update successfully');
 
-        router.push(`/user/${encodeURIComponent(response.data.content.user.username)}${search ? `?tabs=${search}` : ''}`);
+        router.push(`/user/${encodeURIComponent(response.data.user.username)}${search ? `?tabs=${search}` : ''}`);
     } catch (error: any) {
         toast.error(error?.response?.data?.error ?? 'There is some issue. Please try again.');
     } finally {
@@ -371,8 +371,8 @@ const handleDelete = async (
                 Authorization: `JWT ${accessToken}`,
             }
         }
-        const response = await axios.request(options);
-        toast.success(response.data.message);
+        await axios.request(options);
+        toast.success("Your account is deleted.");
         await LogoutUser?.();
         router.push('/auth/register');
     } catch (error: any) {

@@ -29,7 +29,6 @@ const CreateFeed = () => {
 
     const [uploading, setUploading] = React.useState<boolean>(false)
     const [media, setMedia] = React.useState<ImageListType>([])
-    const [isMediaUpdate, setIsMediaUpdate] = React.useState<boolean>(false)
 
     return <Formik initialValues={{
         caption: '',
@@ -103,7 +102,7 @@ const CreateFeed = () => {
                     </div>
                     <div className="col-span-2 grid w-full gap-2 px-1">
                         <Label htmlFor="Media" className="uppercase text-gray-600 text-xs">Media</Label>
-                        <MediaUploader media={media} setMedia={setMedia} setIsMediaUpdate={setIsMediaUpdate} />
+                        <MediaUploader media={media} setMedia={setMedia} setIsMediaUpdate={undefined} maxNumber={10} />
                     </div>
                 </div>
                 {
@@ -186,13 +185,13 @@ const CreateFeedPost = async (
 interface MediaUploaderProps {
     media: ImageListType
     setMedia: React.Dispatch<React.SetStateAction<ImageListType>>
-    setIsMediaUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsMediaUpdate: React.Dispatch<React.SetStateAction<boolean>> | undefined;
+    maxNumber: number
 }
 
-export const MediaUploader = ({ media, setMedia, setIsMediaUpdate }: MediaUploaderProps) => {
-    const maxNumber = 10;
+export const MediaUploader = ({ media, setMedia, setIsMediaUpdate, maxNumber }: MediaUploaderProps) => {
     return <ImageUploading value={media} multiple onChange={(imageList, addUpdateIndex) => {
-        setIsMediaUpdate(() => true)
+        setIsMediaUpdate?.(() => true)
         setMedia(() => imageList)
     }} maxNumber={maxNumber} dataURLKey="data_url">
         {({ imageList, onImageUpload, onImageRemoveAll, onImageUpdate, onImageRemove, isDragging, dragProps }) => {

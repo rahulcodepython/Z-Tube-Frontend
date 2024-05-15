@@ -14,40 +14,55 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Form, Formik } from 'formik'
 import { Button } from '@/components/ui/button'
 import { ReloadIcon } from '@radix-ui/react-icons'
+import axios from 'axios'
+import { MediaUploader } from '@/app/(index)/(main)/user/[username]/@feed/components/client/CreateFeed'
+import { ImageListType } from 'react-images-uploading'
+import { AccessToken, AuthContext, AuthContextType } from '@/context/AuthContext'
+import { UploadMediaFiles } from '@/utils'
+import { toast } from 'react-toastify'
+import Data from '@/data/data'
 
-interface ProductType{
+interface ProductType {
     name: string
     description: string
-    price: string
-    offer: string
+    price: number
+    offer: number
     category: string
     subcategory: string
-    quantity: string
+    quantity: number
+    availibile_quantity: number
     availibility: string
 }
 
 const CreateProduct = () => {
-    const [uploading, setUploading] = React.useState(false)
+    const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
+    const accessToken = authContext?.accessToken
+
+    const [uploading, setUploading] = React.useState<boolean>(false)
+    const [media, setMedia] = React.useState<ImageListType>([])
 
     return (
-        <div>
+        <div className='py-12'>
             <div className='font-bold text-xl'>
                 Create New Post
             </div>
             <Formik initialValues={{
                 name: '',
                 description: '',
-                price: '',
-                offer: '',
-                category: 'light',
-                subcategory: 'dark',
-                quantity: '',
+                price: 0,
+                offer: 0,
+                category: '',
+                subcategory: '',
+                availibile_quantity: 0,
+                quantity: 0,
                 availibility: 'instock'
-            }} onSubmit={async (values :ProductType) => {
-                await CreateProductPost(values, setUploading)
-            }}>
-                {({ values, handleChange, handleSubmit }) => {
-                    return <Form className='flex flex-col gap-8 pt-12'>
+            }} onSubmit={
+                async (values, actions) => {
+                    await CreateProductPost(accessToken, values, media, setMedia, setUploading)
+                    actions.resetForm()
+                }}>
+                {({ values, handleChange, handleSubmit, setFieldValue }) => {
+                    return <Form className='flex flex-col gap-8 pt-12' onSubmit={e => e.preventDefault()}>
                         <div className='flex flex-col gap-2'>
                             <Label htmlFor="product-name">Product Name</Label>
                             <Input placeholder='Product Name' value={values.name} onChange={e => handleChange(e)} name="name" />
@@ -74,9 +89,11 @@ const CreateProduct = () => {
                                     <SelectValue placeholder="Category" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="light">Light</SelectItem>
-                                    <SelectItem value="dark">Dark</SelectItem>
-                                    <SelectItem value="system">System</SelectItem>
+                                    {
+                                        Data.ecom.productCategory.map((item, index) => {
+                                            return <SelectItem key={index} value={item.key}>{item.title}</SelectItem>
+                                        })
+                                    }
                                 </SelectContent>
                             </Select>
                         </div>
@@ -90,15 +107,24 @@ const CreateProduct = () => {
                                     <SelectValue placeholder="Subcategory" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="light">Light</SelectItem>
-                                    <SelectItem value="dark">Dark</SelectItem>
-                                    <SelectItem value="system">System</SelectItem>
+                                    {
+                                        Data.ecom.productSubCategory.map((item, index) => {
+                                            return <SelectItem key={index} value={item.key}>{item.title}</SelectItem>
+                                        })
+                                    }
                                 </SelectContent>
                             </Select>
                         </div>
                         <div className='flex flex-col gap-2'>
                             <Label htmlFor="product-quantity">Product Quantity</Label>
-                            <Input type="number" placeholder='Product Quantity' value={values.quantity} onChange={e => handleChange(e)} name="quantity" />
+                            <Input type="number" placeholder='Product Quantity' value={values.quantity} onChange={e => {
+                                handleChange(e)
+                                Number(e.target.value) < values.availibile_quantity && setFieldValue('availibile_quantity', Number(e.target.value))
+                            }} name="quantity" />
+                        </div>
+                        <div className='flex flex-col gap-2'>
+                            <Label htmlFor="availibile-quantity">Product Available Quantity</Label>
+                            <Input type="number" placeholder='Product Available Quantity' value={values.availibile_quantity} onChange={e => Number(e.target.value) <= values.quantity && handleChange(e)} name="availibile_quantity" />
                         </div>
                         <div className='flex flex-col gap-2'>
                             <Label htmlFor="product-availibility">Product Availability</Label>
@@ -113,6 +139,10 @@ const CreateProduct = () => {
                                 </div>
                             </RadioGroup>
                         </div>
+                        <div className='flex flex-col gap-2'>
+                            <Label htmlFor="product-image">Product Image</Label>
+                            <MediaUploader media={media} setMedia={setMedia} setIsMediaUpdate={undefined} maxNumber={4} />
+                        </div>
                         {
                             uploading ? <Button disabled>
                                 <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
@@ -126,10 +156,42 @@ const CreateProduct = () => {
     )
 }
 
-const CreateProductPost = async (values: ProductType, setUploading: React.Dispatch<React.SetStateAction<boolean>>) => {
+const CreateProductPost = async (
+    accessToken: AccessToken | undefined,
+    values: ProductType,
+    media: ImageListType,
+    setMedia: React.Dispatch<React.SetStateAction<ImageListType>>,
+    setUploading: React.Dispatch<React.SetStateAction<boolean>>,
+) => {
     setUploading(true)
-    console.log(values);
-    setUploading(false)
+    try {
+        const mediaURL: string[] = []
+
+        await Promise.all(media.map(async (item: any) => {
+            const url = await UploadMediaFiles(item.file, `ECommerce/${item.file.name}`);
+            mediaURL.push(url);
+        }));
+
+        const options = {
+            method: 'POST',
+            url: `${process.env.BASE_API_URL}/ecom/create-product/`,
+            headers: {
+                Authorization: `JWT ${accessToken}`,
+            },
+            data: {
+                ...values,
+                images: mediaURL
+            }
+        }
+
+        await axios.request(options)
+        toast.success('Product Created Successfully');
+    } catch (error: any) {
+        toast.error(error?.response?.data?.error ?? 'Something went wrong')
+    } finally {
+        setMedia([])
+        setUploading(false)
+    }
 }
 
 export default CreateProduct

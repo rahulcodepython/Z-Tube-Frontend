@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <ViewTransitions>
             <html lang="en">
-                <link rel="icon" href="/fave/icons8-z-color-32.png" sizes="any" />
+                <link rel="icon" href="/fav/icons8-z-color-32.png" sizes="any" />
                 <body className='scroll-smooth'>
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                         <ToastContainer draggableDirection="x" pauseOnFocusLoss={false} transition={Flip} />

@@ -171,8 +171,7 @@ const FetchProfileData = async (
         setProfile?.(response.data)
     }).catch(error => {
         setIsError?.(() => true)
-        setErrorMsg('There is some issue')
-        toast.error(error.response.data.error ?? "There is some issue")
+        setErrorMsg(error.response.data.error ?? "There is some issue")
     }).finally(() => setParentLoading?.(() => false))
 }
 
@@ -185,7 +184,7 @@ const ConnectPeople = async (accessToken: AccessToken | undefined, username: str
         method: 'POST',
     }
 
-    await axios.request(options).then(response => {
+    await axios.request(options).then(() => {
         setProfile?.((pre) => {
             if (pre) {
                 return {
@@ -197,7 +196,7 @@ const ConnectPeople = async (accessToken: AccessToken | undefined, username: str
                 return null
             }
         });
-        toast.success(response.data.success)
+        toast.success("Connected")
     })
 }
 
@@ -210,7 +209,7 @@ const DisconnectPeople = async (accessToken: AccessToken | undefined, username: 
         method: 'DELETE',
     }
 
-    await axios.request(options).then(response => {
+    await axios.request(options).then(() => {
         setProfile?.((pre) => {
             if (pre) {
                 return {
@@ -222,7 +221,7 @@ const DisconnectPeople = async (accessToken: AccessToken | undefined, username: 
                 return null
             }
         });
-        toast.success(response.data.success)
+        toast.success("Disconnected")
     })
 }
 

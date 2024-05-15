@@ -78,7 +78,7 @@ const Comment = ({ feed, feedIndex }: { feed: FeedType, feedIndex: number }) => 
                 })
             }
         </ScrollArea>
-        <CommentForm setComments={setComments} feed={feed} />
+        <CommentForm setComments={setComments} feed={feed} feedIndex={feedIndex} />
     </DialogDescription>
 }
 
@@ -226,17 +226,20 @@ const ReplyItem = ({
 }
 
 
-const CommentForm = ({ setComments, feed }: { feed: FeedType, setComments: React.Dispatch<React.SetStateAction<CommentType[]>> }) => {
+const CommentForm = ({ setComments, feed, feedIndex }: { feed: FeedType, setComments: React.Dispatch<React.SetStateAction<CommentType[]>>, feedIndex: number }) => {
     const [loading, setLoading] = React.useState(false)
 
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
     const accessToken = authContext?.accessToken
 
+    const feedContext = React.useContext<FeedContextType | undefined>(FeedContext)
+    const setFeed = feedContext?.setFeed
+
     return (
         <Formik initialValues={{
             comment: ''
         }} onSubmit={async (values, actions) => {
-            await CreateComment(accessToken, values.comment, feed.id, setLoading, setComments)
+            await CreateComment(accessToken, values.comment, feed.id, setLoading, setComments, setFeed, feedIndex)
             actions.resetForm()
         }}>
             {({ values, handleChange, handleSubmit }) => (
@@ -473,6 +476,8 @@ const CreateComment = async (
     postId: string,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     setComments: React.Dispatch<React.SetStateAction<CommentType[]>>,
+    setFeed: React.Dispatch<React.SetStateAction<FeedType[]>> | undefined,
+    feedIndex: number
 ) => {
     setLoading(() => true)
     const options = {
@@ -489,6 +494,11 @@ const CreateComment = async (
     await axios.request(options)
         .then(response => {
             setComments(pre => [response.data.comment, ...pre])
+            setFeed?.(pre => {
+                let newData = [...pre];
+                newData[feedIndex].commentNo = response.data.commentNo;
+                return newData;
+            })
         }).finally(() => {
             setLoading(() => false)
         })
