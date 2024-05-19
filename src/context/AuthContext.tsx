@@ -30,6 +30,7 @@ export interface ProfileType {
     isFriend: boolean,
     is_superuser: boolean,
     self: boolean
+    isMarchant: boolean
 }
 
 export interface AuthContextType {
@@ -91,8 +92,8 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
     };
 
     return <AuthContext.Provider value={{
-            isAuthenticated, accessToken, refreshToken, user, profile, setUser, setProfile, AuthenticateUser, UnAuthenticateUser, LoggedInUser, LogoutUser,
-        }}>
-            {children}
-        </AuthContext.Provider>
+        isAuthenticated, accessToken, refreshToken, user, profile, setUser, setProfile, AuthenticateUser, UnAuthenticateUser, LoggedInUser, LogoutUser,
+    }}>
+        {children}
+    </AuthContext.Provider>
 };

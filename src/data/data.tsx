@@ -123,16 +123,6 @@ const Data: Data = {
                 title: "Discord",
                 link: '/'
             },
-            {
-                icon: <PiHandbagSimpleFill />,
-                title: "eCommerce",
-                link: '/ecom'
-            },
-            {
-                icon: <MdOutlineShoppingCart />,
-                title: "Cart",
-                link: '/ecom/cart'
-            }
         ],
         explore: [
             {
@@ -182,9 +172,14 @@ const Data: Data = {
             },
             {
                 icon: <PiHandbagSimpleFill />,
-                title: "Shopping",
-                link: '#'
+                title: "eCommerce",
+                link: '/ecom'
             },
+            {
+                icon: <MdOutlineShoppingCart />,
+                title: "Cart",
+                link: '/ecom/cart'
+            }
         ],
         topic: [
             {

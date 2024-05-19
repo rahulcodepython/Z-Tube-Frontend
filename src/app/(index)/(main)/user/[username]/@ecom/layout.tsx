@@ -6,8 +6,16 @@ import CreateProduct from "@/app/(index)/(main)/user/[username]/@ecom/components
 import ListProducts from "@/app/(index)/(main)/user/[username]/@ecom/components/server/ListProducts";
 import OrderHistory from "@/app/(index)/(main)/user/[username]/@ecom/components/client/OrderHistory";
 import { UserContext, UserContextType } from "@/context/UserContext";
+import { AuthContext, AuthContextType } from '@/context/AuthContext';
 
 const EComLayout = ({ params, children }: { params: { username: string }, children: React.ReactNode }) => {
+    const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
+    const profile = authContext?.profile
+
+    return profile?.isMarchant ? <EComPartialLayout params={params} children={children} /> : children
+}
+
+const EComPartialLayout = ({ params, children }: { params: { username: string }, children: React.ReactNode }) => {
     const [defaultTab, setDefaultTab] = React.useState<string>('dashboard')
     const [loading, setLoading] = React.useState<boolean>(true)
 
