@@ -23,6 +23,9 @@ const EComPartialLayout = ({ params, children }: { params: { username: string },
     const parentLoading = userContext?.parentLoading
     const isError = userContext?.isError
 
+    const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
+    const profile = authContext?.profile
+
     const search = useSearchParams()
     const router = useRouter()
 
@@ -38,29 +41,41 @@ const EComPartialLayout = ({ params, children }: { params: { username: string },
     </div> : !loading && <Tabs defaultValue={defaultTab}>
         <TabsList className="mb-4 w-full">
             <TabsTrigger value="dashboard"
-                onClick={() => router.push(`/user/${params.username}?tabs=ecom&subtabs=dashboard`)}>Dashboard</TabsTrigger>
-            <TabsTrigger value="create-product"
-                onClick={() => router.push(`/user/${params.username}?tabs=ecom&subtabs=create-product`)}>Create
-                Product</TabsTrigger>
+                onClick={() => router.push(`/user/${params.username}?tabs=ecom&subtabs=dashboard`)}>
+                Dashboard
+            </TabsTrigger>
+            {
+                profile?.self && <TabsTrigger value="create-product"
+                    onClick={() => router.push(`/user/${params.username}?tabs=ecom&subtabs=create-product`)}>
+                    Create Product
+                </TabsTrigger>
+            }
             <TabsTrigger value="list-product"
-                onClick={() => router.push(`/user/${params.username}?tabs=ecom&subtabs=list-product`)}>List
-                Product</TabsTrigger>
-            <TabsTrigger value="order-history"
-                onClick={() => router.push(`/user/${params.username}?tabs=ecom&subtabs=order-history`)}>Order
-                History</TabsTrigger>
+                onClick={() => router.push(`/user/${params.username}?tabs=ecom&subtabs=list-product`)}>
+                List Product
+            </TabsTrigger>
+            {
+                profile?.self && <TabsTrigger value="order-history" onClick={() => router.push(`/user/${params.username}?tabs=ecom&subtabs=order-history`)}>
+                    Order History
+                </TabsTrigger>
+            }
         </TabsList>
         <TabsContent value="dashboard" className="mt-0">
             {children}
         </TabsContent>
-        <TabsContent value="create-product" className="mt-0">
-            <CreateProduct />
-        </TabsContent>
+        {
+            profile?.self && <TabsContent value="create-product" className="mt-0">
+                <CreateProduct />
+            </TabsContent>
+        }
         <TabsContent value="list-product" className="mt-0">
             <ListProducts />
         </TabsContent>
-        <TabsContent value="order-history" className="mt-0">
-            <OrderHistory />
-        </TabsContent>
+        {
+            profile?.self && <TabsContent value="order-history" className="mt-0">
+                <OrderHistory />
+            </TabsContent>
+        }
     </Tabs>
 }
 

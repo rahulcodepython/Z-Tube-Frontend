@@ -64,53 +64,49 @@ const ProfileCard = ({ params, error, errorMsg }: { params: { username: string }
         <CardContent className="h-[160px] relative px-4 py-5 flex items-center justify-start gap-8">
             <Image src={profile?.image ? profile?.image : '/image/user.png'} width={120} height={120}
                 className='rounded-lg w-[120px] h-[120px] overflow-hidden' alt='...' />
-            <div className='space-y-6'>
+            <div className='space-y-2 max-w-4xl w-full'>
                 <div className='space-y-1'>
-                    <div className='space-y-1'>
-                        <div className='font-extrabold text-xl'>
-                            <span>
-                                {profile?.first_name} {profile?.last_name}
-                            </span>
-                            {
-                                profile?.isVerified && <sup className='ml-1'>
-                                    <MdVerified className='inline-block text-sm' />
-                                </sup>
-                            }
-                        </div>
-                        <span className='text-sm'>
-                            {profile?.username}
+                    <div className='font-extrabold text-xl'>
+                        <span>
+                            {profile?.first_name} {profile?.last_name}
                         </span>
-                    </div>
-                    <div className='text-sm'>
-                        {profile?.bio}
-                    </div>
-                    <div className='space-x-2 text-xs'>
                         {
-                            profile?.tags.map((item, index) => {
-                                return <span key={index}>
-                                    #{item}
-                                </span>
-                            })
+                            profile?.isVerified && <sup className='ml-1'>
+                                <MdVerified className='inline-block text-sm' />
+                            </sup>
                         }
                     </div>
-                    <div className='flex items-center justify-center gap-4 text-sm'>
-                        <div className='flex items-center justify-center gap-1 cursor-pointer'>
-                            <span>{profile?.posts}</span>
-                            <span>Posts</span>
-                        </div>
-                        <div className='flex items-center justify-center gap-1 cursor-pointer'>
-                            <span>{profile?.followers}</span>
-                            <span>Followers</span>
-                        </div>
-                        <div className='flex items-center justify-center gap-1 cursor-pointer'>
-                            <span>{profile?.following}</span>
-                            <span>Followings</span>
-                        </div>
+                    <span className='text-sm'>
+                        {profile?.username}
+                    </span>
+                </div>
+                <div className='text-sm truncate'>
+                    {profile?.bio}
+                </div>
+                <div className='space-x-2 text-xs'>
+                    {
+                        profile?.tags.map((item, index) => {
+                            return <span key={index}>
+                                #{item}
+                            </span>
+                        })
+                    }
+                </div>
+                <div className='flex items-center gap-4 text-sm'>
+                    <div className='flex items-center justify-center gap-1 cursor-pointer'>
+                        <span>{profile?.posts}</span>
+                        <span>Posts</span>
+                    </div>
+                    <div className='flex items-center justify-center gap-1 cursor-pointer'>
+                        <span>{profile?.followers}</span>
+                        <span>Followers</span>
+                    </div>
+                    <div className='flex items-center justify-center gap-1 cursor-pointer'>
+                        <span>{profile?.following}</span>
+                        <span>Followings</span>
                     </div>
                 </div>
-
             </div>
-
             <div className='absolute bottom-5 right-4 flex items-center justify-end gap-4'>
                 {
                     profile?.self ? <EditProfile /> :
@@ -145,7 +141,6 @@ const ProfileCard = ({ params, error, errorMsg }: { params: { username: string }
                         </Button>
                 }
             </div>
-
         </CardContent>
     </Card>
 }

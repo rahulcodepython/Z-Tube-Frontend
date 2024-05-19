@@ -81,17 +81,7 @@ const CheckUser = async (
     const refresh_token = isRefreshTokenExists ? Decrypt(localStorage.getItem("refresh"), process.env.ENCRYPTION_KEY) : null;
     const isValidateRefreshToken = refresh_token ? await VerifyToken(refresh_token) : null;
 
-    if (isValidateRefreshToken && refresh_token) {
-        const isAccessTokenExists = sessionStorage.getItem("access") ?? null;
-        const access_token = isAccessTokenExists ? Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY) : null;
-        const isValidateAccessToken = access_token ? await VerifyToken(access_token) : null;
-
-        if (!isValidateAccessToken && !access_token) {
-            await RefreshTheAccessToken(refresh_token, LoggedInUser, setUser);
-        }
-
-        isValidateAccessToken && await FetchUserData(access_token, setUser);
-    } else {
+    if (!isValidateRefreshToken) {
         await LogoutUser?.();
         if (isPathnameInUrl(pathname)) {
             return;
@@ -99,6 +89,17 @@ const CheckUser = async (
             router.push('/auth/login');
         }
     }
+    const isAccessTokenExists = sessionStorage.getItem("access") ?? null;
+    const access_token = isAccessTokenExists ? Decrypt(sessionStorage.getItem("access"), process.env.ENCRYPTION_KEY) : null;
+    const isValidateAccessToken = access_token ? await VerifyToken(access_token) : null;
+
+    if (!isValidateAccessToken) {
+        await RefreshTheAccessToken(refresh_token, LoggedInUser, setUser);
+    } else {
+        LoggedInUser?.(access_token, refresh_token);
+    }
+
+    isValidateAccessToken && await FetchUserData(access_token, setUser);
 };
 
 const isPathnameInUrl = (pathname: string) => {

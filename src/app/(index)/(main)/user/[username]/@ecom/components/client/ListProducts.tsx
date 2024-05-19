@@ -15,6 +15,7 @@ import {
     DialogHeader,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { Card } from '@/components/ui/card'
 
 
 interface ProductType {
@@ -41,12 +42,14 @@ const ListProducts = () => {
     }, [])
 
     return (
-        loading ? <div>Loading...</div> : products.map((item, index) => {
-            return <div className='p-8 flex items-start justify-between gap-2 h-fit' key={index}>
+        loading ? <div>Loading...</div> : products.length === 0 ? <div className='flex items-center justify-center w-full'>
+            No products found.
+        </div> : products.map((item, index) => {
+            return <Card className='p-4 flex items-start justify-between gap-2 h-fit' key={index}>
                 <div className='flex items-start gap-8 w-full'>
                     <Image src={item.image} width={100} height={100} alt={'product'} />
-                    <div className='flex flex-col flex-1 gap-8 items-start w-full col-span-2 mr-4'>
-                        <div className='flex-1 flex items-start justify-between'>
+                    <div className='flex flex-col flex-1 gap-8 items-start w-full col-span-2'>
+                        <div className='flex-1 flex items-start justify-between w-full'>
                             <div className='flex flex-col gap-2'>
                                 <h1 className='text-lg'>
                                     {item.name}
@@ -80,7 +83,7 @@ const ListProducts = () => {
                     </div>
                 </div>
                 <Cross2Icon />
-            </div>
+            </Card>
         })
     )
 }

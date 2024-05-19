@@ -23,6 +23,12 @@ const nextConfig = {
                 port: '',
                 pathname: '/v0/b/z-tube-53cf1.appspot.com/**',
             },
+            {
+                protocol: "https",
+                hostname: "avatars.githubusercontent.com",
+                port: '',
+                pathname: '/u/**',
+            },
         ],
     },
 };

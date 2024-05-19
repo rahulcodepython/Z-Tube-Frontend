@@ -15,17 +15,21 @@ const ECommerceDashboard = () => {
     const [loading, setLoading] = React.useState<boolean>(false)
 
     return !profile?.isMarchant ? <div className='flex items-center justify-center gap-4 my-8'>
-        <span>
-            You have not a merchant account yet.
-        </span>
         {
-            loading ? <Button disabled className="gap-2">
+            profile?.self ? <span>
+                You have not a merchant account yet.
+            </span> : <span>
+                This user has not a merchant account yet.
+            </span>
+        }
+        {
+            profile?.self ? loading ? <Button disabled className="gap-2">
                 <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                 Please wait
             </Button> :
                 <Button onClick={() => handleRequestMarchetAccount(accessToken, profile, setProfile, setLoading)}>
                     Create Merchant Account
-                </Button>
+                </Button> : null
         }
     </div> : <div>
         ECommerce Dashboard

@@ -3,9 +3,13 @@ import React from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import CreateFeed from "@/app/(index)/(main)/user/[username]/@feed/components/client/CreateFeed";
 import { UserContext, UserContextType } from "@/context/UserContext";
+import { AuthContext, AuthContextType } from '@/context/AuthContext';
 
 const FeedLayout = ({ children }: { children: React.ReactNode }) => {
     const userContext = React.useContext<UserContextType | undefined>(UserContext);
+    const authContext = React.useContext<AuthContextType | undefined>(AuthContext);
+
+    const profile = authContext?.profile
 
     const parentLoading = userContext?.parentLoading
     const isError = userContext?.isError
@@ -15,14 +19,18 @@ const FeedLayout = ({ children }: { children: React.ReactNode }) => {
     </div> : <Tabs defaultValue="feeds">
         <TabsList className='w-full mb-4'>
             <TabsTrigger value="feeds">Posts</TabsTrigger>
-            <TabsTrigger value="createFeed">Create Feed</TabsTrigger>
+            {
+                profile?.self && <TabsTrigger value="createFeed">Create Feed</TabsTrigger>
+            }
         </TabsList>
         <TabsContent value="feeds">
             {children}
         </TabsContent>
-        <TabsContent value="createFeed">
-            <CreateFeed />
-        </TabsContent>
+        {
+            profile?.self && <TabsContent value="createFeed">
+                <CreateFeed />
+            </TabsContent>
+        }
     </Tabs>
 }
 
