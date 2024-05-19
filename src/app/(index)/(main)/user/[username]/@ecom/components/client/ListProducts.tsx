@@ -2,11 +2,20 @@
 import { StarBlank, StarFill } from '@/app/(index)/(main)/ecom/components/server/Starts'
 import { Button } from '@/components/ui/button'
 import { AccessToken, AuthContext, AuthContextType } from '@/context/AuthContext'
-import { Cross2Icon } from '@radix-ui/react-icons'
+import { Cross2Icon, ReloadIcon } from '@radix-ui/react-icons'
 import axios from 'axios'
 import Image from 'next/image'
 import React from 'react'
 import { toast } from 'react-toastify'
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+
 
 interface ProductType {
     "id": string,
@@ -26,8 +35,6 @@ const ListProducts = () => {
 
     const [products, setProducts] = React.useState<ProductType[]>([])
     const [loading, setLoading] = React.useState<boolean>(true)
-
-    console.log(products);
 
     React.useEffect(() => {
         FetchAllProducts(accessToken, setProducts, setLoading)
@@ -68,9 +75,7 @@ const ListProducts = () => {
                             <Button>
                                 Edit
                             </Button>
-                            <Button>
-                                Delete
-                            </Button>
+                            <DeleteButton setProducts={setProducts} id={item.id} />
                         </div>
                     </div>
                 </div>
@@ -97,6 +102,65 @@ const FetchAllProducts = async (
         setProducts(response.data)
     } catch (error: any) {
         toast.error(error.response.data.error ?? "Something went wrong!")
+    } finally {
+        setLoading(false)
+    }
+}
+
+const DeleteButton = ({ setProducts, id }: { setProducts: React.Dispatch<React.SetStateAction<ProductType[]>>, id: string }) => {
+    const [open, setOpen] = React.useState<boolean>(false)
+    const [loading, setLoading] = React.useState<boolean>(false)
+
+    const authContext = React.useContext<AuthContextType | undefined>(AuthContext)
+    const accessToken = authContext?.accessToken
+
+    return <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger>
+            <Button>
+                Delete
+            </Button>
+        </DialogTrigger>
+        <DialogContent>
+            <DialogHeader>
+                <DialogDescription>
+                    Are you sure you want to delete this product?
+                </DialogDescription>
+                <DialogFooter>
+                    <Button onClick={() => setOpen(false)}>Cancel</Button>
+                    {
+                        loading ? <Button disabled className="gap-2">
+                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                            Please wait
+                        </Button> :
+                            <Button onClick={() => handleDeleteProduct(accessToken, setLoading, id, setProducts)}>Delete</Button>
+                    }
+                </DialogFooter>
+            </DialogHeader>
+        </DialogContent>
+    </Dialog>
+}
+
+const handleDeleteProduct = async (
+    accessToken: AccessToken | undefined,
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    id: string,
+    setProducts: React.Dispatch<React.SetStateAction<ProductType[]>>,
+
+) => {
+    setLoading(true)
+    try {
+        const options = {
+            method: 'DELETE',
+            url: `${process.env.BASE_API_URL}/ecom/edit-product/${id}/`,
+            headers: {
+                authorization: `JWT ${accessToken}`,
+            }
+        }
+        await axios.request(options)
+        setProducts((prev) => prev.filter((item) => item.id !== id))
+        toast.success('Product has been deleted successfully.')
+    } catch (error) {
+        toast.error('Product has been failed to delete.')
     } finally {
         setLoading(false)
     }

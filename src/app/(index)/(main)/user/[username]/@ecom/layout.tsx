@@ -3,7 +3,7 @@ import React from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRouter, useSearchParams } from 'next/navigation'
 import CreateProduct from "@/app/(index)/(main)/user/[username]/@ecom/components/client/CreateProduct";
-import ListProducts from "@/app/(index)/(main)/user/[username]/@ecom/components/server/ListProducts";
+import ListProducts from "@/app/(index)/(main)/user/[username]/@ecom/components/client/ListProducts";
 import OrderHistory from "@/app/(index)/(main)/user/[username]/@ecom/components/client/OrderHistory";
 import { UserContext, UserContextType } from "@/context/UserContext";
 import { AuthContext, AuthContextType } from '@/context/AuthContext';
