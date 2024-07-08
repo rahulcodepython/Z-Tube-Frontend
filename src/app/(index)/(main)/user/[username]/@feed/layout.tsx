@@ -1,11 +1,13 @@
 "use client"
 import React from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import CreateFeed from "@/app/(index)/(main)/user/[username]/@feed/components/client/CreateFeed";
 import { UserContext, UserContextType } from "@/context/UserContext";
 import { AuthContext, AuthContextType } from '@/context/AuthContext';
 
-const FeedLayout = ({ children }: { children: React.ReactNode }) => {
+const FeedLayout = ({ children, createfeed }: {
+    children: React.ReactNode,
+    createfeed: React.ReactNode
+}) => {
     const userContext = React.useContext<UserContextType | undefined>(UserContext);
     const authContext = React.useContext<AuthContextType | undefined>(AuthContext);
 
@@ -28,7 +30,7 @@ const FeedLayout = ({ children }: { children: React.ReactNode }) => {
         </TabsContent>
         {
             profile?.self && <TabsContent value="createFeed">
-                <CreateFeed />
+                {/* {createfeed} */}
             </TabsContent>
         }
     </Tabs>

@@ -15,7 +15,7 @@ import { Form, Formik } from 'formik'
 import { Button } from '@/components/ui/button'
 import { ReloadIcon } from '@radix-ui/react-icons'
 import axios from 'axios'
-import { MediaUploader } from '@/app/(index)/(main)/user/[username]/@feed/components/client/CreateFeed'
+import FeedMediaUploader from '@/app/(index)/(main)/user/[username]/@feed/components/client/FeedMediaUploader';
 import { ImageListType } from 'react-images-uploading'
 import { AccessToken, AuthContext, AuthContextType } from '@/context/AuthContext'
 import { UploadMediaFiles } from '@/utils'
@@ -141,7 +141,7 @@ const CreateProduct = () => {
                         </div>
                         <div className='flex flex-col gap-2'>
                             <Label htmlFor="product-image">Product Image</Label>
-                            <MediaUploader media={media} setMedia={setMedia} setIsMediaUpdate={undefined} maxNumber={4} />
+                            <FeedMediaUploader media={media} setMedia={setMedia} setIsMediaUpdate={undefined} maxNumber={4} />
                         </div>
                         {
                             uploading ? <Button disabled>

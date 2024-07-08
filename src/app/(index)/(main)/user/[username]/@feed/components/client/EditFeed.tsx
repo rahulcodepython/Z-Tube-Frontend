@@ -23,7 +23,7 @@ import TagsInput from "@/components/TagsInput";
 import { FeedContext, FeedContextType, FeedType } from '@/context/FeedContext';
 import { BiSend } from "react-icons/bi";
 import { ImageListType } from "react-images-uploading";
-import { MediaUploader } from "@/app/(index)/(main)/user/[username]/@feed/components/client/CreateFeed";
+import FeedMediaUploader from '@/app/(index)/(main)/user/[username]/@feed/components/client/FeedMediaUploader';
 
 interface EditFeedProps {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -118,7 +118,7 @@ const EditFeed = ({ setIsOpen, feed, feedIndex }: EditFeedProps) => {
                         </div>
                         <div className="col-span-2 grid w-full gap-2 px-1">
                             <Label htmlFor="Media" className="uppercase text-gray-600 text-xs">Media</Label>
-                            <MediaUploader media={media} setMedia={setMedia} setIsMediaUpdate={setIsMediaUpdate} maxNumber={10} />
+                            <FeedMediaUploader media={media} setMedia={setMedia} setIsMediaUpdate={setIsMediaUpdate} maxNumber={10} />
                         </div>
                     </div>
                     {
